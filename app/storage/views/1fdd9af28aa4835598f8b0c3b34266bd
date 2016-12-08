@@ -1,0 +1,95 @@
+ 
+ <ul class="breadcrumb">
+    <li><a href="<?php echo URL::route('getDashboard'); ?>"><i class="fa fa-home"></i> Početna</a></li>
+    <li class="active"><a href="<?php echo URL::route('TrashIndex'); ?>">Pregled svih obrisanih sadržaja</a></li>
+    
+    
+</ul>
+        
+<div class="panel-heading">
+    <h4>Pregled svih obrisanih sadržaja</h4>
+</div>
+
+<div class="panel-body table-responsive">
+
+    <table class="table table-hover" id="entries-list">
+        <thead>
+            <tr>
+            <?php $itemnumber = 1; ?>
+            <?php foreach($items as $key=>$value): ?> 
+            <?php $itemnumber++; ?>
+            <th><?php echo $value; ?></th>
+            <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach($entries as $key=>$value): ?>
+         <tr>
+            <?php foreach($indexes as $index): ?>
+                <?php if($index == "full_name"): ?>
+                <td><?php echo $value->first_name; ?> <?php echo $value->last_name; ?></td>
+                <?php elseif($index == "deleted_at"): ?>
+                <td><?php echo date('d. m. Y.', strtotime($value->deleted_at)); ?></td>
+                <?php elseif($index == "button"): ?>
+                <td class="col-md-1">  
+                    <a href="<?php echo URL::route('TrashRestore', array('id' => $value->id, 'trashed' => $trashed)); ?>">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-undo"></i></button>
+                    </a>
+                </td>
+                <?php elseif($index == "image"): ?>
+                <td>
+                <img src="<?php echo url('/'); ?>/uploads/frontend/<?php echo $folder; ?>/thumbs/<?php echo $value->image; ?>" class="blog-post-image img-responsive" style="width:200px; height:100px;" />
+                </td>
+                <?php elseif($index == "foldername"): ?>
+                <?php else: ?>
+                <td><?php echo $value->$index; ?></td>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php if(count($entries) > 0): ?> 
+    <?php foreach($entries as $entry): ?>
+    
+    <div class="modal fade" id="delete-blog-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pozor!</h4>
+                </div>
+                <div class="modal-body">
+                <?php if($trashed != 'media'): ?>
+                    <p>Želite li vratiti blog post: <?php echo $entry->title; ?>?</p>
+                <?php endif; ?>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('TrashRestore', array('id' => $entry->id, 'trashed' => $trashed)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+
+<div><?php echo $entries->links(); ?></div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        <?php if(count($entries) > 0): ?> 
+            <?php foreach($entries as $entry): ?>
+                $("#btn-delete-blog-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#delete-blog-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+       
+    });
+    </script>

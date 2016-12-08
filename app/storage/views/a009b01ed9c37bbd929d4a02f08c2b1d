@@ -1,0 +1,304 @@
+<!-- Main content -->
+<ul class="breadcrumb">
+    <li><a href="<?php echo URL::route('getDashboard'); ?>"><i class="fa fa-home"></i> Početna</a></li>
+    <li><a href="<?php echo URL::route('WorkingOrderIndex'); ?>">Pregled svih radnih naloga</a></li>
+    <li class="active">Dodaj radni nalog</li>
+</ul>
+<div class="panel-heading">
+    <div class="row">
+        <div class="col-md-10">
+            <h4>Dodaj radni nalog</h4>
+        </div>
+        <div class="col-md-2">
+            <a href="<?php echo URL::route('WorkingOrderIndex'); ?>">
+                <button class="btn btn-default btn-md pull-right"><i class="fa fa-caret-square-o-left"></i> Povratak</button>
+            </a> 
+        </div>
+    </div>
+</div>
+<div class="panel-body">
+    <div class="row">
+        <?php echo Form::open(array('route' => $postRoute, 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'files' => true)); ?>
+
+        <div class="col-md-7">
+                <div class="col-md-3">
+                <div class="form-group">  
+                    <label for="workingorder_number">Broj radnog naloga:</label>  
+                    <?php echo Form::text('workingorder_number', isset($newworkingordernumber) ? $newworkingordernumber : null, ['class' => 'form-control', 'id' => 'workingorder_number', 'placeholder' => 'Broj radnog naloga']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('workingorder_number'); ?></small>
+                </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-1">
+                   <div class="form-group">  
+                    <label for="tax">Oporezivo:</label>
+                    <?php echo Form::select('taxable', array('0' => 'Ne', '1' => 'Da'), '0', array('class'=>'form-control','style'=>'' )); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('taxable'); ?></small>
+                </div>  
+                    </div>
+
+                <div class="col-md-1"></div>
+
+                    <div class="col-md-2">
+                   <div class="form-group">  
+                    <label for="hide_amount">Sakrij iznose:</label>
+                    <?php echo Form::select('hide_amount', array('0' => 'Ne', '1' => 'Da'), '0', array('class'=>'form-control','style'=>'' )); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('hide_amount'); ?></small>
+                </div>  
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="col-md-4">
+                <div class="form-group">  
+                    <label for="client_id">Naručitelj:</label>  
+                    <?php echo Form::select('client_id', $clientlist, isset($entry->client_id) ? $entry->client_id : null, array('class' => 'form-control', 'style' => 'width:100;', 'id' => 'client_id')); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('client_id'); ?></small>
+                </div>
+                </div>
+
+                <div class="col-md-1"></div>
+
+                <div class="col-md-3">
+                <div class="form-group">  
+                    <label for="client_address">Adresa:</label>  
+                    <?php echo Form::text('client_address', isset($entry->client_address) ? $entry->client_address : null, ['class' => 'form-control', 'id' => 'client_address', 'placeholder' => 'Adresa']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('client_address'); ?></small>
+                </div>
+                </div>
+
+                <div class="col-md-1"></div>
+
+                <div class="col-md-3">
+                <div class="form-group">  
+                    <label for="client_oib">OIB:</label>  
+                    <?php echo Form::text('client_oib', isset($entry->client_oib) ? $entry->client_oib : null, ['class' => 'form-control', 'id' => 'client_oib', 'placeholder' => 'OIB']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('client_oib'); ?></small>
+                </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <label for="education">Usluge:</label>  
+                        <div class="item-block no-margin-top">
+                          <div class="item-form">
+
+                            <div class="row">
+                            <div class="col-md-12">
+
+                <div class="col-md-12">
+                <div class="form-group">  
+                    <label for="service">Usluga:</label>  
+                    <?php echo Form::select('service[]', $servicelist, isset($entry->service) ? $entry->service : null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('service'); ?></small>
+                        </div>
+                        </div>
+                <div class="col-md-2">
+                        <div class="form-group">  
+                    <label for="measurement">Jedinična mjera:</label> 
+                    <?php echo Form::select('measurement[]', array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'), 'piece', array('class'=>'form-control','style'=>'' )); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('measurement'); ?></small>
+                </div>     
+                </div> 
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                   <div class="form-group">  
+                    <label for="amount">Količina:</label>
+                    <?php echo Form::text('amount[]', isset($entry->amount) ? $entry->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('amount'); ?></small>
+                </div>    
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                   <div class="form-group">  
+                    <label for="price">Cijena:</label>
+                    <?php echo Form::text('price[]', isset($entry->price) ? $entry->price : null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('price'); ?></small>
+                </div>    
+                </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                   <div class="form-group">  
+                    <label for="discount">Popust:</label>
+                    <?php echo Form::text('discount[]', isset($entry->discount) ? $entry->discount : null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('discount'); ?></small>
+                </div>    
+                </div>
+                <div class="col-md-1"></div>
+                   <div class="col-md-1">
+                   <div class="form-group">  
+                    <label for="taxpercent">Stopa:</label>
+                    <?php echo Form::text('taxpercent[]', isset($entry->taxpercent) ? $entry->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('taxpercent'); ?></small>
+                </div>    
+                </div>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 duplicateable-content">
+                            <div class="item-block">
+                                <div class="item-form">
+
+                                    <a class="btn btn-danger btn-float btn-remove"><i class="ti-close"></i></a>
+
+                                    <div class="row">
+
+                <div class="col-md-12">
+<div class="form-group">  
+                    <label for="service">Usluga:</label>  
+                    <?php echo Form::select('service[]', $servicelist, isset($entry->service) ? $entry->service : null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('service'); ?></small>
+                        </div>
+                        </div>
+                <div class="col-md-2">
+                        <div class="form-group">  
+                    <label for="measurement">Jedinična mjera:</label>  
+                    <?php echo Form::select('measurement[]', array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'), 'piece', array('class'=>'form-control','style'=>'' )); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('measurement'); ?></small>
+                </div>     
+                </div> 
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                   <div class="form-group">  
+                    <label for="amount">Količina:</label>
+                    <?php echo Form::text('amount[]', isset($entry->amount) ? $entry->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('amount'); ?></small>
+                </div>    
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                   <div class="form-group">  
+                    <label for="price">Cijena:</label>
+                    <?php echo Form::text('price[]', isset($entry->price) ? $entry->price : null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('price'); ?></small>
+                </div>    
+                </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                   <div class="form-group">  
+                    <label for="discount">Popust:</label>
+                    <?php echo Form::text('discount[]', isset($entry->discount) ? $entry->discount : null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('discount'); ?></small>
+                </div>    
+                </div>
+                <div class="col-md-1"></div>
+                   <div class="col-md-1">
+                   <div class="form-group">  
+                    <label for="taxpercent">Stopa:</label>
+                    <?php echo Form::text('taxpercent[]', isset($entry->taxpercent) ? $entry->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('taxpercent'); ?></small>
+                </div>    
+                </div>
+                                      </div>
+                                  </div>
+                              </div>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <br>
+                            <a class="btn btn-info btn-duplicator margin-bot30">Dodaj usluge</a>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                <div class="form-group">  
+                    <label for="workingorder_employee">Djelatnik:</label>  
+                    <?php echo Form::text('workingorder_employee', isset($entry->workingorder_employee) ? $entry->workingorder_employee : null, ['class' => 'form-control', 'id' => 'workingorder_employee', 'placeholder' => 'Djelatnik']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('workingorder_employee'); ?></small>
+                </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                <div class="form-group">  
+                    <label for="workingorder_date_ship">Datum isporuke:</label>
+                    <?php echo Form::text('workingorder_date_ship', isset($entry->workingorder_date_ship) ? $entry->workingorder_date_ship : null, ['class' => 'form-control datepicker', 'id' => 'workingorder_date_ship', 'placeholder' => 'Datum']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('workingorder_date_ship'); ?></small>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                <div class="form-group">  
+                    <label for="workingorder_note">Opis kvara:</label>
+                    <?php echo Form::textarea('workingorder_note', isset($entry->workingorder_note) ? $entry->workingorder_note : null, ['class' => 'form-control', 'id' => 'workingorder_note', 'placeholder' => 'Unesite opis kvara ili napomene']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('workingorder_note'); ?></small>
+                    </div>
+                    </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12">
+                <div class="form-group">  
+                    <label for="workingorder_description">Opis radova:</label>
+                    <?php echo Form::textarea('workingorder_description', isset($entry->workingorder_description) ? $entry->workingorder_description : null, ['class' => 'form-control', 'id' => 'workingorder_description', 'placeholder' => 'Opis radova']); ?>
+
+                    <small class="text-danger"><?php echo $errors->first('workingorder_description'); ?></small>
+                    </div>
+                    </div>
+
+                  <?php echo Form::button('<i class="fa fa-floppy-o"></i>   ' . Lang::get('core.save'), array('type' => 'submit', 'class' => 'btn btn-info pull-right')); ?>
+
+        </div>
+
+        <?php echo Form::close(); ?>
+
+ 
+    </div>
+</div>
+
+<script type="text/javascript">
+
+$("#client_id").change(function() {
+  $.ajax({
+    url: '/admin/ajax/getAddress/' + $(this).val(),
+    type: 'get',
+    data: {},
+    success: function(data) {
+      if (data.success == true) {
+        $("#client_address").val(data.info);
+      } else {
+        alert('Cannot find info');
+      }
+
+    },
+    error: function(jqXHR, textStatus, errorThrown) {}
+  });
+});
+
+</script>
+ 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(":file").filestyle();
+        $('.editor').summernote({
+            height: 200
+        });
+
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+
+            });
+
+    });
+</script>

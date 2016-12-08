@@ -1,0 +1,201 @@
+ 
+ <ul class="breadcrumb">
+    <li><a href="<?php echo URL::route('getDashboard'); ?>"><i class="fa fa-home"></i> Početna</a></li>
+    <li class="active"><a href="<?php echo URL::route('OrderIndex'); ?>">Pregled svih narudžbi</a></li>
+    
+    <a href="<?php echo URL::route('OrderCreate'); ?>" class="pull-right" style="margin-top: -5px;">
+        <button class="btn btn-success btn-addon btn-sm">
+            <i class="fa fa-plus"></i> Dodaj novu narudžbu
+        </button>
+    </a>
+</ul>
+        
+<div class="panel-heading">
+    <h4>Pregled svih narudžbi (<?php echo count($entries); ?>)</h4>
+</div>
+
+<div class="panel-body table-responsive">
+
+    <table class="table table-hover" id="entries-list">
+        <thead>
+            <tr>
+               
+                <th>Narudžba broj</th>
+                <th>Broj računa</th>
+                <th>Klijent</th>
+                <th>Adresa</th>
+                <th>Datum narudžbe</th>
+                <th>Proizvodi</th>
+            </tr>
+        </thead>
+        <tbody>
+
+             <?php foreach($entries as $val => $entry): ?>
+                <tr>
+
+                    <td> 
+                    <a href="<?php echo URL::route('OrderEdit', array('id' => $entry->id)); ?>">
+                    <?php echo $entry->id; ?>
+
+                    </a>
+                    </td>
+                    <td> 
+                    <?php echo $entry->order_id; ?>
+
+                    </td>
+                    <td> 
+                    <a href="<?php echo URL::route('ClientEdit', array('id' => $entry->user_id)); ?>">
+                    <?php echo $entry->first_name; ?>  <?php echo $entry->last_name; ?>
+
+                    </a>
+                    </td>
+                    <td> <?php echo $entry->address; ?></td>
+                    <td> <?php echo date('d.m.Y', strtotime($entry->order_date)); ?></td>
+                    <td> 
+                    <?php foreach($allproducts[$val] as $key => $product): ?>
+
+                  <div class="row"><div class="col-md-12">
+                   <a href="<?php echo URL::route('ProductEdit', array('id' => $product['entry']->id)); ?>"><?php echo $product['entry']->title; ?></a>
+                   <?php if($product['entry']->sale_price == 1): ?>
+                   <span style="color:crimson;"> Rasprodajna cijena</span>
+                   <?php else: ?>
+                   <span style="color:violet;"> Uobičajena cijena</span>
+                   <?php endif; ?>
+                   </div></div>
+                    <?php endforeach; ?>
+                    </td>
+                    <td class="col-md-1">  
+
+                        <a href="<?php echo URL::route('OrderEdit', array('id' => $entry->id)); ?>">
+                            <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                        </a>
+                        <button type="button" id="btn-delete-blog-id-<?php echo $entry->id; ?>" class="btn btn-danger btn-xs" data-target="#delete-blog-id-<?php echo $entry->id; ?>"><i class="fa fa-times"></i>
+                        </button>
+                        <a href="<?php echo URL::route('OrderCreatePdf', array('entry_id' => $entry->id)); ?>">
+                        <button type="button" id="btn-pdf-order-id-<?php echo $entry->id; ?>" class="btn btn-warning btn-xs" data-target="#pdf-order-id-<?php echo $entry->id; ?>"><i class="fa fa-file-text-o"></i>
+                        </button>
+                        </a>
+                        <button type="button" id="btn-email-order-id-<?php echo $entry->id; ?>" class="btn btn-primary btn-xs" data-target="#email-order-id-<?php echo $entry->id; ?>"><i class="fa fa-envelope-o"></i></i>
+                        </button>
+                    </td>
+                </tr>
+            
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php if(count($entries) > 0): ?> 
+    <?php foreach($entries as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="pdf-order-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pozor!</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Želite li obrisati narudžbu:<?php echo $entry->id; ?> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('OrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+      
+<?php if(count($entries) > 0): ?> 
+    <?php foreach($entries as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="email-order-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Slanje narudžbe u PDF obliku klijentu: <?php echo $entry->first_name; ?>  <?php echo $entry->last_name; ?></h4>
+                </div>
+                <div class="modal-body">
+                                <div class="form-group">  
+                                <label for="order_comment">Upišite komentar ispod narudžbe:</label>
+                                <?php echo Form::textarea('order_comment', isset($entry->order_comment) ? $entry->order_comment : null, ['class' => 'form-control', 'id' => 'order_comment']); ?>
+
+                                <small class="text-danger"><?php echo $errors->first('order_comment'); ?></small>
+                                </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('OrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">Pošalji</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+
+
+<?php if(count($entries) > 0): ?> 
+    <?php foreach($entries as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="delete-blog-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pozor!</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Želite li obrisati narudžbu:<?php echo $entry->id; ?> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('OrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+
+<div class="text-center"><?php echo $entries->links(); ?></div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        <?php if(count($entries) > 0): ?> 
+            <?php foreach($entries as $entry): ?>
+                $("#btn-delete-blog-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#delete-blog-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+
+        <?php if(count($entries) > 0): ?> 
+            <?php foreach($entries as $entry): ?>
+                $("#btn-pdf-order-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#pdf-order-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+
+        <?php if(count($entries) > 0): ?> 
+            <?php foreach($entries as $entry): ?>
+                $("#btn-email-order-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#email-order-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+
+    });
+    </script>

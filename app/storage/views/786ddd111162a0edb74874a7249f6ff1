@@ -1,0 +1,12 @@
+<html>
+Poštovani <?php echo $first_name; ?> <?php echo $last_name; ?>, šaljemo vam otpremnicu broj <?php echo $number; ?> u elektronskom obliku.
+<?php if($comment != ''): ?>
+<br>
+<br>
+<br>Dodatni komentar:
+<br><?php echo $comment; ?>
+
+<?php else: ?>
+
+<?php endif; ?>
+</html>

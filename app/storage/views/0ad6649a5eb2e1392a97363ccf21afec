@@ -1,0 +1,165 @@
+ 
+ <ul class="breadcrumb">
+    <li><a href="<?php echo URL::route('getDashboard'); ?>"><i class="fa fa-home"></i> Početna</a></li>
+    <li class="active"><a href="<?php echo URL::route('WorkingOrderIndex'); ?>">Pregled svih radnih naloga</a></li>
+    
+    <a href="<?php echo URL::route('WorkingOrderCreate'); ?>" class="pull-right" style="margin-top: -5px;">
+        <button class="btn btn-success btn-addon btn-sm">
+            <i class="fa fa-plus"></i> Dodaj novi radni nalog
+        </button>
+    </a>
+</ul>
+        
+<div class="panel-heading">
+    <h4>Pregled svih radnih naloga (<?php echo count($entries['entries']); ?>)</h4>
+</div>
+
+<div class="panel-body table-responsive">
+
+    <table class="table table-hover" id="entries-list">
+        <thead>
+            <tr>
+                <th>Broj radnog naloga</th>
+                <th>Ime kupca</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+             <?php if(count($entries['entries']) > 0): ?> 
+                <?php foreach($entries['entries'] as $entry): ?>
+                <tr>
+                    <td><?php echo $entry->workingorder_number; ?></td>
+                    <td><?php echo $entry->first_name; ?> <?php echo $entry->last_name; ?> </td>
+                    <td class="col-md-1">
+
+                        <a href="<?php echo URL::route('WorkingOrderEdit', array('id' => $entry->id)); ?>">
+                            <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                        </a>
+                        <button type="button" id="btn-delete-tag-id-<?php echo $entry->id; ?>" class="btn btn-danger btn-xs" data-target="#delete-tag-id-<?php echo $entry->id; ?>"><i class="fa fa-times"></i>
+                        </button>
+                        <a href="<?php echo URL::route('WorkingOrderCreatePdf', array('entry_id' => $entry->id)); ?>">
+                        <button type="button" id="btn-pdf-workingorder-id-<?php echo $entry->id; ?>" class="btn btn-warning btn-xs" data-target="#pdf-workingorder-id-<?php echo $entry->id; ?>"><i class="fa fa-file-text-o"></i>
+                        </button>
+                        </a>
+                        <button type="button" id="btn-email-workingorder-id-<?php echo $entry->id; ?>" class="btn btn-primary btn-xs" data-target="#email-workingorder-id-<?php echo $entry->id; ?>"><i class="fa fa-envelope-o"></i></i>
+                        </button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php if(count($entries['entries']) > 0): ?> 
+    <?php foreach($entries['entries'] as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="pdf-workingorder-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pozor!</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Želite li obrisati narudžbu:<?php echo $entry->id; ?> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('OrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+      
+<?php if(count($entries['entries']) > 0): ?> 
+    <?php foreach($entries['entries'] as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="email-workingorder-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Slanje radnog naloga u PDF obliku klijentu: <?php echo $entry->first_name; ?>  <?php echo $entry->last_name; ?></h4>
+                </div>
+                <div class="modal-body">
+                                <div class="form-group">  
+                                <label for="workingorder_comment">Upišite komentar ispod radnog naloga:</label>
+                                <?php echo Form::textarea('workingorder_comment', isset($entry->workingorder_comment) ? $entry->workingorder_comment : null, ['class' => 'form-control', 'id' => 'workingorder_comment']); ?>
+
+                                <small class="text-danger"><?php echo $errors->first('workingorder_comment'); ?></small>
+                                </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('OrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">Pošalji</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+
+<?php if(count($entries['entries']) > 0): ?> 
+    <?php foreach($entries['entries'] as $entry): ?>
+    <!-- Modal <?php echo $entry->id; ?>-->
+    <div class="modal fade" id="delete-tag-id-<?php echo $entry->id; ?>" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pozor!</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Želite li obrisati radni nalog: <?php echo $entry->workingorder_number; ?> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="<?php echo URL::route('WorkingOrderDestroy', array('id' => $entry->id)); ?>">
+                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
+                    </a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?> 
+
+<div class="text-center"><?php echo $entries['entries']->links(); ?></div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        <?php if(count($entries['entries']) > 0): ?> 
+            <?php foreach($entries['entries'] as $entry): ?>
+                $("#btn-delete-tag-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#delete-tag-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+
+        <?php if(count($entries['entries']) > 0): ?> 
+            <?php foreach($entries['entries'] as $entry): ?>
+                $("#btn-pdf-workingorder-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#pdf-workingorder-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+
+        <?php if(count($entries['entries']) > 0): ?> 
+            <?php foreach($entries['entries'] as $entry): ?>
+                $("#btn-email-workingorder-id-<?php echo $entry->id; ?>").click(function() { 
+                    $('#email-workingorder-id-<?php echo $entry->id; ?>').modal('show');
+                });
+            <?php endforeach; ?>
+        <?php endif; ?> 
+    });
+    </script>

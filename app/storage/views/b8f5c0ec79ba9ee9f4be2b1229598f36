@@ -1,0 +1,130 @@
+<html>
+
+	<head>
+   			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	 		<title>Izdavanje ponude <?php echo $offersdata['0']['offer']['entry']->id; ?></title>
+			<style>
+			body {
+				font-size: 12px;
+				font-weight: normal !important;
+			    font-family: DejaVu Sans;
+			}
+			b {
+				font-weight: bold !important;
+			}
+		      h3 {
+		      	font-weight: bold;
+		      }
+   			</style>
+	</head>
+	
+<body>
+   	<table style="width:100%;" id="pdfreport">
+    <tbody>
+        <tr>
+            <td style="width:200px;">
+                <h3>
+                    <img src="favicon.png" width="200" height="auto" />
+                </h3>
+            </td>
+            <td style="width:300px;">
+                <h3>BillingCRM</h3>
+            </td>
+            <td>
+
+                <h4 style="text-align:right; color:#808080;">Današnji datum: <?php echo $currdate; ?></h4>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<hr style="color:#ddd;">
+<table style="width:100%;">
+    <tbody>
+        <tr>
+            <td style="color:#595959;">Izdavatelj</td>
+            <td style="color:#595959;">Klijent</td>
+            <td style="color:#595959;">Broj računa #<?php echo $offersdata['0']['offer']['entry']->offer_number; ?> </td>
+        </tr>
+        <tr>
+            <td style="color:#000000;"><?php echo $offersdata['0']['employeeinfo']->first_name; ?> <?php echo $offersdata['0']['employeeinfo']->last_name; ?></td>
+            <td style="color:#000000;"><?php echo $offersdata['0']['offer']['entry']->first_name; ?> <?php echo $offersdata['0']['offer']['entry']->last_name; ?></td>
+            <td style="color:#595959;">Datum izdavanja računa: <?php echo date('d.m.Y', strtotime($offersdata['0']['offer']['entry']->offer_start)); ?></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="color:#595959;"><?php echo $offersdata['0']['employeeinfo']->address; ?></td>
+            <td style="color:#595959;"><?php echo $offersdata['0']['offer']['entry']->address; ?></td>
+        </tr>
+        <tr>
+            <td style="color:#595959;">Hrvatska, <?php echo $offersdata['0']['employeeinfo']->zip; ?> <?php echo $offersdata['0']['employeeinfo']->cityname; ?></td>
+            <td style="color:#595959;">Hrvatska, <?php echo $offersdata['0']['offer']['entry']->zip; ?> <?php echo $offersdata['0']['offer']['entry']->cityname; ?></td>
+        </tr>
+        <tr>
+            <td style="color:#595959;">Telefon: <?php echo $offersdata['0']['employeeinfo']->phone; ?></td>
+            <td style="color:#595959;">Telefon: <?php echo $offersdata['0']['offer']['entry']->phone; ?></td>
+        </tr>
+        <tr>
+            <td style="color:#595959;">Email: <?php echo $offersdata['0']['employeeinfo']->email; ?></td>
+            <td style="color:#595959;">Email: <?php echo $offersdata['0']['offer']['entry']->email; ?></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<br>
+<table style="width:100%;">
+    <thead>
+        <tr style="background:#ddd;">
+            <th style="color:#595959; text-align:left;">Proizvod</th>
+            <th style="color:#595959;">Cijena</th>
+            <th style="color:#595959;">Količina</th>
+            <th style="color:#595959;">Ukupna cijena po proizvodu</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <?php foreach($productsperoffer['offerbycustomer'] as $singleproduct): ?>
+        <tr>
+            <td style="text-align:left;"><?php echo $singleproduct->productname; ?></td>
+            <td style="text-align:center;"><?php echo $singleproduct->price; ?> kn</td>
+            <td style="text-align:center;"><?php echo $singleproduct->amount; ?></td> 
+            <td style="text-align:center;"><?php echo $singleproduct->price * $singleproduct->amount; ?> kn</td> 
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<br>
+<br>
+<table style="width:100%;">
+    <tbody>
+        <tr style="background:#ddd;">
+            <td style="color:#595959; width:400px;">Metoda plaćanja</td>
+            <?php /* <td style="color:#595959; text-align:left;">Porez (%)</td> */ ?>
+            <td style="color:#595959; text-align:right;"></td>
+        </tr>
+        <tr>
+            <?php if($offersdata['0']['offer']['entry']->payment_way == 'virman'): ?>
+                <td>Virman (bankovna transakcija)</td>
+            <?php elseif($offersdata['0']['offer']['entry']->payment_way == 'preuzimanje'): ?>
+                <td>Po preuzimanju</td>
+            <?php elseif($offersdata['0']['offer']['entry']->payment_way == 'kartica'): ?>
+                <td>Kartično plaćanje</td>
+            <?php elseif($offersdata['0']['offer']['entry']->payment_way == 'paypal'): ?>
+                <td>PayPal</td>
+            <?php endif; ?>
+           <td style="text-align:left;"><?php echo $singleproduct->taxpercent; ?></td>
+            <td>
+                <table style="width:100%;">
+                    <tbody>
+                        <tr>
+                            <td>Ukupno:</td>
+                            <td style="text-align: right;"><?php echo $offersdata['0']['totalprice']; ?> kn</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body> 
+</html>
