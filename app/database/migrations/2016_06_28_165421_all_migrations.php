@@ -436,6 +436,7 @@ class AllMigrations extends Migration {
 			$table->string('shipping_address');
 			$table->text('note');
 			$table->dateTime('order_date');
+			$table->integer('show_only');
 			$table->dateTime('created_at');
 			$table->dateTime('updated_at');
 			$table->softDeletes();

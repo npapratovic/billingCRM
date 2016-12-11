@@ -105,7 +105,7 @@ class ServiceController extends \BaseController {
 			Input::get('discount'),
 			Input::get('tax')
 		);
-
+goDie($store);
 		
 		if ($store['status'] == 0)
 		{

@@ -116,7 +116,7 @@ class ClientController extends \BaseController {
 
 		);
 		
-		
+
 		if ($store['status'] == 0)
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();

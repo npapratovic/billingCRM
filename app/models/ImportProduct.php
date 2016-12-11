@@ -2,7 +2,7 @@
 
 class ImportProduct extends Eloquent
 {
-	protected $table = 'products';
+	protected $table = 'products_services';
 
 	public $timestamps = false;
 }

@@ -132,7 +132,7 @@ class WpApiController extends \BaseController {
 
 		foreach($products as $product)
 		{
-			$existingproduct = Product::checkUpdate($product->id);
+			$existingproduct = ProductService::checkUpdate($product->id);
 
 			$updatecheck = substr_replace(preg_replace("/[^0-9,:,-]/", "", $product->updated_at), ' ', 10, -8);
 
@@ -369,17 +369,19 @@ class WpApiController extends \BaseController {
 			foreach($order['line_items'] as $singleorder) { 
 				if(is_null($singleorder->product_id))
 				{
-					$productcheck = Product::checkProduct($singleorder->name);
+					$productcheck = ProductService::checkProduct($singleorder->name);
 
 					if(!is_null($productcheck['entry']))
 					{	
 						$newproductid = $productcheck['entry']->id;
 					}
+
 					else {
 						$store = $this->productsrepo->errorproduct(
 							$singleorder->name,
 							$singleorder->price
 						);
+
 						$newproductid = $store['product_id'];
 					}
 						array_push($product, $newproductid);

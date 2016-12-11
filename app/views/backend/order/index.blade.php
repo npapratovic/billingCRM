@@ -30,6 +30,7 @@
         <tbody>
 
              @foreach($entries as $val => $entry)
+
                 <tr>
                     <td> 
                     {{ $entry->order_id }}
@@ -45,13 +46,16 @@
                     @foreach($allproducts[$val] as $key => $product)
 
                   <div class="row"><div class="col-md-12">
-                  @if($product['entry']->existing == '0')
-                    <span style="color:lightslategray;"> {{ $product['entry']->title }}</span>
+                  @if($product['entry'][0]->existing == '0')
+                    <span style="color:lightslategray;"> {{ $product['entry'][0]->title }}</span>
                     <span style="color:maroon;"> Nepostojeći proizvod</span>
                   @else
-                   <a href="{{ URL::route('ProductEdit', array('id' => $product['entry']->id)) }}">{{ $product['entry']->title }}</a>
-                   
-                   @if($product['entry']->sale_price == 1)
+                  @if($product['entry'][0]->type == 'service')
+                  <a href="{{ URL::route('ServiceEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
+                  @else
+                   <a href="{{ URL::route('ProductEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
+                   @endif
+                   @if($product['entry'][0]->sale_price == 1)
                    <span style="color:crimson;"> Rasprodajna cijena</span>
                    @else
                    <span style="color:violet;"> Uobičajena cijena</span>
@@ -61,9 +65,12 @@
                     @endforeach
                     </td>
                     <td class="col-md-2">  
-
+                        @if($entry->show_only == '1')
+                        <a href="{{ URL::route('OrderShow', array('id' => $entry->id)) }}">
+                        @else
                         <a href="{{ URL::route('OrderEdit', array('id' => $entry->id)) }}">
-                            <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                        @endif
+                            <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         </a>
                         <button type="button" id="btn-delete-blog-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-blog-id-{{ $entry->id }}"><i class="fa fa-times"></i>
                         </button>

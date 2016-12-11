@@ -53,7 +53,7 @@ class ProductRepository {
 			$entry->purchase_note = $purchase_note;
 			$entry->manage_stock = $manage_stock;
 			$entry->backorders = $backorders;
-			
+			$entry->type = 'product';
 
 			if ($image != null)
 			{
@@ -169,7 +169,7 @@ class ProductRepository {
 			$entry->purchase_note = $purchase_note;
 			$entry->manage_stock = $manage_stock;
 			$entry->backorders = $backorders;
-
+			$entry->type = 'product';
 
 			if ($image != null)
 			{
@@ -286,6 +286,9 @@ class ProductRepository {
 			$entry->purchase_note = $purchase_note;
 			$entry->manage_stock = $manage_stock;
 			$entry->backorders = $backorders;
+
+			$entry->type = 'product';
+
 			$entry->created_at = $created_at;
 			$entry->updated_at = $updated_at;
 			
@@ -317,7 +320,7 @@ class ProductRepository {
 
 			$entry->save();
 
-			$product = DB::table('products')->orderBy('created_at', 'desc')->first();
+			$product = DB::table('products_services')->orderBy('created_at', 'desc')->first();
 
 			$newproduct = $product->id;
 
@@ -403,6 +406,9 @@ class ProductRepository {
 			$entry->purchase_note = $purchase_note;
 			$entry->manage_stock = $manage_stock;
 			$entry->backorders = $backorders;
+
+			$entry->type = 'product';
+
 			$entry->created_at = $created_at;
 			$entry->updated_at = $updated_at;
 			
@@ -434,7 +440,7 @@ class ProductRepository {
 
 			$entry->save();
 
-			$product = DB::table('products')->orderBy('created_at', 'desc')->first();
+			$product = DB::table('products_services')->orderBy('created_at', 'desc')->first();
 
 			$newproduct = $product->id;
 
@@ -493,10 +499,11 @@ class ProductRepository {
 	public function errorproduct($product_name, $price)
 	{
 		try {
-			$entry = new Product;
+			$entry = new ProductService;
 			$entry->title = $product_name;
 			$entry->price = $price;
 			$entry->existing = '0';
+			$entry->type = 'product';
 			$entry->save();
 
 			return array('status' => 1, 'product_id' => $entry->id);

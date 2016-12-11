@@ -56,9 +56,10 @@ class OrderController extends \BaseController {
 
 					array_push($productsperorder, $singleproduct);
 				}
-				array_push($allproducts, $productsperorder);
+
+				$allproducts[] = $productsperorder;
+
 		}
-goDie($allproducts);
 
 		$this->layout->title = 'Narudžbe | BillingCRM';
 
@@ -189,17 +190,57 @@ goDie($allproducts);
 	public function show($id)
 	{
 
-		$this->layout->title = 'Narudžba';
+		 
+		$entry = Order::getEntries($id);
+
+		// Getting all clients
+		$clientslist = array();
+
+		$clients = User::getListEntries(null, null);
+
+		if ($clients['status'] == 0)
+		{
+			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+		}
+		foreach ($clients['entries'] as $clients)
+		{
+			$clientslist[$clients->id] = $clients->first_name . '  ' . $clients->last_name;
+		}
+			
+		// Getting all products
+		$productlist = array();
+
+		$products = ProductService::getListedProducts(null, null);
+
+		if ($products['status'] == 0)
+		{
+			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+		}
+		foreach ($products['entries'] as $products)
+		{
+			$productlist[$products->id] = $products->title . ' (' . $products->price . ' kn)';
+
+		}
+
+
+		$orderbycustomer = OrdersProducts::getOrderByCustomer($id);
+		
+		$this->layout->title = 'Pregled narudžbe | BillingCRM';
 
 		$this->layout->css_files = array(
-
-		);
+			'css/backend/summernote.css'
+			);
 
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js'
+			'js/backend/bootstrap-filestyle.min.js',
+			'js/backend/summernote.js',
+			'js/backend/jquery.stringtoslug.min.js',
+			'js/backend/speakingurl.min.js',
+			'js/backend/bootstrap-datepicker.min.js'
+
 		);
 
-		$this->layout->content = View::make('backend.order.view');
+		$this->layout->content = View::make('backend.order.show', array('entry' => $entry['entry'], 'postRoute' => 'OrderUpdate', 'clientslist' => $clientslist, 'productlist' => $productlist, 'orderbycustomer' => $orderbycustomer['orderbycustomer']));
 	}
 
 
@@ -231,7 +272,7 @@ goDie($allproducts);
 		// Getting all products
 		$productlist = array();
 
-		$products = Product::getListedProducts(null, null);
+		$products = ProductService::getListedProducts(null, null);
 
 		if ($products['status'] == 0)
 		{
@@ -246,7 +287,7 @@ goDie($allproducts);
 
 		$orderbycustomer = OrdersProducts::getOrderByCustomer($id);
 		
-		$this->layout->title = 'Uređivanje klijenta | BillingCRM';
+		$this->layout->title = 'Uređivanje narudžbe | BillingCRM';
 
 		$this->layout->css_files = array(
 			'css/backend/summernote.css'

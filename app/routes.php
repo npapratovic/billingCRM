@@ -219,6 +219,8 @@ Route::group(array('before' => 'admin' , 'prefix' => 'admin'), function()
 
 		Route::post('store', array('as' => 'OrderStore', 'uses' => 'OrderController@store'));
 
+		Route::get('show/{id}', array('as' => 'OrderShow', 'uses' => 'OrderController@show'));
+
 		Route::get('edit/{id}', array('as' => 'OrderEdit', 'uses' => 'OrderController@edit'));
 
 		Route::post('update/{id}', array('as' => 'OrderUpdate', 'uses' => 'OrderController@update'));

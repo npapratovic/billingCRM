@@ -139,7 +139,8 @@
                     <small class="text-danger">{{ $errors->first('measurement') }}</small>
                 </div>     
                 </div> 
-                <div class="col-md-3">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
                    <div class="form-group">  
                     <label for="amount">Količina:</label>
                     {{ Form::text('amount[]', isset($entry->amount) ? $entry->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
@@ -165,7 +166,7 @@
                 <div class="col-md-1"></div>
                    <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="taxpercent">Porez. stopa:</label>
+                    <label for="taxpercent">Stopa:</label>
                     {{ Form::text('taxpercent[]', isset($entry->taxpercent) ? $entry->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('taxpercent') }}</small>
                 </div>    

@@ -106,7 +106,9 @@ class ProductService extends Eloquent
 					'products_services.downloadable AS downloadable',
 					'products_services.virtual AS virtual',
 					'products_services.regular_price AS regular_price',
-					'products_services.sale_price AS sale_price'
+					'products_services.sale_price AS sale_price',
+					'products_services.existing AS existing',
+					'products_services.type AS type'
 					)->whereNull('deleted_at');
 
 			// Retrieve specific entry

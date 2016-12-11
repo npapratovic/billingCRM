@@ -21,18 +21,19 @@ class ServiceRepository {
 	 *
 	 * @return Response
 	 */
-	public function store($title, $description, $measurement, $amount, $price, $discount, $tax)
+	public function store($title, $content, $measurement, $amount, $price, $discount, $tax)
 	{
 		try {
 
-			$entry = new Service;
+			$entry = new ProductService;
 			$entry->title = $title;
-			$entry->description = $description;
+			$entry->content = $content;
 			$entry->measurement = $measurement;
 			$entry->amount = $amount;
 			$entry->price = $price;
 			$entry->discount = $discount;
 			$entry->tax = $tax;
+			$entry->type = 'service';
 
 			$entry->save();
 
@@ -51,19 +52,20 @@ class ServiceRepository {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id, $title, $description, $measurement, $amount, $price, $discount, $tax)
+	public function update($id, $title, $content, $measurement, $amount, $price, $discount, $tax)
 	{
     	
     		try {
 
-			$entry = Service::find($id);
+			$entry = ProductService::find($id);
 			$entry->title = $title;
-			$entry->description = $description;
+			$entry->content = $content;
 			$entry->measurement = $measurement;
 			$entry->amount = $amount;
 			$entry->price = $price;
 			$entry->discount = $discount;
 			$entry->tax = $tax;
+			$entry->type = 'service';
 
 			$entry->save();
 
@@ -87,7 +89,7 @@ class ServiceRepository {
 	{
 		try
 		{
-			$entry = Service::find($id);
+			$entry = ProductService::find($id);
 
 			$entry->delete();
 

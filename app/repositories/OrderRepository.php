@@ -187,6 +187,7 @@ class OrderRepository {
 			$entry->shipping_address = $shipping_address;
 			$entry->note = $note;
 			$entry->order_date = $order_date;
+			$entry->show_only = '1';
 			$entry->created_at = $created_at;
 			$entry->updated_at = $updated_at;
 
