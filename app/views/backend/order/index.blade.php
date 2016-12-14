@@ -67,10 +67,11 @@
                     <td class="col-md-2">  
                         @if($entry->show_only == '1')
                         <a href="{{ URL::route('OrderShow', array('id' => $entry->id)) }}">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         @else
                         <a href="{{ URL::route('OrderEdit', array('id' => $entry->id)) }}">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         @endif
-                            <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         </a>
                         <button type="button" id="btn-delete-blog-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-blog-id-{{ $entry->id }}"><i class="fa fa-times"></i>
                         </button>

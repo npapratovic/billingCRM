@@ -51,6 +51,7 @@ class Invoice extends Eloquent
 					'invoices.repeat_invoice AS repeat_invoice',
 					'invoices.invoice_language AS invoice_language',
 					'invoices.valute AS valute',
+					'invoices.from_order AS from_order',
 					'users.id AS userid',
 					'users.first_name AS first_name',
 					'users.last_name AS last_name',

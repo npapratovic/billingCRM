@@ -81,4 +81,34 @@ class OrdersProducts extends Eloquent
 
 	}
 
+		 	public static function getImportedOrderByCustomer($order_id)
+		{
+
+			try
+			{
+				$orderbycustomer = DB::table('orders_products')
+					->join('orders', 'orders.id', '=', 'orders_products.order_id')
+					->join('imported_order_products', 'imported_order_products.id', '=', 'orders_products.product_id')  
+	 				->select(
+	 					'orders_products.id AS id',
+	 					'orders_products.product_id AS product_id',
+						'orders_products.order_id AS order_id',
+						'orders_products.quantity AS quantity',
+						'orders_products.price AS price',
+						'imported_order_products.name AS productname',
+						'imported_order_products.existing AS existing'
+	 				)
+	 				->where('orders_products.order_id', '=', $order_id)
+					->get();
+
+				return array('status' => 1, 'orderbycustomer' => $orderbycustomer);
+			}
+			catch (Exception $exp)
+			{
+				return array('status' => 0, 'reason' => $exp->getMessage());
+			}
+
+
+		}
+
 }

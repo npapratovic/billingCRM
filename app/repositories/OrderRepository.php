@@ -196,7 +196,7 @@ class OrderRepository {
 
 			$orderprice = 0;
 
-			$singleprices = ProductService::getPrices();
+			$singleprices = ImportedOrderProduct::getPrices();
 
 			$order = DB::table('orders')->where('order_id', $order_id)->first();
 
@@ -210,7 +210,7 @@ class OrderRepository {
 
 				foreach ($products_array as $key=>$value)
 				{
-					$singleprice = ProductService::getPrices($value);
+					$singleprice = ImportedOrderProduct::getPrices($value);
 					$orderproduct = new OrdersProducts;
 					$orderproduct->order_id = $order;
 					$orderproduct->product_id = $value;

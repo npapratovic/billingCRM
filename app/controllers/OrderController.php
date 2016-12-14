@@ -46,13 +46,20 @@ class OrderController extends \BaseController {
 		}
 
 		$allproducts = array();
+
 		foreach ($entries['entries'] as $order)
 		{
 			$productsperorder = array();
 	 		$productdata = OrdersProducts::getEntries($order->id);
 		 		foreach($productdata['entry'] as $product)
 				{
-					$singleproduct = ProductService::getEntry($product->product_id);
+					if($order->show_only == '1'){
+						
+						$singleproduct = ImportedOrderProduct::getEntry($product->product_id);
+					}
+					else {
+						$singleproduct = ProductService::getEntry($product->product_id);
+					}
 
 					array_push($productsperorder, $singleproduct);
 				}
@@ -210,7 +217,7 @@ class OrderController extends \BaseController {
 		// Getting all products
 		$productlist = array();
 
-		$products = ProductService::getListedProducts(null, null);
+		$products = ImportedOrderProduct::getProductsByOrder(null, null);
 
 		if ($products['status'] == 0)
 		{
@@ -223,8 +230,8 @@ class OrderController extends \BaseController {
 		}
 
 
-		$orderbycustomer = OrdersProducts::getOrderByCustomer($id);
-		
+		$orderbycustomer = OrdersProducts::getImportedOrderByCustomer($id);
+
 		$this->layout->title = 'Pregled narudžbe | BillingCRM';
 
 		$this->layout->css_files = array(
@@ -283,7 +290,6 @@ class OrderController extends \BaseController {
 			$productlist[$products->id] = $products->title . ' (' . $products->price . ' kn)';
 
 		}
-
 
 		$orderbycustomer = OrdersProducts::getOrderByCustomer($id);
 		
@@ -355,7 +361,14 @@ class OrderController extends \BaseController {
 		try{
 			$order = Order::getEntries($id);
 
-			$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+			if($order['entry']->show_only == '1')
+			{
+				$productsperorder = OrdersProducts::getImportedOrderByCustomer($order['entry']->id);
+				
+			}
+			else {
+				$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+			}
 
 			$product = array();
 			$measurement = array();
@@ -374,28 +387,56 @@ class OrderController extends \BaseController {
 				array_push($taxpercent, 0);
 			}
 
-				$store = $this->invoicerepo->store(
-				$order['entry']->order_id,
-				'N',					//	order_id
-				0,					//	tax
-				$order['entry']->user_id,			//	user
-				$order['entry']->employee_id,		//	employee_id
-				$product,
-				$measurement,
-				$quantity,
-				$price,
-				$discount,
-				$taxpercent,
-				$order['entry']->payment_way,
-				$order['entry']->order_date,
-				'0',					//	invoice_date_deadline
-				'0',					//	invoice_date_ship
-				$order['entry']->note,
-				'',					//	intern_note
-				0,					//	repeat_invoice
-				'croatian',				//	invoice_language
-				0					//	valute
-		);
+			if($order['entry']->show_only == '1')
+			{
+						$store = $this->invoicerepo->convertToInvoice(
+						$order['entry']->order_id,
+						'N',					//	order_id
+						0,					//	tax
+						$order['entry']->user_id,			//	user
+						$order['entry']->employee_id,		//	employee_id
+						$product,
+						$measurement,
+						$quantity,
+						$price,
+						$discount,
+						$taxpercent,
+						$order['entry']->payment_way,
+						$order['entry']->order_date,
+						'0',					//	invoice_date_deadline
+						'0',					//	invoice_date_ship
+						$order['entry']->note,
+						'',					//	intern_note
+						0,					//	repeat_invoice
+						'croatian',				//	invoice_language
+						0					//	valute
+				);
+				
+			}
+			else {
+						$store = $this->invoicerepo->store(
+						$order['entry']->order_id,
+						'N',					//	order_id
+						0,					//	tax
+						$order['entry']->user_id,			//	user
+						$order['entry']->employee_id,		//	employee_id
+						$product,
+						$measurement,
+						$quantity,
+						$price,
+						$discount,
+						$taxpercent,
+						$order['entry']->payment_way,
+						$order['entry']->order_date,
+						'0',					//	invoice_date_deadline
+						'0',					//	invoice_date_ship
+						$order['entry']->note,
+						'',					//	intern_note
+						0,					//	repeat_invoice
+						'croatian',				//	invoice_language
+						0					//	valute
+				);
+			}
 
 			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_invoice_created'));
 		}

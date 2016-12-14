@@ -23,7 +23,7 @@
 		{{ Form::hidden('id', $entry->id, array('id' => 'id')) }}
                 <div class="form-group">  
                     <label for="title">Naslov:</label>  
-                    {{ Form::text('title', isset($entry->title) ? $entry->title : null, ['class' => 'form-control', 'id' => 'title', 'placeholder' => 'Naslov posta']) }}
+                    {{ Form::text('title', isset($entry->title) ? $entry->title : null, ['class' => 'form-control', 'id' => 'title', 'placeholder' => 'Naslov proizvoda']) }}
                     <small class="text-danger">{{ $errors->first('title') }}</small>
                 </div>
                 <div class="form-group">  
@@ -48,7 +48,11 @@
              <div class="tab-content">
              <div id="home" class="tab-pane fade in active">
         <div class="col-md-12">
-                  
+                  <div class="form-group">  
+                      <label for="product_id">Identifikacijski broj:</label>  
+                      {{ Form::text('product_id', isset($entry->product_id) ? $entry->product_id : null, ['class' => 'form-control', 'id' => 'product_id', 'placeholder' => 'Identifikacijski broj proizvoda']) }}
+                      <small class="text-danger">{{ $errors->first('product_id') }}</small>
+                  </div>  
                 <div class="form-group">  
                     <label for="sku">SKU:</label>  
                     {{ Form::text('sku', isset($entry->sku) ? $entry->sku : null, ['class' => 'form-control', 'id' => 'sku', 'placeholder' => 'SKU proizvoda']) }}

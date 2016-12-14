@@ -44,6 +44,7 @@ class Order extends Eloquent
 					'orders.shipping_address AS shipping_address',
 					'orders.note AS note',
 					'orders.order_date AS order_date',
+					'orders.show_only AS show_only',
 					'users.id AS user_id',
 					'users.first_name AS first_name',
 					'users.last_name AS last_name',

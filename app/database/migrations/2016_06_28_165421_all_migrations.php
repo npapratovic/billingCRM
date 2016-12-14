@@ -83,6 +83,7 @@ class AllMigrations extends Migration {
 		Schema::create('products_services', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('product_id');
 			$table->string('title', 255);
 			$table->string('permalink', 255);
 			$table->string('product_type', 255)->nullable();
@@ -136,6 +137,26 @@ class AllMigrations extends Migration {
 		});
 
 
+		//products imported from woocommerce
+		Schema::create('imported_order_products', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->string('subtotal')->nullable();
+			$table->string('subtotal_tax')->nullable();
+			$table->string('total')->nullable();
+			$table->string('total_tax')->nullable();
+			$table->string('price')->nullable();
+			$table->integer('quantity')->nullable();
+			$table->string('tax_class')->nullable();
+			$table->string('name')->nullable();
+			$table->string('product_id')->nullable();
+			$table->string('sku')->nullable();
+			$table->integer('existing')->nullable();
+			$table->timestamp('created_at')->nullable();
+			$table->timestamp('updated_at')->nullable();
+			$table->softDeletes();
+		});
+
 		Schema::create('categories', function(Blueprint $table)
 		{
 			$table->increments('id');
@@ -179,6 +200,7 @@ class AllMigrations extends Migration {
 			$table->integer('repeat_invoice');
 			$table->string('invoice_language');
 			$table->string('valute');
+			$table->integer('from_order')->nullable();
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 			$table->softDeletes();

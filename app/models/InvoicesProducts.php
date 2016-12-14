@@ -89,4 +89,38 @@ class InvoicesProducts extends Eloquent
 
 	}
 
+
+	public static function getImportedByCustomer($invoice_id)
+	{
+
+		try
+		{
+			$orderbycustomer = DB::table('invoices_products')
+				->leftjoin('orders', 'orders.id', '=', 'invoices_products.invoice_id')
+				->join('imported_order_products', 'imported_order_products.id', '=', 'invoices_products.product_id')
+ 				->select(
+ 					'invoices_products.id AS id',
+ 					'invoices_products.product_id AS product_id',
+					'invoices_products.invoice_id AS invoice_id',
+					'invoices_products.measurement AS measurement',
+					'invoices_products.amount AS amount',
+					'invoices_products.price',
+					'invoices_products.discount AS discount',
+					'invoices_products.taxpercent AS taxpercent',
+					'imported_order_products.name AS productname',
+					'imported_order_products.price AS price'
+ 				)
+ 				->where('invoices_products.invoice_id', '=', $invoice_id)
+				->get();
+
+			return array('status' => 1, 'orderbycustomer' => $orderbycustomer);
+		}
+		catch (Exception $exp)
+		{
+			return array('status' => 0, 'reason' => $exp->getMessage());
+		}
+
+
+	}
+
 }

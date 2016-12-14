@@ -21,7 +21,7 @@ class ProductRepository {
 	 *
 	 * @return Response
 	 */
-	public function store($title, $intro, $permalink, $sku, $price, $sale_price, $stock, $total_sales, $stock_status, $sold_individually, $weight, $length, $width, $height, $status, $product_type, $content, $visibility, $downloadable, $featured, $virtual, $purchase_note, $manage_stock, $backorders, $product_attribute, $product_category, $product_tag, $image = null)
+	public function store($title, $intro, $permalink, $product_id, $sku, $price, $sale_price, $stock, $total_sales, $stock_status, $sold_individually, $weight, $length, $width, $height, $status, $product_type, $content, $visibility, $downloadable, $featured, $virtual, $purchase_note, $manage_stock, $backorders, $product_attribute, $product_category, $product_tag, $image = null)
 	{
 		try {
 
@@ -31,6 +31,7 @@ class ProductRepository {
 			$entry = new ServiceProduct;
 			$entry->title = $title;
 			$entry->intro = $intro;
+			$entry->product_id = $product_id;
 			$entry->permalink = $permalink;
 			$entry->sku = $sku;
 			$entry->price = $price;
@@ -137,7 +138,7 @@ class ProductRepository {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id, $title, $intro, $permalink, $sku, $price, $sale_price, $stock, $total_sales, $stock_status, $sold_individually, $weight, $length, $width, $height, $status, $product_type, $content, $visibility, $downloadable, $featured, $virtual, $purchase_note, $manage_stock, $backorders, $product_attribute, $product_category, $product_tag, $image = null)
+	public function update($id, $title, $intro, $permalink, $product_id, $sku, $price, $sale_price, $stock, $total_sales, $stock_status, $sold_individually, $weight, $length, $width, $height, $status, $product_type, $content, $visibility, $downloadable, $featured, $virtual, $purchase_note, $manage_stock, $backorders, $product_attribute, $product_category, $product_tag, $image = null)
 	{
     	
     		try {
@@ -147,6 +148,7 @@ class ProductRepository {
 			$entry = ServiceProduct::find($id);
 			$entry->title = $title;
 			$entry->intro = $intro;
+			$entry->product_id = $product_id;
 			$entry->permalink = $permalink;
 			$entry->sku = $sku;
 			$entry->price = $price;
@@ -507,6 +509,30 @@ class ProductRepository {
 			$entry->save();
 
 			return array('status' => 1, 'product_id' => $entry->id);
+		}
+
+		catch (Exception $exp)
+		{
+			return array('status' => 0, 'reason' => $exp->getMessage());
+		}   
+	}
+
+	public function productfromorder($subtotal, $subtotal_tax, $total, $total_tax, $price, $quantity, $tax_class, $name, $product_id)
+	{
+		try {
+			$entry = new ImportedOrderProduct;
+			$entry->subtotal = $subtotal;
+			$entry->subtotal_tax = $subtotal_tax;
+			$entry->total = $total;
+			$entry->total_tax = $total_tax;
+			$entry->price = $price;
+			$entry->quantity = $quantity;
+			$entry->tax_class = $tax_class;
+			$entry->name = $name;
+			$entry->product_id = $product_id;
+			$entry->save();
+
+			return array('status' => 1, 'id' => $entry->id, 'quantity' => $entry->quantity);
 		}
 
 		catch (Exception $exp)

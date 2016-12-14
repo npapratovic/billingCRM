@@ -29,10 +29,17 @@
     <div class="row">
         {{ Form::open(array('route' => $postRoute, 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'files' => true)) }}
         {{ Form::hidden('id', $entry->id, array('id' => 'id')) }}
+
+        @if($entry->from_order == '1')
+        @foreach($imported['orderbycustomer'] as $singleimport)
+            {{ Form::hidden('imported_products[]', $singleimport->product_id) }}
+        @endforeach
+        @endif
+
         <div class="col-md-9">
                 <div class="col-md-4">
                 <div class="form-group">  
-                    <label for="client_id">Tip usluge:</label>  
+                    <label for="client_id">Klijent:</label>  
                     {{ Form::select('client_id', $clientlist, isset($entry->client_id) ? $entry->client_id : null, array('class' => 'form-control', 'style' => 'width:100%', 'client_id' => 'client_id')) }}
                     <small class="text-danger">{{ $errors->first('client_id') }}</small>
                 </div>
@@ -69,7 +76,33 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <label for="education">Proizvodi:</label>            
+                        <label for="education">Proizvodi:</label>          
+
+                        @if($entry->from_order == '1')
+                        @foreach($imported['orderbycustomer'] as $singleimport)
+
+                        <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                  <div class="form-group">  
+                                        <label for="productname">Proizvod:</label>
+                                        {{ Form::label('productname', $singleimport->productname, ['class' => '']) }}
+                                        </div>
+                                </div>
+                                <div class="col-md-4">
+                                 <div class="form-group">  
+                                        <label for="amount">Količina:</label>
+                                        {{ Form::label('amount', $singleimport->amount, ['class' => '']) }}
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        @endforeach
+                        @endif
+
                         @foreach($invoicecustomer as $singleinvoice)
                         <div class="col-md-12">
                         <div class="item-block no-margin-top">

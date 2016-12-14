@@ -69,10 +69,11 @@
                     <td class="col-md-2">  
                         <?php if($entry->show_only == '1'): ?>
                         <a href="<?php echo URL::route('OrderShow', array('id' => $entry->id)); ?>">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         <?php else: ?>
                         <a href="<?php echo URL::route('OrderEdit', array('id' => $entry->id)); ?>">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         <?php endif; ?>
-                            <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         </a>
                         <button type="button" id="btn-delete-blog-id-<?php echo $entry->id; ?>" class="btn btn-danger btn-xs" data-target="#delete-blog-id-<?php echo $entry->id; ?>"><i class="fa fa-times"></i>
                         </button>

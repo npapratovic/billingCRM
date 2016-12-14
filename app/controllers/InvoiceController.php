@@ -240,7 +240,14 @@ class InvoiceController extends \BaseController {
 			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
 		}
 
-		$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
+		if($entry['entry']->from_order == '1'){
+			$imported = InvoicesProducts::getImportedByCustomer($id);
+			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
+		}
+		else{
+			$imported = 0;
+			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
+		}
 
 		$this->layout->title = 'Uređivanje računa | BillingCRM';
 
@@ -257,7 +264,7 @@ class InvoiceController extends \BaseController {
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.invoice.edit', array('entry' => $entry['entry'], 'postRoute' => 'InvoiceUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'invoicecustomer' => $invoicecustomer['orderbycustomer']));
+		$this->layout->content = View::make('backend.invoice.edit', array('entry' => $entry['entry'], 'postRoute' => 'InvoiceUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'imported' => $imported, 'invoicecustomer' => $invoicecustomer['orderbycustomer']));
 	}
 
 
@@ -269,8 +276,8 @@ class InvoiceController extends \BaseController {
 	 */
 	public function update($id)
 	{
-//goDie(Input::all());
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+
+		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent', 'imported_products')));
 
 		$entryValidator = Validator::make(Input::all(), Invoice::$update_rules);
 //dd($entryValidator);
@@ -299,7 +306,8 @@ class InvoiceController extends \BaseController {
 			Input::get('intern_note'),
 			Input::get('repeat_invoice'),
 			Input::get('invoice_language'),
-			Input::get('valute')
+			Input::get('valute'),
+			Input::get('imported_products')
 		);
 		
 		if ($update['status'] == 0)

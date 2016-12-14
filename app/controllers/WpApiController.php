@@ -367,6 +367,29 @@ class WpApiController extends \BaseController {
 			$quantity = array(); 
 
 			foreach($order['line_items'] as $singleorder) { 
+
+					$store = $this->productsrepo->productfromorder(
+					$singleorder->subtotal,
+					$singleorder->subtotal_tax,
+					$singleorder->total,
+					$singleorder->total_tax,
+					$singleorder->price,
+					$singleorder->quantity, 
+					$singleorder->tax_class,
+					$singleorder->name, 
+					$singleorder->product_id
+				);
+
+				array_push($product, $store['id']);
+				array_push($quantity, $store['quantity']); 
+
+			}
+
+			/*
+ 			$product = array(); 
+			$quantity = array(); 
+
+			foreach($order['line_items'] as $singleorder) { 
 				if(is_null($singleorder->product_id))
 				{
 					$productcheck = ProductService::checkProduct($singleorder->name);
@@ -392,6 +415,7 @@ class WpApiController extends \BaseController {
 				}
 
 			}
+			*/
 
 			$user = User::where('email', $order['customer']->email)->first();
 

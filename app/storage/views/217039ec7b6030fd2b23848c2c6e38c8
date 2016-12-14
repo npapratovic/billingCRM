@@ -31,10 +31,18 @@
 
         <?php echo Form::hidden('id', $entry->id, array('id' => 'id')); ?>
 
+
+        <?php if($entry->from_order == '1'): ?>
+        <?php foreach($imported['orderbycustomer'] as $singleimport): ?>
+            <?php echo Form::hidden('imported_products[]', $singleimport->product_id); ?>
+
+        <?php endforeach; ?>
+        <?php endif; ?>
+
         <div class="col-md-9">
                 <div class="col-md-4">
                 <div class="form-group">  
-                    <label for="client_id">Tip usluge:</label>  
+                    <label for="client_id">Klijent:</label>  
                     <?php echo Form::select('client_id', $clientlist, isset($entry->client_id) ? $entry->client_id : null, array('class' => 'form-control', 'style' => 'width:100%', 'client_id' => 'client_id')); ?>
 
                     <small class="text-danger"><?php echo $errors->first('client_id'); ?></small>
@@ -75,7 +83,35 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <label for="education">Proizvodi:</label>            
+                        <label for="education">Proizvodi:</label>          
+
+                        <?php if($entry->from_order == '1'): ?>
+                        <?php foreach($imported['orderbycustomer'] as $singleimport): ?>
+
+                        <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                  <div class="form-group">  
+                                        <label for="productname">Proizvod:</label>
+                                        <?php echo Form::label('productname', $singleimport->productname, ['class' => '']); ?>
+
+                                        </div>
+                                </div>
+                                <div class="col-md-4">
+                                 <div class="form-group">  
+                                        <label for="amount">Količina:</label>
+                                        <?php echo Form::label('amount', $singleimport->amount, ['class' => '']); ?>
+
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+
                         <?php foreach($invoicecustomer as $singleinvoice): ?>
                         <div class="col-md-12">
                         <div class="item-block no-margin-top">

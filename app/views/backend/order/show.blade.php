@@ -7,7 +7,7 @@
 <div class="panel-heading">
 	<div class="row">
 	    <div class="col-md-4">
-    		<h4>Uredi narudžbu</h4>
+    		<h4>Pregled narudžbu</h4>
     	</div>
     	<div class="col-md-3"></div>
     	<div class="col-md-2">
@@ -34,7 +34,7 @@
 		 	<div class="col-md-6">
 					 <div class="form-group">  
 			                    <label for="order_id">Broj narudžbe:</label>
-			                    {{ Form::label('order_id', isset($entry->order_id) ? $entry->order_id : null, ['class' => '', 'id' => 'order_id', 'placeholder' => 'Broj narudžbe']) }}
+			                    {{ Form::label('order_id', $entry->order_id, ['class' => '']) }}
 			                    <small class="text-danger">{{ $errors->first('order_id') }}</small>
 			                    </div>
 		 	</div>
@@ -42,9 +42,8 @@
 		 	<div class="row">
 		 	<div class="col-md-4">
 		 	<div class="form-group">  
-	                <label for="user_id">Klijent:</label>  
-					{{ Form::label('user_id', isset($entry->user_id) ? $entry->user_id : null, ['class' => '', 'id' => 'user_id', 'placeholder' => 'Broj narudžbe']) }}
-					<small class="text-danger">{{ $errors->first('user_id') }}</small>
+	                <label for="user">Klijent:</label>  
+					{{ Form::label('user', $entry->first_name . ' ' . $entry->last_name, ['class' => '']) }}
 	            </div>
 	            </div>
 
@@ -52,7 +51,7 @@
 	            <div class="col-md-5">
 	                            <div class="form-group">  
                     <label for="order_date">Datum isporuke:</label>
-                    {{ Form::label('order_date', isset($entry->order_date) ? $entry->order_date : null, ['class' => '', 'id' => 'order_date', 'placeholder' => 'Broj narudžbe']) }}
+                    {{ Form::label('order_date', isset($entry->order_date) ? $entry->order_date : null, ['class' => '', 'id' => 'order_date', 'placeholder' => 'Datum isporuke']) }}
                     <small class="text-danger">{{ $errors->first('order_date') }}</small>
                     </div>
                     </div>
@@ -72,15 +71,13 @@
 					        	<div class="col-md-6">
 						          <div class="form-group">  
 					                    <label for="order_date">Proizvod:</label>
-					                    {{ Form::label('productname', isset($singleorder->productname) ? $singleorder->productname : null, ['class' => '', 'id' => 'productname', 'placeholder' => 'Broj narudžbe']) }}
-					                    <small class="text-danger">{{ $errors->first('productname') }}</small>
+					                    {{ Form::label('productname', $singleorder->productname, ['class' => '']) }}
 					                    </div>
 					        	</div>
 					        	<div class="col-md-4">
 						         <div class="form-group">  
 					                    <label for="order_date">Količina:</label>
-					                    {{ Form::label('quantity', isset($singleorder->quantity) ? $singleorder->quantity : null, ['class' => '', 'id' => 'quantity', 'placeholder' => 'Broj narudžbe']) }}
-					                    <small class="text-danger">{{ $errors->first('quantity') }}</small>
+					                    {{ Form::label('quantity', $singleorder->quantity, ['class' => '']) }}
 					                    </div>
 
 					            </div>
@@ -98,21 +95,21 @@
       	<div class="col-md-3">
 		        <div class="form-group">
 		            <label for="shipping_way">Način dostave:</label>
-		            {{ Form::label('shipping_way', isset($entry->shipping_way) ? $entry->shipping_way : null, ['class' => '', 'id' => 'shipping_way', 'placeholder' => 'Broj narudžbe']) }}
+		            {{ Form::label('shipping_way', $entry->shipping_way, ['class' => '']) }}
 		        </div>
 	</div>
 	<div class="col-md-1"></div>
       	<div class="col-md-4">
 		        <div class="form-group">
 		            <label for="payment_way">Naćin plaćanja: </label>
-		            {{ Form::label('payment_way', isset($entry->payment_way) ? $entry->payment_way : null, ['class' => '', 'id' => 'payment_way', 'placeholder' => 'Broj narudžbe']) }}
+		            {{ Form::label('payment_way', $entry->payment_way, ['class' => '']) }}
 		        </div>
 	</div>
 	<div class="col-md-1"></div>
 	      	<div class="col-md-3">
 		        <div class="form-group">
 		            <label for="payment_status">Status narudžbe: </label>
-		            {{ Form::label('payment_status', isset($entry->payment_status) ? $entry->payment_status : null, ['class' => '', 'id' => 'payment_status', 'placeholder' => 'Broj narudžbe']) }}
+		            {{ Form::label('payment_status', $entry->payment_status, ['class' => '']) }}
 		        </div>
 	</div>
 	</div>
@@ -120,7 +117,7 @@
 	      	<div class="col-md-3">
 			 <div class="form-group">  
 	                    <label for="billing_address">Adresa računa:</label>
-	                    {{ Form::label('billing_address', isset($entry->billing_address) ? $entry->billing_address : null, ['class' => '', 'id' => 'billing_address', 'placeholder' => 'Broj narudžbe']) }}
+	                    {{ Form::label('billing_address', $entry->billing_address, ['class' => '']) }}
 	                    <small class="text-danger">{{ $errors->first('billing_address') }}</small>
 	                    </div>
 	</div>
@@ -128,14 +125,14 @@
 	<div class="col-md-3">
 			 <div class="form-group">  
 	                    <label for="shipping_address">Adresa dostave:</label>
-	                    {{ Form::label('shipping_address', isset($entry->shipping_address) ? $entry->shipping_address : null, ['class' => '', 'id' => 'shipping_address', 'placeholder' => 'Broj narudžbe']) }}
+	                    {{ Form::label('shipping_address', $entry->shipping_address, ['class' => '']) }}
 	                    <small class="text-danger">{{ $errors->first('shipping_address') }}</small>
 	                    </div>
 	</div>
 	</div>
 	        	<div class="form-group">
                 <label for="note">Napomena</label>
-               	{{ Form::label('note', isset($entry->note) ? $entry->note : null, ['class' => 'form-control editor', 'id' => 'note', 'placeholder' => 'Broj narudžbe']) }}
+               	{{ Form::label('note', $entry->note, ['class' => 'form-control editor']) }}
 				<small class="text-danger">{{ $errors->first('note') }}</small>
             </div> 
 	</div> 
