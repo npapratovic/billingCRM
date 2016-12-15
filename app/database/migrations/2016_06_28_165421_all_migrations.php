@@ -275,7 +275,7 @@ class AllMigrations extends Migration {
 			$table->timestamp('updated_at')->nullable();
 
 
-			$table->foreign('product_id')->references('id')->on('products');
+			$table->foreign('product_id')->references('id')->on('products_services');
 			$table->foreign('attribute_id')->references('id')->on('attributes');
 		});
 
@@ -289,7 +289,7 @@ class AllMigrations extends Migration {
 			$table->timestamp('updated_at')->nullable();
 
 
-			$table->foreign('product_id')->references('id')->on('products');
+			$table->foreign('product_id')->references('id')->on('products_services');
 			$table->foreign('category_id')->references('id')->on('categories');
 		});
 
@@ -303,7 +303,7 @@ class AllMigrations extends Migration {
 			$table->timestamp('updated_at')->nullable();
 
 
-			$table->foreign('product_id')->references('id')->on('products');
+			$table->foreign('product_id')->references('id')->on('products_services');
 			$table->foreign('tag_id')->references('id')->on('tags');
 		});
 		
@@ -322,7 +322,7 @@ class AllMigrations extends Migration {
 			$table->timestamp('updated_at')->nullable();
 
 			$table->foreign('invoice_id')->references('id')->on('invoices');
-			$table->foreign('product_id')->references('id')->on('products');
+			$table->foreign('product_id')->references('id')->on('products_services');
 		});
 
 
@@ -529,7 +529,7 @@ class AllMigrations extends Migration {
 		Schema::drop('workingorders');
 		Schema::drop('categories');
 		Schema::drop('attributes');
-		Schema::drop('products');
+		Schema::drop('products_services');
 		Schema::drop('invoices');
 		Schema::drop('services');
 		Schema::drop('offers');
