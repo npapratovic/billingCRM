@@ -249,6 +249,8 @@ class InvoiceController extends \BaseController {
 			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
 		}
 
+
+
 		$this->layout->title = 'Uređivanje računa | BillingCRM';
 
 		$this->layout->css_files = array(

@@ -442,6 +442,10 @@ body > .header .navbar {
         left: -280px;
     }
 }
+.imported-items {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
 
 /*-------Added Ivan------*/
 .st-orange {

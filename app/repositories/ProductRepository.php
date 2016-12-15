@@ -530,6 +530,8 @@ class ProductRepository {
 			$entry->tax_class = $tax_class;
 			$entry->name = $name;
 			$entry->product_id = $product_id;
+			$entry->existing = '0';
+			$entry->type = 'imported';
 			$entry->save();
 
 			return array('status' => 1, 'id' => $entry->id, 'quantity' => $entry->quantity);

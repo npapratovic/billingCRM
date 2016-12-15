@@ -152,6 +152,7 @@ class AllMigrations extends Migration {
 			$table->string('product_id')->nullable();
 			$table->string('sku')->nullable();
 			$table->integer('existing')->nullable();
+			$table->string('type')->nullable();
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 			$table->softDeletes();

@@ -67,7 +67,7 @@
 						<div class="item-form">
 
 			 			<div class="row">
-			 			    <div class="form-group">
+			 			    <div class="form-group  imported-items">
 					        	<div class="col-md-6">
 						          <div class="form-group">  
 					                    <label for="order_date">Proizvod:</label>

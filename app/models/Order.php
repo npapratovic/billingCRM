@@ -31,7 +31,6 @@ class Order extends Eloquent
 		{  
 			$entry = DB::table('orders')
 				->join('users', 'users.id', '=', 'orders.user_id')
-				->join('city', 'city.id', '=', 'users.city')
 				->select(
 					'orders.id AS id',
 					'orders.order_id AS order_id',
@@ -51,8 +50,7 @@ class Order extends Eloquent
 					'users.address AS address',
 					'users.zip AS zip',
 					'users.phone AS phone',
-					'users.email AS email',
-					'city.name AS cityname'
+					'users.email AS email'
 				)->whereNull('orders.deleted_at');
 
 			if ($id != null)

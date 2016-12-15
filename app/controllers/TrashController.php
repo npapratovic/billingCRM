@@ -33,13 +33,13 @@ class TrashController extends \BaseController {
 
 		// Get data
 		switch ($trashed) {
-			case 'products':
+			case 'products_services':
 
-				$entries = Product::onlyTrashed()->select(
-					'products.id AS id',
-					'products.title AS title',
-					'products.image AS image',
-					'products.deleted_at AS deleted_at')->paginate(10);
+				$entries = ProductService::onlyTrashed()->select(
+					'products_services.id AS id',
+					'products_services.title AS title',
+					'products_services.image AS image',
+					'products_services.deleted_at AS deleted_at')->paginate(10);
 				$items = array("Naziv produkta", "Slika produkta", "Obrisano", "Obnovi");
 				$indexes = array("title", "image", "deleted_at", "button");
 				$folder = "product";
@@ -73,12 +73,12 @@ class TrashController extends \BaseController {
 				$indexes = array("title", "deleted_at", "button");
 				$folder = "";
 			break;
-			case 'services':
-				$entries = Service::onlyTrashed()->select(
-					'services.id AS id',
-					'services.title AS title',
-					'services.description AS description',
-					'services.deleted_at AS deleted_at')->paginate(10);
+			case 'products_services':
+				$entries = ProductService::onlyTrashed()->select(
+					'products_services.id AS id',
+					'products_services.title AS title',
+					'products_services.description AS description',
+					'products_services.deleted_at AS deleted_at')->paginate(10);
 				$items = array("Naziv usluge", "Opis usluge", "Obrisano", "Obnovi");
 				$indexes = array("title", "description", "deleted_at", "button");
 				$folder = "";

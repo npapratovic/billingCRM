@@ -246,7 +246,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 		try
 		{
 			$entry = DB::table('users')
-				->join('city', 'city.id', '=', 'users.city')
 		        		//->join('region', 'region.id', '=', 'users.region')
 				->select(
 						'users.id AS id',
@@ -274,8 +273,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 						'users.iban AS iban',
 						'users.note AS note',
 						'users.created_at AS created_at',
-						'users.updated_at AS updated_at',
-						'city.name AS cityname'
+						'users.updated_at AS updated_at'
 				)->whereNull('deleted_at')
 				->where('user_group', '=', 'client')
 				->orderBy('id', 'ASC')->get();

@@ -85,9 +85,9 @@
                         <div class="row">
                             <div class="form-group">
                                 <div class="col-md-6">
-                                  <div class="form-group">  
+                                  <div class="form-group imported-items">  
                                         <label for="productname">Proizvod:</label>
-                                        {{ Form::label('productname', $singleimport->productname, ['class' => '']) }}
+                                        {{ Form::label('productname', $singleimport->productname, ['class' => 'imported-items']) }}
                                         </div>
                                 </div>
                                 <div class="col-md-4">

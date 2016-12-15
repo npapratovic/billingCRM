@@ -28,21 +28,17 @@
             </tr>
         </thead>
         <tbody>
-
              <?php foreach($entries as $val => $entry): ?>
-
                 <tr>
                     <td> 
                     <?php echo $entry->order_id; ?>
 
                     </td>
                     <td> 
-                    <a href="<?php echo URL::route('ClientEdit', array('id' => $entry->user_id)); ?>">
                     <?php echo $entry->first_name; ?>  <?php echo $entry->last_name; ?>
 
-                    </a>
                     </td>
-                    <td> <?php echo $entry->address; ?></td>
+                    <td> <?php echo $entry->shipping_address; ?></td>
                     <td> <?php echo date('d.m.Y', strtotime($entry->order_date)); ?></td>
                     <td> 
                     <?php foreach($allproducts[$val] as $key => $product): ?>
@@ -56,11 +52,6 @@
                   <a href="<?php echo URL::route('ServiceEdit', array('id' => $product['entry'][0]->id)); ?>"><?php echo $product['entry'][0]->title; ?></a>
                   <?php else: ?>
                    <a href="<?php echo URL::route('ProductEdit', array('id' => $product['entry'][0]->id)); ?>"><?php echo $product['entry'][0]->title; ?></a>
-                   <?php endif; ?>
-                   <?php if($product['entry'][0]->sale_price == 1): ?>
-                   <span style="color:crimson;"> Rasprodajna cijena</span>
-                   <?php else: ?>
-                   <span style="color:violet;"> Uobičajena cijena</span>
                    <?php endif; ?>
                    <?php endif; ?>
                    </div></div>

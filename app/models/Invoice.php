@@ -33,7 +33,6 @@ class Invoice extends Eloquent
 		{
 			$entry = DB::table('invoices')
 				->join('users', 'users.id', '=', 'invoices.client_id')
-				->join('city', 'city.id', '=', 'users.city')
 				->select(
 					'invoices.id AS id',
 					'invoices.invoice_number AS invoice_number',
@@ -58,8 +57,7 @@ class Invoice extends Eloquent
 					'users.address AS address',
 					'users.zip AS zip',
 					'users.phone AS phone',
-					'users.email AS email',
-					'city.name AS cityname'
+					'users.email AS email'
 					
  				)->whereNull('invoices.deleted_at');
 			if ($id != null)

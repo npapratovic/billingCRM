@@ -21,7 +21,8 @@ class ImportedOrderProduct extends Eloquent
 					'imported_order_products.tax_class AS tax_class',
 					'imported_order_products.name AS title',
 					'imported_order_products.product_id AS product_id',
-					'imported_order_products.existing AS existing'
+					'imported_order_products.existing AS existing',
+					'imported_order_products.type AS type'
 					)->whereNull('deleted_at');
 
 			// Retrieve specific entry

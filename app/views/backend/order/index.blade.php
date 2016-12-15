@@ -28,19 +28,15 @@
             </tr>
         </thead>
         <tbody>
-
              @foreach($entries as $val => $entry)
-
                 <tr>
                     <td> 
                     {{ $entry->order_id }}
                     </td>
                     <td> 
-                    <a href="{{ URL::route('ClientEdit', array('id' => $entry->user_id)) }}">
                     {{ $entry->first_name }}  {{ $entry->last_name }}
-                    </a>
                     </td>
-                    <td> {{ $entry->address }}</td>
+                    <td> {{ $entry->shipping_address }}</td>
                     <td> {{ date('d.m.Y', strtotime($entry->order_date))}}</td>
                     <td> 
                     @foreach($allproducts[$val] as $key => $product)
@@ -54,11 +50,6 @@
                   <a href="{{ URL::route('ServiceEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
                   @else
                    <a href="{{ URL::route('ProductEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
-                   @endif
-                   @if($product['entry'][0]->sale_price == 1)
-                   <span style="color:crimson;"> Rasprodajna cijena</span>
-                   @else
-                   <span style="color:violet;"> Uobičajena cijena</span>
                    @endif
                    @endif
                    </div></div>

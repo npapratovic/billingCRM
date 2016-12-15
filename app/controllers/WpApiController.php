@@ -45,9 +45,9 @@ class WpApiController extends \BaseController {
 
 		$entries = LaravelWpApi::products();  
  
-		$consumer_key = 'ck_5c2d542f1ad41a68442418a906d7d7a1fd470d2b'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_560ec219cdbb5cca24a2316d7f1430932f9960e4'; // Add your own Consumer Secret here
-		$store_url = 'http://localhost/wordpress/wordpress/'; // Add the home URL to the store you want to connect to here
+		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
+		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
+		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 		// Initialize the class
 		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
 
@@ -119,14 +119,14 @@ class WpApiController extends \BaseController {
 	public function products()
 	{ 
 		// Get data 
-		$consumer_key = 'ck_5c2d542f1ad41a68442418a906d7d7a1fd470d2b'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_560ec219cdbb5cca24a2316d7f1430932f9960e4'; // Add your own Consumer Secret here
-		$store_url = 'http://localhost/wordpress/wordpress/'; // Add the home URL to the store you want to connect to here
+		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
+		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
+		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 		// Initialize the class
 		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
  
-		$response = $wc_api->get_products( array( 'filter[post_status]' => 'any'));
+		$response = $wc_api->get_products( array( 'filter[limit]' => '-1'));
 
 		$products = $response->products;
 
@@ -266,9 +266,9 @@ class WpApiController extends \BaseController {
 	public function orders()
 	{ 
 		// Get data 
-		$consumer_key = 'ck_5c2d542f1ad41a68442418a906d7d7a1fd470d2b'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_560ec219cdbb5cca24a2316d7f1430932f9960e4'; // Add your own Consumer Secret here
-		$store_url = 'http://localhost/wordpress/wordpress/'; // Add the home URL to the store you want to connect to here
+		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
+		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
+		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 		// Initialize the class
 		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
@@ -468,9 +468,9 @@ class WpApiController extends \BaseController {
 	public function customers()
 	{ 
 		// Get data 
-		$consumer_key = 'ck_5c2d542f1ad41a68442418a906d7d7a1fd470d2b'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_560ec219cdbb5cca24a2316d7f1430932f9960e4'; // Add your own Consumer Secret here
-		$store_url = 'http://localhost/wordpress/wordpress/'; // Add the home URL to the store you want to connect to here
+		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
+		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
+		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 		// Initialize the class
 		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );

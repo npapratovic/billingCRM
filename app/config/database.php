@@ -56,9 +56,9 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'billingcrm',
-			'username'  => 'root',
-			'password'  => '',
+			'database'  => 'crmgo_billingcrm',
+			'username'  => 'crmgo_billingcrm',
+			'password'  => 'ORpZpU4BiV3rnr1iFQ',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
