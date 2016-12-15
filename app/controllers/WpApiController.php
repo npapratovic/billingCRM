@@ -275,7 +275,7 @@ class WpApiController extends \BaseController {
  
 		$response = $wc_api->get_orders(array( 'filter[limit]' => '-1' ));
 
-		$orders = $response->orders; 
+		$orders = $response->orders;  
 
 		foreach($orders as $order)
 		{    
@@ -309,121 +309,120 @@ class WpApiController extends \BaseController {
 				}
 
 
-			$order = get_object_vars($order); 
+				$order = get_object_vars($order); 
 
-			$userexists = User::getUserByEmail($order['customer']->email);
+				$userexists = User::getUserByEmail($order['customer']->email);
 
-			if(empty($userexists['user']))
-			{
-				$store = $this->customersrepo->import(
-					'asdf',			//	naziv kompanije
-					1,			//	tip djelatnosti
-					1,			//	oib
-					$order['customer']->first_name,
-					$order['customer']->last_name,
-					'asdf',			//	adresa
-					14,			//	mjesto
-					31000,		//	zip
-					14,			//	grad			
-					987654321,		//	broj telefona
-					0987123456,		//	fax
-					123098456,		//	broj mobitela
-					$order['customer']->email,
-					'http://mojawebstranica.com',	//	web stranica
-					'iban',					//	iban
-					'Podaci iz WordPress stranice'			//	note
-
-				);
-
-			}
-
-			else{
-				$store = $this->customersrepo->importupdate(
-					$order['customer']->id,
-					'asdf',			//	naziv kompanije
-					1,			//	tip djelatnosti
-					1,			//	oib
-					$order['customer']->first_name,
-					$order['customer']->last_name,
-					'asdf',			//	adresa
-					14,			//	mjesto
-					31000,		//	zip
-					14,			//	grad			
-					987654321,		//	broj telefona
-					0987123456,		//	fax
-					123098456,		//	broj mobitela
-					$order['customer']->email,
-					'http://mojawebstranica.com',	//	web stranica
-					'iban',					//	iban
-					'Podaci iz WordPress stranice'			//	note
-
-				);
-
-			}
-
-
-
- 			$product = array(); 
-			$quantity = array(); 
-
-			foreach($order['line_items'] as $singleorder) { 
-
-					$store = $this->productsrepo->productfromorder(
-					$singleorder->subtotal,
-					$singleorder->subtotal_tax,
-					$singleorder->total,
-					$singleorder->total_tax,
-					$singleorder->price,
-					$singleorder->quantity, 
-					$singleorder->tax_class,
-					$singleorder->name, 
-					$singleorder->product_id
-				);
-
-				array_push($product, $store['id']);
-				array_push($quantity, $store['quantity']); 
-
-			}
-
-			/*
- 			$product = array(); 
-			$quantity = array(); 
-
-			foreach($order['line_items'] as $singleorder) { 
-				if(is_null($singleorder->product_id))
+				if(empty($userexists['user']))
 				{
-					$productcheck = ProductService::checkProduct($singleorder->name);
+					$store = $this->customersrepo->import(
+						'asdf',			//	naziv kompanije
+						1,			//	tip djelatnosti
+						1,			//	oib
+						$order['customer']->first_name,
+						$order['customer']->last_name,
+						'asdf',			//	adresa
+						14,			//	mjesto
+						31000,		//	zip
+						14,			//	grad			
+						987654321,		//	broj telefona
+						0987123456,		//	fax
+						123098456,		//	broj mobitela
+						$order['customer']->email,
+						'http://mojawebstranica.com',	//	web stranica
+						'iban',					//	iban
+						'Podaci iz WordPress stranice'			//	note
 
-					if(!is_null($productcheck['entry']))
-					{	
-						$newproductid = $productcheck['entry']->id;
-					}
+					);
 
-					else {
-						$store = $this->productsrepo->errorproduct(
-							$singleorder->name,
-							$singleorder->price
-						);
-
-						$newproductid = $store['product_id'];
-					}
-						array_push($product, $newproductid);
-						array_push($quantity, $singleorder->quantity); 
-				} else{
-					array_push($product, $singleorder->product_id);
-					array_push($quantity, $singleorder->quantity); 					
 				}
 
-			}
-			*/
+				else{
 
-			$user = User::where('email', $order['customer']->email)->first();
+					$store = $this->customersrepo->importupdate(
+						$order['customer']->id,
+						'asdf',			//	naziv kompanije
+						1,			//	tip djelatnosti
+						1,			//	oib
+						$order['customer']->first_name,
+						$order['customer']->last_name,
+						'asdf',			//	adresa
+						14,			//	mjesto
+						31000,		//	zip
+						14,			//	grad			
+						987654321,		//	broj telefona
+						0987123456,		//	fax
+						123098456,		//	broj mobitela
+						$order['customer']->email,
+						'http://mojawebstranica.com',	//	web stranica
+						'iban',					//	iban
+						'Podaci iz WordPress stranice'			//	note
 
-			$created_at = $order['created_at'];
-			$updated_at = $order['updated_at'];
+					);
 
-			$created_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $created_at), ' ', 10, -8);
-			$updated_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $updated_at), ' ', 10, -8);
+				}
+ 
+	 			$product = array(); 
+				$quantity = array(); 
+
+				foreach($order['line_items'] as $singleorder) { 
+
+						$store = $this->productsrepo->productfromorder(
+						$singleorder->subtotal,
+						$singleorder->subtotal_tax,
+						$singleorder->total,
+						$singleorder->total_tax,
+						$singleorder->price,
+						$singleorder->quantity, 
+						$singleorder->tax_class,
+						$singleorder->name, 
+						$singleorder->product_id
+					);
+
+					array_push($product, $store['id']);
+					array_push($quantity, $store['quantity']); 
+
+				}
+
+				/*
+	 			$product = array(); 
+				$quantity = array(); 
+
+				foreach($order['line_items'] as $singleorder) { 
+					if(is_null($singleorder->product_id))
+					{
+						$productcheck = ProductService::checkProduct($singleorder->name);
+
+						if(!is_null($productcheck['entry']))
+						{	
+							$newproductid = $productcheck['entry']->id;
+						}
+
+						else {
+							$store = $this->productsrepo->errorproduct(
+								$singleorder->name,
+								$singleorder->price
+							);
+
+							$newproductid = $store['product_id'];
+						}
+							array_push($product, $newproductid);
+							array_push($quantity, $singleorder->quantity); 
+					} else{
+						array_push($product, $singleorder->product_id);
+						array_push($quantity, $singleorder->quantity); 					
+					}
+
+				}
+				*/
+
+				$user = User::where('email', $order['customer']->email)->first();
+
+				$created_at = $order['created_at'];
+				$updated_at = $order['updated_at'];
+
+				$created_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $created_at), ' ', 10, -8);
+				$updated_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $updated_at), ' ', 10, -8);
 
 				$store = $this->ordersrepo->import(
 					$order['order_number'],
@@ -443,9 +442,7 @@ class WpApiController extends \BaseController {
 				);
 				
 			}
-
-
-
+ 
 		}
 
 		$this->layout->title = 'WpApi | BillingCRM';
@@ -457,7 +454,9 @@ class WpApiController extends \BaseController {
 		$this->layout->js_footer_files = array(
 
 		);
+
 		$this->layout->content = View::make('backend.wp-api.orders', array('orders' => $orders));
+		
 	}
 
 	/**
