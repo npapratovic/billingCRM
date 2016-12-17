@@ -59,7 +59,9 @@ Route::get('/', array('as' => 'getlanding', 'uses' => 'FrontendController@index'
  /*
  * 	Backend routes
  */
-Route::group(array('before' => 'admin' , 'prefix' => 'admin'), function()
+ // Route::group(array('before' => 'admin' , 'prefix' => 'admin'), function()
+
+Route::group(array('prefix' => 'admin'), function()
 {
 
 	/*
@@ -91,6 +93,9 @@ Route::group(array('before' => 'admin' , 'prefix' => 'admin'), function()
 
 	});
 
+	// CRUD za employees 
+ 	Route::resource('employees', 'EmployeesController');
+ 
 	//PDF routes
 	Route::group(array('prefix' => 'pdf'), function()
 	{
