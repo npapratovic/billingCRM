@@ -41,6 +41,7 @@ class Invoice extends Eloquent
 					'invoices.employee_id AS employee_id',
 					'invoices.invoice_type AS invoice_type',
 					'invoices.address AS address',
+					'invoices.cityname AS cityname',
 					'invoices.payment_way AS payment_way',
 					'invoices.invoice_date AS invoice_date',
 					'invoices.invoice_date_deadline AS invoice_date_deadline',

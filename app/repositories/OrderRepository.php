@@ -170,7 +170,7 @@ class OrderRepository {
 	 *
 	 * @return Response
 	 */
-	public function import($order_id, $user_id, $employee_id, $order_date, $products_array, $quantity, $shipping_way, $payment_way, $payment_status, $billing_address, $shipping_address, $note, $created_at, $updated_at) 
+	public function import($order_id, $user_id, $employee_id, $order_date, $products_array, $quantity, $shipping_way, $payment_way, $payment_status, $cityname, $billing_address, $shipping_address, $note, $created_at, $updated_at) 
 	{
 	/*	try {*/
 			DB::beginTransaction();
@@ -183,6 +183,7 @@ class OrderRepository {
 			$entry->shipping_way = $shipping_way;
 			$entry->payment_way = $payment_way;
 			$entry->payment_status = $payment_status;
+			$entry->cityname = $cityname;
 			$entry->billing_address = $billing_address;
 			$entry->shipping_address = $shipping_address;
 			$entry->note = $note;

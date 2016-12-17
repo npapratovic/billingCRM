@@ -401,6 +401,7 @@ class OrderController extends \BaseController {
 						$price,
 						$discount,
 						$taxpercent,
+						$order['entry']->cityname,
 						$order['entry']->payment_way,
 						$order['entry']->order_date,
 						'0',					//	invoice_date_deadline
@@ -414,7 +415,7 @@ class OrderController extends \BaseController {
 				
 			}
 			else {
-						$store = $this->invoicerepo->store(
+						$store = $this->invoicerepo->convert(
 						$order['entry']->order_id,
 						'N',					//	order_id
 						0,					//	tax
@@ -459,7 +460,12 @@ class OrderController extends \BaseController {
 
 			$order = Order::getEntries($id);
 
-			$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+			if($order['entry']->show_only == '1'){
+				$productsperorder = OrdersProducts::getImportedOrderByCustomer($id);
+			}
+			else{
+				$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+			}
 
 			$employeeinfo = User::getEntries($order['entry']->employee_id);
 
@@ -469,7 +475,6 @@ class OrderController extends \BaseController {
 
 				$totalprice += $singleproduct->price * $singleproduct->quantity;
 			}
-
 
 			$ordersData[] = array('order' => $order, 'employeeinfo' => $employeeinfo['entry'], 'productsperorder' => $productsperorder['orderbycustomer'], 'totalprice' => $totalprice);
 			

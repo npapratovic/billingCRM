@@ -249,8 +249,6 @@ class InvoiceController extends \BaseController {
 			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
 		}
 
-
-
 		$this->layout->title = 'Uređivanje računa | BillingCRM';
 
 		$this->layout->css_files = array(
@@ -332,7 +330,14 @@ class InvoiceController extends \BaseController {
 
 			$invoice = Invoice::getEntries($id);
 
-			$productsperinvoice = InvoicesProducts::getOrderByCustomer($invoice['entry']->id);
+			if($invoice['entry']->from_order == '1'){
+				$imported = InvoicesProducts::getImportedByCustomer($id);
+				$productsperinvoice = InvoicesProducts::getOrderByCustomer($id);
+			}
+			else{
+				$imported = 0;
+				$productsperinvoice = InvoicesProducts::getOrderByCustomer($id);
+			}
 
 			$employeeinfo = User::getEntries($invoice['entry']->employee_id);
 
@@ -364,7 +369,7 @@ class InvoiceController extends \BaseController {
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.invoice.invoicespdf', array('invoicesdata' => $invoicesData, 'productsperinvoice' => $productsperinvoice, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.invoice.invoicespdf', array('invoicesdata' => $invoicesData, 'imported' => $imported, 'productsperinvoice' => $productsperinvoice, 'currdate' => $currdate))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}

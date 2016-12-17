@@ -16,9 +16,11 @@ class WpApiController extends \BaseController {
 	
 	protected $productsrepo;
 	protected $ordersrepo;
-	protected $customersrepo;
+	protected $customersrepo;  
 
-
+	const CUSTOMER_KEY = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
+	const CUSTOMER_SECRET = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
+	const STORE_URL = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 	// Constructing default values
 	public function __construct()
@@ -33,6 +35,8 @@ class WpApiController extends \BaseController {
 		$this->productsrepo = new ProductRepository;
 		$this->customersrepo = new ClientRepository;
 		$this->ordersrepo = new OrderRepository;
+
+
 	}
 	/**
 	 * Display a listing of the tag.
@@ -44,12 +48,9 @@ class WpApiController extends \BaseController {
 		// Get data
 
 		$entries = LaravelWpApi::products();  
- 
-		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
-		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
+
 		// Initialize the class
-		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
+		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
 
 		$orders = $wc_api->get_orders( array( 'status' => 'completed' ) );
 
@@ -118,13 +119,9 @@ class WpApiController extends \BaseController {
 	 */
 	public function products()
 	{ 
-		// Get data 
-		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
-		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 		// Initialize the class
-		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
+		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
  
 		$response = $wc_api->get_products( array( 'filter[limit]' => '-1'));
 
@@ -265,13 +262,8 @@ class WpApiController extends \BaseController {
 	 */
 	public function orders()
 	{ 
-		// Get data 
-		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
-		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
-
 		// Initialize the class
-		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
+		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
  
 		$response = $wc_api->get_orders(array( 'filter[limit]' => '-1' ));
 
@@ -434,6 +426,7 @@ class WpApiController extends \BaseController {
 					$order['shipping_methods'],
 					$order['payment_details']->method_id,		//	payment_way
 					$order['status'],
+					$order['billing_address']->city,
 					$order['billing_address']->address_1,	//	adresa racuna
 					$order['shipping_address']->address_1,		//	adresa dostave
 					$order['note'],
@@ -466,13 +459,9 @@ class WpApiController extends \BaseController {
 	 */
 	public function customers()
 	{ 
-		// Get data 
-		$consumer_key = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
-		$consumer_secret = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
-		$store_url = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
 
 		// Initialize the class
-		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
+		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
  
 		$response = $wc_api->get_customers(array( 'filter[limit]' => '-1' ));
 

@@ -110,6 +110,9 @@
         @elseif($ordersdata['0']['order']['entry']->payment_way == 'paypal')
         <td>PayPal</td>
         @endif
+        @if($ordersdata['0']['order']['entry']->show_only == '1')
+        <td>{{ $ordersdata['0']['order']['entry']->shipping_way }}
+        @endif
             <td>
                 <table style="width:100%;">
                     <tbody>

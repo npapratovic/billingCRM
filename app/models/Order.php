@@ -39,6 +39,7 @@ class Order extends Eloquent
 					'orders.shipping_way AS shipping_way',
 					'orders.payment_way AS payment_way',
 					'orders.payment_status AS payment_status',
+					'orders.cityname AS cityname',
 					'orders.billing_address AS billing_address',
 					'orders.shipping_address AS shipping_address',
 					'orders.note AS note',

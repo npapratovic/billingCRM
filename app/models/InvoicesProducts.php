@@ -62,7 +62,6 @@ class InvoicesProducts extends Eloquent
 		try
 		{
 			$orderbycustomer = DB::table('invoices_products')
-				->leftjoin('orders', 'orders.id', '=', 'invoices_products.invoice_id')
 				->join('products_services', 'products_services.id', '=', 'invoices_products.product_id')
  				->select(
  					'invoices_products.id AS id',
@@ -77,6 +76,7 @@ class InvoicesProducts extends Eloquent
 					'products_services.price AS price'
  				)
  				->where('invoices_products.invoice_id', '=', $invoice_id)
+ 				->where('invoices_products.imported', '!=', '1')
 				->get();
 
 			return array('status' => 1, 'orderbycustomer' => $orderbycustomer);
@@ -111,6 +111,7 @@ class InvoicesProducts extends Eloquent
 					'imported_order_products.price AS price'
  				)
  				->where('invoices_products.invoice_id', '=', $invoice_id)
+ 				->where('invoices_products.imported', '1')
 				->get();
 
 			return array('status' => 1, 'orderbycustomer' => $orderbycustomer);

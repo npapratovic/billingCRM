@@ -83,6 +83,18 @@
         </tr>
     </thead>
     <tbody>
+    @if($imported != '0')
+    @foreach($imported['orderbycustomer'] as $singleproduct)
+        <tr>
+            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
+            <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
+            <td style="text-align:center;">{{ $singleproduct->taxpercent }}%</td> 
+            <td style="text-align:center;">{{ number_format($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
+            <td style="text-align:center;">{{ ($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100))) * $singleproduct->amount }} kn</td> 
+        </tr>
+        @endforeach
+        @endif
 
     @foreach($productsperinvoice['orderbycustomer'] as $singleproduct)
         <tr>
@@ -113,6 +125,9 @@
             <td>Kartično plaćanje</td>
             @elseif($invoicesdata['0']['invoice']['entry']->payment_way == 'paypal')
             <td>PayPal</td>
+            @endif
+            @if($invoicesdata['0']['invoice']['entry']->from_order == '1')
+            <td>{{ $invoicesdata['0']['invoice']['entry']->payment_way}}</td>
             @endif
             <td>
                 <table style="width:100%;">

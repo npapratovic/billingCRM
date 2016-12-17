@@ -63,6 +63,7 @@ class InvoiceRepository {
 					$orderproduct->price = $price[$key];
 					$orderproduct->discount = $discount[$key];
 					$orderproduct->taxpercent = $taxpercent[$key];
+					$orderproduct->imported = '0';
 					$orderproduct->save();
 				}
 			}
@@ -128,6 +129,7 @@ class InvoiceRepository {
 					$orderproduct->price = $price[$key];
 					$orderproduct->discount = $discount[$key];
 					$orderproduct->taxpercent = $taxpercent[$key];
+					$orderproduct->imported = '0';
 					$orderproduct->save();
 				}
 			}
@@ -142,6 +144,7 @@ class InvoiceRepository {
 				$orderproduct->price = $imported_item['entry']['0']->price;
 				$orderproduct->discount = '0';
 				$orderproduct->taxpercent = $imported_item['entry']['0']->total_tax;
+				$orderproduct->imported = '1';
 				$orderproduct->save();
 			}
 
@@ -156,7 +159,7 @@ class InvoiceRepository {
 	}*/
 
 
-	public function convertToInvoice($invoice_number, $invoice_type, $tax, $client_id, $employee_id, $product, $measurement, $amount, $price, $discount, $taxpercent, $payment_way, $invoice_date, $invoice_date_deadline, $invoice_date_ship, $invoice_note, $intern_note, $repeat_invoice, $invoice_language, $valute)
+	public function convertToInvoice($invoice_number, $invoice_type, $tax, $client_id, $employee_id, $product, $measurement, $amount, $price, $discount, $taxpercent, $cityname, $payment_way, $invoice_date, $invoice_date_deadline, $invoice_date_ship, $invoice_note, $intern_note, $repeat_invoice, $invoice_language, $valute)
 	{
 		//try {
 			DB::beginTransaction();
@@ -167,6 +170,7 @@ class InvoiceRepository {
 			$entry->tax = $tax;
 			$entry->client_id = $client_id;
 			$entry->employee_id = $employee_id;
+			$entry->cityname = $cityname;
 			$entry->payment_way = $payment_way;
 			$entry->invoice_date = $invoice_date;
 			$entry->invoice_date_deadline = $invoice_date_deadline;
@@ -194,6 +198,60 @@ class InvoiceRepository {
 					$orderproduct->price = $price[$key];
 					$orderproduct->discount = $discount[$key];
 					$orderproduct->taxpercent = $taxpercent[$key];
+					$orderproduct->imported = '1';
+					$orderproduct->save();
+				}
+			}
+
+			DB::commit();
+
+			return array('status' => 1);
+		//}
+
+		/*catch (Exception $exp)
+		{
+			return array('status' => 0, 'reason' => $exp->getMessage());
+		}   */
+	}
+
+	public function convert($invoice_number, $invoice_type, $tax, $client_id, $employee_id, $product, $measurement, $amount, $price, $discount, $taxpercent, $payment_way, $invoice_date, $invoice_date_deadline, $invoice_date_ship, $invoice_note, $intern_note, $repeat_invoice, $invoice_language, $valute)
+	{
+		//try {
+			DB::beginTransaction();
+
+			$entry = new Invoice;
+			$entry->invoice_number = $invoice_number;
+			$entry->invoice_type = $invoice_type;
+			$entry->tax = $tax;
+			$entry->client_id = $client_id;
+			$entry->employee_id = $employee_id;
+			$entry->payment_way = $payment_way;
+			$entry->invoice_date = $invoice_date;
+			$entry->invoice_date_deadline = $invoice_date_deadline;
+			$entry->invoice_date_ship = $invoice_date_ship;
+			$entry->invoice_note = $invoice_note;
+			$entry->intern_note = $intern_note;
+			$entry->repeat_invoice = $repeat_invoice;
+			$entry->invoice_language = $invoice_language;
+			$entry->valute = $valute;
+
+			$entry->save();
+
+			$invoice = DB::table('invoices')->orderBy('created_at', 'desc')->first();
+
+			if ($product != null)
+			{
+				foreach ($product as $key=>$value)
+				{
+					$orderproduct = new InvoicesProducts;
+					$orderproduct->invoice_id = $invoice->id;
+					$orderproduct->product_id = $value;
+					$orderproduct->measurement = $measurement[$key];
+					$orderproduct->amount = $amount[$key];
+					$orderproduct->price = $price[$key];
+					$orderproduct->discount = $discount[$key];
+					$orderproduct->taxpercent = $taxpercent[$key];
+					$orderproduct->imported = '0';
 					$orderproduct->save();
 				}
 			}

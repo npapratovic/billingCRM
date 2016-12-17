@@ -192,6 +192,7 @@ class AllMigrations extends Migration {
 			$table->string('invoice_type');
 			$table->integer('tax');
 			$table->string('address');
+			$table->string('cityname');
 			$table->string('payment_way')->nullable();
 			$table->date('invoice_date')->nullable();
 			$table->date('invoice_date_deadline')->nullable();
@@ -318,6 +319,7 @@ class AllMigrations extends Migration {
 			$table->float('price');
 			$table->float('discount');
 			$table->float('taxpercent');
+			$table->integer('imported')->nullable();
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 
@@ -455,6 +457,7 @@ class AllMigrations extends Migration {
 			$table->string('shipping_way');
 			$table->string('payment_way');
 			$table->string('payment_status');
+			$table->string('cityname')->nullable();
 			$table->string('billing_address');
 			$table->string('shipping_address');
 			$table->text('note');
