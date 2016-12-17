@@ -59,9 +59,9 @@ Route::get('/', array('as' => 'getlanding', 'uses' => 'FrontendController@index'
  /*
  * 	Backend routes
  */
- // Route::group(array('before' => 'admin' , 'prefix' => 'admin'), function()
+ // Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
-Route::group(array('prefix' => 'admin'), function()
+Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 {
 
 	/*

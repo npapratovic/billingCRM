@@ -2,12 +2,12 @@
 <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
     <li class="active"><a href="{{ route('admin.employees.index') }}">Pregled svih korisnika</a></li>
-    <li class="active">Dodaj korisnika</li>
+    <li class="active">Uređivanje korisnika</li>
 </ul>
 <div class="panel-heading">
 	<div class="row">
 	    <div class="col-md-10">
-    		<h4>Unos novog korisnika</h4>
+    		<h4>Uređivanje korisnika: {{ $employee->first_name }} {{ $employee->last_name }}</h4>
     	</div>
     	<div class="col-md-2">
       		<a href="{{ route('admin.employees.index') }}">
@@ -20,7 +20,7 @@
 	<div class="row">
 
         <div class="col-md-5">
-            {{ Form::open(['url' => 'admin/employees', 'files' => 'true']) }}
+            {{ Form::model($employee, ['method' => 'PATCH','route'=>['admin.employees.update', $employee->id], 'files' => 'true']) }}
             <div class="form-group">
                 {{ Form::label('first_name', 'Ime:') }}
                 {{ Form::text('first_name', null, ['class'=>'form-control']) }}
@@ -30,22 +30,18 @@
                 {{ Form::label('last_name', 'Prezime:') }}
                 {{ Form::text('last_name', null, ['class'=>'form-control']) }}
                 <small class="text-danger">{{ $errors->first('last_name') }}</small>
-            </div>
-            <div class="form-group">
-                {{ Form::label('password', 'Lozinka:') }}
-                {{ Form::password('password', ['class'=>'form-control']) }}
-                <small class="text-danger">{{ $errors->first('password') }}</small>
-            </div>
-            <div class="form-group">
-                {{ Form::label('repeat_password', 'Lozinka ponovo:') }}
-                {{ Form::password('repeat_password', ['class'=>'form-control']) }}
-                <small class="text-danger">{{ $errors->first('repeat_password') }}</small>
-            </div>
+            </div> 
             <div class="form-group">
                 {{ Form::label('email', 'E-mail:') }}
                 {{ Form::text('email', null, ['class'=>'form-control']) }}
                 <small class="text-danger">{{ $errors->first('email') }}</small>
             </div> 
+            @if ($employee->image != null || $employee->image != '') 
+            <div class="form-group">
+                <h5> {{ Form::label('image', 'Stara slika:') }}</h5> 
+                {{ HTML::image(URL::to('/') . '/uploads/backend/employee/' . $employee->image, $employee->first_name . ' ' . $employee->last_name) }} 
+            </div> 
+            @endif
             <div class="form-group"> 
                 {{ Form::label('image', 'Slika:') }}
                 {{ Form::file('image', ['class'=>'form-control'])  }}

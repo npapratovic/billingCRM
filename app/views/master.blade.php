@@ -167,7 +167,7 @@ More details about us can be found on our official website: http://www.shopcenta
                         {{ HTML::image('favicon.png', '', array('class' => 'img-circle')) }}
                     </div>
                     <div class="pull-left info">
-                        <p>Bok, {{-- Auth::user()->first_name --}} {{-- Auth::user()->last_name --}}</p>
+                        <p>Bok, {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
                     
                     </div>
                 </div>
