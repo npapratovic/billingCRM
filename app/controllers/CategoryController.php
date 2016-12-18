@@ -33,7 +33,7 @@ class CategoryController extends \BaseController {
 
 	public function create()
 	{
-		$entries = Category::paginate(10);  
+		$entries = Category::paginate(5);  
 
 		$this->layout->title = 'Unos nove kategorije | BillingCRM';
 
@@ -108,7 +108,7 @@ class CategoryController extends \BaseController {
 	public function edit($id)
 	{
 
-	  $entries = Category::paginate(10);  
+	  $entries = Category::paginate(5);  
       
       $category = Category::find($id);
       

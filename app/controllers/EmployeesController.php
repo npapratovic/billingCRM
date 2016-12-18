@@ -10,7 +10,7 @@ class EmployeesController extends \BaseController {
 
   public function index()
   {
-    $entries = Employees::paginate(10);  
+    $entries = Employees::where('user_group','employee')->paginate(10);  
 
     $this->layout->title = 'Korisnici | BillingCRM';
  
