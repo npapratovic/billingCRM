@@ -95,7 +95,9 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
 	// CRUD za employees 
  	Route::resource('employees', 'EmployeesController');
- 
+ 	// CRUD za categories 
+  	Route::resource('categories', 'CategoryController');
+
 	//PDF routes
 	Route::group(array('prefix' => 'pdf'), function()
 	{
@@ -148,24 +150,7 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
 	});
 
-
-	  // Product , create, save, edit, update, destroy
-	Route::group(array('prefix' => 'categories'), function()
-	{
-		Route::get('/', array('as' => 'CategoryIndex', 'uses' => 'CategoryController@index'));
-
-		Route::get('create', array('as' => 'CategoryCreate', 'uses' => 'CategoryController@create'));
-
-		Route::post('store', array('as' => 'CategoryStore', 'uses' => 'CategoryController@store'));
-
-		Route::get('edit/{id}', array('as' => 'CategoryEdit', 'uses' => 'CategoryController@edit'));
-
-		Route::post('update/{id}', array('as' => 'CategoryUpdate', 'uses' => 'CategoryController@update'));
-
-		Route::get('destroy/{id}', array('as' => 'CategoryDestroy', 'uses' => 'CategoryController@destroy'));
-
-	});
-
+ 
 
 	Route::group(array('prefix' => 'attributes'), function()
 	{

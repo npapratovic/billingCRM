@@ -222,7 +222,7 @@ More details about us can be found on our official website: http://www.shopcenta
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ URL::route('CategoryIndex') }}">
+                                    <a href="{{ route('admin.categories.index') }}">
                                         <i class="fa fa-th-list"></i><span>Kategorije proizvoda</span>
                                     </a>
                                 </li>

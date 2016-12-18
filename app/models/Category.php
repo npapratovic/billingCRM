@@ -8,15 +8,23 @@ class Category extends Eloquent
 	
 	protected $table = 'categories';
 
-	// New entry validation
+	protected $fillable = array('title','permalink','description','image', 'created_at','updated_at');
+
+	// New category validation
 	public static $store_rules = array(
-		'title'					=>	'required',
+		'title'						=>	'required',
+		'permalink'					=>	'required',
+		'description'				=>	'required',
+		'image'						=>	'required'
 	);
 
-	// Edit entry validation
+	// Edit category validation
 	public static $update_rules = array(
-		'id'					=>	'required|integer',
-	);	
+		'title'						=>	'required',
+		'permalink'					=>	'required',
+		'description'				=>	'required'
+	);
+   
 
 	/*
 	*	Get entries

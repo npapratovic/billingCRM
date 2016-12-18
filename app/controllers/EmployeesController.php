@@ -7,9 +7,10 @@ class EmployeesController extends \BaseController {
    *
    * @return Response
    */
+
   public function index()
   {
-    $entries = Employees::paginate();  
+    $entries = Employees::paginate(10);  
 
     $this->layout->title = 'Korisnici | BillingCRM';
  
@@ -36,12 +37,13 @@ class EmployeesController extends \BaseController {
    *
    * @return Response
    */
+
   public function store()
   {
 
       $employee = Request::all(); 
  
-      $entryValidator = Validator::make(Input::all(), Employees::$store_rules_employee); 
+      $entryValidator = Validator::make(Input::all(), Employees::$store_rules); 
 
       if ($entryValidator->fails())
       {
@@ -90,6 +92,7 @@ class EmployeesController extends \BaseController {
    * @param  int  $id
    * @return Response
    */
+  
   public function show($id)
   {
     //
@@ -102,6 +105,7 @@ class EmployeesController extends \BaseController {
    * @param  int  $id
    * @return Response
    */
+
   public function edit($id)
   {
       $employee = Employees::find($id);
@@ -118,11 +122,12 @@ class EmployeesController extends \BaseController {
    * @param  int  $id
    * @return Response
    */
+
   public function update($id)
   {
       $employee = Request::all(); 
 
-      $entryValidator = Validator::make(Input::all(), Employees::$edit_rules_employee); 
+      $entryValidator = Validator::make(Input::all(), Employees::$update_rules); 
 
       if ($entryValidator->fails())
       {
@@ -154,7 +159,7 @@ class EmployeesController extends \BaseController {
                               
         //add extra fields to array for model
         $employee['image'] = $image;
-        
+
       } 
    
       $data->update($employee);

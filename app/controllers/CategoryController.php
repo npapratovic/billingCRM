@@ -7,46 +7,21 @@
 */
 
 class CategoryController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new CategoryRepository;
-	}
+ 
 	/**
 	 * Display a listing of the category.
 	 *
 	 * @return Response
 	 */
+
 	public function index()
 	{
-		// Get data
+	    $entries = Category::paginate(10);  
 
-		$entries = Category::getEntries(null, null);
-
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Kategorije | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.category.index', array('entries' => $entries));
+	 
+	    $this->layout->content = View::make('backend.category.index', compact('entries')); 
+  
 	}
 
 
@@ -55,23 +30,20 @@ class CategoryController extends \BaseController {
 	 *
 	 * @return Response
 	 */
+
 	public function create()
 	{
-		$this->layout->title = 'Unos nove kategorije | BillingCRM';
+		$entries = Category::paginate(10);  
 
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'
-			);
+		$this->layout->title = 'Unos nove kategorije | BillingCRM';
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
-		$entries = Category::getEntries(null, null);
-		$this->layout->content = View::make('backend.category.create', array('postRoute' => 'CategoryStore'), array('entries' => $entries));
+	 
+	    $this->layout->content = View::make('backend.category.create', compact('entries'));
 	}
 
 
@@ -80,32 +52,38 @@ class CategoryController extends \BaseController {
 	 *
 	 * @return Response
 	 */
+
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
 
-		$entryValidator = Validator::make(Input::all(), Category::$store_rules);
+      $category = Request::all(); 
 
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+      $entryValidator = Validator::make(Input::all(), Category::$store_rules); 
 
-		$store = $this->repo->store(
-			Input::get('title'),
-			Input::get('permalink'),
-			Input::get('description'),
-			Input::file('image')
-		);
-				
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('CategoryIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+      if ($entryValidator->fails())
+      {
+        return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+      } 
+
+      //Image processing
+      $destinationPath = 'public_html/uploads/backend/category/'; // upload path
+      $extension = $category['image']->getClientOriginalExtension(); // getting image extension
+      $image = rand(11111,99999).'.'.$extension; // renameing image
+      Image::make($category['image']->getRealPath())
+                        ->orientate()
+                        ->fit(500, 500)
+                        ->crop(500, 500)
+                        ->resize(150, 150)
+                        ->save($destinationPath . $image)
+                        ->destroy(); // uploading file to given path
+                            
+      //add extra fields to array for model 
+      $category['image'] = $image;
+
+      Category::create($category);   
+  
+      return Redirect::route('admin.categories.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
+ 
 	}
 
 
@@ -116,19 +94,8 @@ class CategoryController extends \BaseController {
 	 * @return Response
 	 */
 	public function show($id)
-	{
-
-		$this->layout->title = 'Kategorije | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js'
-		);
-
-		$this->layout->content = View::make('backend.category.view');
+	{ 
+		//
 	}
 
 
@@ -140,29 +107,21 @@ class CategoryController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		// Get data
 
-		$entry = Category::getEntries($id, null);
+	  $entries = Category::paginate(10);  
+      
+      $category = Category::find($id);
+      
+	  $this->layout->title = 'Uređivanje kategorije | BillingCRM';
 
-		$entries = Category::getEntries(null, null);
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$this->layout->title = 'Uređivanje kategorije | BillingCRM';
+	  $this->layout->js_footer_files = array(
+		'js/backend/bootstrap-filestyle.min.js',
+		'js/backend/jquery.stringtoslug.min.js',
+		'js/backend/speakingurl.min.js'
+	  );
 
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
-
-		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
-			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
-		);
-
-		$this->layout->content = View::make('backend.category.edit', array('entry' => $entry['entry'], 'postRoute' => 'CategoryUpdate'), array('entries' => $entries));
+      $this->layout->content = View::make('backend.category.edit', compact('category', 'entries'));
+ 
 	}
 
 
@@ -172,33 +131,49 @@ class CategoryController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
+
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
+      $category = Request::all(); 
 
-		$entryValidator = Validator::make(Input::all(), Category::$update_rules);
+      $entryValidator = Validator::make(Input::all(), Category::$update_rules); 
 
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+      if ($entryValidator->fails())
+      {
+        return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+      } 
+ 
+      $data = Category::find($id);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('title'),
-			Input::get('permalink'),
-			Input::get('description'),
-			Input::file('image')
-		);
+      //Get old image value, this is fallback
 
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('CategoryIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+      if (!is_object($category['image'])) { 
+        $category['image'] = $data->image;
+      }
+
+      //Check if image is updated
+      if (is_object($category['image'])) { 
+
+        //Image processing
+        $destinationPath = 'public_html/uploads/backend/category/'; // upload path
+        $extension = $category['image']->getClientOriginalExtension(); // getting image extension
+        $image = rand(11111,99999).'.'.$extension; // renameing image
+        Image::make($category['image']->getRealPath())
+                          ->orientate()
+                          ->fit(500, 500)
+                          ->crop(500, 500)
+                          ->resize(150, 150)
+                          ->save($destinationPath . $image)
+                          ->destroy(); // uploading file to given path
+                              
+        //add extra fields to array for model
+        $category['image'] = $image;
+
+      } 
+   
+      $data->update($category);
+
+      return Redirect::route('admin.categories.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -211,32 +186,8 @@ class CategoryController extends \BaseController {
 	public function destroy($id)
 	{
 
-		if ($id == null)
-		{
-			return Redirect::route('CategoryIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Category::getEntries($id, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('CategoryIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('CategoryIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('CategoryIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+      Category::find($id)->delete();
+      return Redirect::route('admin.categories.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 
