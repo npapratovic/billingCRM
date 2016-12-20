@@ -1,16 +1,16 @@
 <!-- Main content -->
 <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li><a href="{{ URL::route('TagIndex') }}">Pregled svih oznaka</a></li>
+    <li><a href="{{ route('admin.tags.index') }}">Pregled svih oznaka</a></li>
     <li class="active">Uredi oznaku</li>
 </ul>
 <div class="panel-heading">
 	<div class="row">
 	    <div class="col-md-10">
-    		<h4>Uredi oznaku</h4>
+    		<h4>Uređivanje oznake: {{ $tag->title }}</h4>
     	</div>
     	<div class="col-md-2">
-      		<a href="{{ URL::route('TagIndex') }}">
+      		<a href="{{ route('admin.tags.edit') }}">
                 <button class="btn btn-default btn-md pull-right"><i class="fa fa-caret-square-o-left"></i> Povratak</button>
             </a> 
     	</div>
@@ -18,21 +18,20 @@
 </div>
 <div class="panel-body">
 	<div class="row">
-		{{ Form::open(array('route' => $postRoute, 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'files' => true)) }}
-		{{ Form::hidden('id', $entry->id, array('id' => 'id')) }}
+		{{ Form::model($tag, ['method' => 'PATCH','route'=>['admin.tags.update', $tag->id], 'files' => 'false']) }}
 	    <div class="col-md-4">
 	            <div class="form-group">  
-	                <label for="title">Naslov oznake:</label>  
+	                                           {{ Form::label('title', 'Naslov oznake:') }}
 					{{ Form::text('title', isset($entry->title) ? $entry->title : null, ['class' => 'form-control', 'id' => 'title', 'placeholder' => 'Naslov oznake']) }}
 					<small class="text-danger">{{ $errors->first('title') }}</small>
 	            </div>
 	         	<div class="form-group">  
-	                <label for="title">Poveznica:</label>  
+	                                           {{ Form::label('title', 'Poveznica:') }}
 					{{ Form::text('permalink', isset($entry->permalink) ? $entry->permalink : null, ['class' => 'form-control', 'id' => 'permalink', 'placeholder' => 'Poveznica oznake']) }}
 					<small class="text-danger">{{ $errors->first('permalink') }}</small>
 	            </div>    
 	            	   <div class="form-group">  
-	                <label for="title">Opis:</label>  
+	                                           {{ Form::label('description', 'Opis:') }}
 					{{ Form::text('description', isset($entry->description) ? $entry->description : null, ['class' => 'form-control', 'id' => 'description', 'placeholder' => 'Opis oznake']) }}
 					<small class="text-danger">{{ $errors->first('description') }}</small>
 	            </div>    
@@ -53,8 +52,8 @@
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->id }}</td>
                     <td>{{ $entry->title }}</td>
@@ -62,7 +61,7 @@
                     <td>{{ $entry->description }}</td>
                     <td class="col-md-1">
 
-                        <a href="{{ URL::route('TagEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ route('admin.tags.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-tag-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-tag-id-{{ $entry->id }}"><i class="fa fa-times"></i>
@@ -73,12 +72,13 @@
             @endif
         </tbody>
     </table>
+    <div class="text-center">{{$entries->links()}}</div>
 	    </div>
     </div>
 </div>
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -92,10 +92,21 @@
                     <p>Želite li obrisati oznaku: {{ $entry->title }}?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('TagDestroy', array('id' => $entry->id)) }}">
-                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    <div class="row">
+                        <div class="col-md-7">
+                        </div>
+                        <div class="col-md-2">
+                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.tags.destroy', $entry->id]]) }}
+                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                            {{ Form::close() }} 
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div> 
+
                 </div>
             </div>
         </div>
@@ -105,25 +116,15 @@
  
 <script type="text/javascript">
 	$(document).ready(function() {
-	    $(":file").filestyle();
-	    $('.editor').summernote({
-	    	height: 200
-	    });
+
     	$("#title").stringToSlug();
 
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
-
-    	 $('#entries-list').DataTable( 
-        	{
-            "language": {
-                "url": "http://cdn.datatables.net/plug-ins/1.10.11/i18n/Croatian.json"
-            }
-        	})
 	});
 </script>

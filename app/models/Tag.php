@@ -8,14 +8,20 @@ class Tag extends Eloquent
 	
 	protected $table = 'tags';
 
+	protected $fillable = array('title', 'permalink', 'description', 'created_at', 'updated_at');
+
 	// New entry validation
 	public static $store_rules = array(
 		'title'					=>	'required',
+		'permalink'				=>	'required',
+		'description'				=>	'required'
 	);
 
 	// Edit entry validation
 	public static $update_rules = array(
-		'id'					=>	'required|integer',
+		'title'					=>	'required',
+		'permalink'				=>	'required',
+		'description'				=>	'required'
 	);	
 
 	/*

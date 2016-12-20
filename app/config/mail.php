@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'info@crm.go.hr', 'name' => 'ingo@crm.go.hr'),
+	'from' => array('address' => 'info@crm.go.hr', 'name' => 'info@crm.go.hr'),
 
 	/*
 	|--------------------------------------------------------------------------

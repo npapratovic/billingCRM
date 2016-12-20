@@ -227,12 +227,12 @@ More details about us can be found on our official website: http://www.shopcenta
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ URL::route('TagIndex') }}">
+                                    <a href="{{ route('admin.tags.index') }}">
                                         <i class="fa fa-tags"></i><span>Oznake proizvoda</span>
                                     </a>
                                 </li> 
                                 <li>
-                                    <a href="{{ URL::route('AttributeIndex') }}">
+                                    <a href="{{ route('admin.attributes.index') }}">
                                       <i class="fa fa-bookmark-o" aria-hidden="true"></i><span>Atributi proizvoda</span>
                                     </a>
                                 </li>
@@ -245,12 +245,12 @@ More details about us can be found on our official website: http://www.shopcenta
                         </a>
                         <ul class="treeview-menu">
                                 <li>
-                                    <a href="{{ URL::route('ServiceCreate') }}">
+                                    <a href="{{ URL::route('admin.services.create') }}">
                                        <i class="fa fa-plus-circle" aria-hidden="true"></i><span>Nova usluga</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ URL::route('ServiceIndex') }}"> 
+                                    <a href="{{ URL::route('admin.services.index') }}"> 
                                       <i class="fa fa-bar-chart" aria-hidden="true"></i><span>Katalog usluga</span>
                                     </a>
                                 </li> 
@@ -262,12 +262,12 @@ More details about us can be found on our official website: http://www.shopcenta
                         </a>
                         <ul class="treeview-menu">
                                 <li>
-                                    <a href="{{ URL::route('ClientCreate') }}">
+                                    <a href="{{ URL::route('admin.clients.create') }}">
                                        <i class="fa fa-plus-circle" aria-hidden="true"></i><span>Novi klijent</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ URL::route('ClientIndex') }}"> 
+                                    <a href="{{ URL::route('admin.clients.index') }}"> 
                                       <i class="fa fa-bar-chart" aria-hidden="true"></i><span>Popis klijenata </span>
                                     </a>
                                 </li> 

@@ -1,9 +1,9 @@
  
  <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ URL::route('ClientIndex') }}">Pregled svih klijenata</a></li>
+    <li class="active"><a href="{{ URL::route('admin.clients.index') }}">Pregled svih klijenata</a></li>
     
-    <a href="{{ URL::route('ClientCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ URL::route('admin.clients.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novog klijenta
         </button>
@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih klijenata ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih klijenata ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -27,8 +27,8 @@
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->first_name }} {{ $entry->last_name }}</td>
                     <td>{{ $entry->address }}  </td>
@@ -37,7 +37,7 @@
 
                     <td class="col-md-1">
 
-                        <a href="{{ URL::route('ClientEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ URL::route('admin.clients.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-client-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-client-id-{{ $entry->id }}"><i class="fa fa-times"></i>
@@ -52,8 +52,8 @@
     </table>
 </div>
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-client-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -64,13 +64,23 @@
                     <h4 class="modal-title">Pozor!</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Želite li obrisati klijenta: {{ $entry->username }}?</p>
+                    <p>Želite li obrisati klijenta: {{ $entry->first_name }} {{ $entry->last_name }}?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('ClientDestroy', array('id' => $entry->id)) }}">
-                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    <div class="row">
+                        <div class="col-md-7">
+                        </div>
+                        <div class="col-md-2">
+                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.clients.destroy', $entry->id]]) }}
+                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                            {{ Form::close() }} 
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -78,12 +88,12 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-client-id-{{ $entry->id }}").click(function() { 
                     $('#delete-client-id-{{ $entry->id }}').modal('show');
                 });

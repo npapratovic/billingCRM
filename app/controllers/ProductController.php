@@ -149,7 +149,7 @@ class ProductController extends \BaseController {
 	{
 		Input::merge(array_map('trim', Input::except('product_attribute', 'product_tag', 'product_category')));
 
-		$entryValidator = Validator::make(Input::all(), Product::$store_rules);
+		$entryValidator = Validator::make(Input::all(), ProductService::$store_rules);
 		
 		if ($entryValidator->fails())
 		{
@@ -160,6 +160,7 @@ class ProductController extends \BaseController {
 			Input::get('title'),
 			Input::get('intro'),
 			Input::get('permalink'),
+			Input::get('product_id'),
 			Input::get('sku'),
 			Input::get('price'),
 			Input::get('sale_price'),
@@ -188,7 +189,6 @@ class ProductController extends \BaseController {
 
 		);
 
-		
 		if ($store['status'] == 0)
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
@@ -330,7 +330,7 @@ class ProductController extends \BaseController {
 	{
 		Input::merge(array_map('trim', Input::except('product_attribute', 'product_tags', 'product_category')));
 
-		$entryValidator = Validator::make(Input::all(), Product::$update_rules);
+		$entryValidator = Validator::make(Input::all(), ProductService::$update_rules);
 
 		if ($entryValidator->fails())
 		{
@@ -342,6 +342,7 @@ class ProductController extends \BaseController {
 			Input::get('title'),
 			Input::get('intro'),
 			Input::get('permalink'),
+			Input::get('product_id'),
 			Input::get('sku'),
 			Input::get('price'),
 			Input::get('sale_price'),
@@ -396,7 +397,7 @@ class ProductController extends \BaseController {
 			return Redirect::route('ProductIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
 		}
 
-		$entry = Product::getEntries($id, null);
+		$entry = ProductService::getEntries($id, null);
 
 		if ($entry['status'] == 0)
 		{

@@ -51,7 +51,7 @@ class EmployeesController extends \BaseController {
       } 
 
       //Image processing
-      $destinationPath = 'public_html/uploads/backend/employee/'; // upload path
+      $destinationPath = public_path() . "/uploads/backend/employee/"; // upload path
       $extension = $employee['image']->getClientOriginalExtension(); // getting image extension
       $image = rand(11111,99999).'.'.$extension; // renameing image
       Image::make($employee['image']->getRealPath())
@@ -146,7 +146,7 @@ class EmployeesController extends \BaseController {
       if (is_object($employee['image'])) { 
 
         //Image processing
-        $destinationPath = 'public_html/uploads/backend/employee/'; // upload path
+        $destinationPath = public_path() . "/uploads/backend/employee/"; // upload path
         $extension = $employee['image']->getClientOriginalExtension(); // getting image extension
         $image = rand(11111,99999).'.'.$extension; // renameing image
         Image::make($employee['image']->getRealPath())

@@ -97,6 +97,10 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
  	Route::resource('employees', 'EmployeesController');
  	// CRUD za categories 
   	Route::resource('categories', 'CategoryController');
+  	// CRUD za categories 
+  	Route::resource('services', 'ServiceController');
+  		// CRUD za categories 
+  	Route::resource('clients', 'ClientController');
 
 	//PDF routes
 	Route::group(array('prefix' => 'pdf'), function()
@@ -133,40 +137,11 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 	});
 
 
-  	// Tag , create, save, edit, update, destroy
-	Route::group(array('prefix' => 'tags'), function()
-	{
-		Route::get('/', array('as' => 'TagIndex', 'uses' => 'TagController@index'));
+ 	// CRUD za tags 
+  	Route::resource('tags', 'TagController');
 
-		Route::get('create', array('as' => 'TagCreate', 'uses' => 'TagController@create'));
-
-		Route::post('store', array('as' => 'TagStore', 'uses' => 'TagController@store'));
-
-		Route::get('edit/{id}', array('as' => 'TagEdit', 'uses' => 'TagController@edit'));
-
-		Route::post('update/{id}', array('as' => 'TagUpdate', 'uses' => 'TagController@update'));
-
-		Route::get('destroy/{id}', array('as' => 'TagDestroy', 'uses' => 'TagController@destroy'));
-
-	});
-
- 
-
-	Route::group(array('prefix' => 'attributes'), function()
-	{
-		Route::get('/', array('as' => 'AttributeIndex', 'uses' => 'AttributeController@index'));
-
-		Route::get('create', array('as' => 'AttributeCreate', 'uses' => 'AttributeController@create'));
-
-		Route::post('store', array('as' => 'AttributeStore', 'uses' => 'AttributeController@store'));
-
-		Route::get('edit/{id}', array('as' => 'AttributeEdit', 'uses' => 'AttributeController@edit'));
-
-		Route::post('update/{id}', array('as' => 'AttributeUpdate', 'uses' => 'AttributeController@update'));
-
-		Route::get('destroy/{id}', array('as' => 'AttributeDestroy', 'uses' => 'AttributeController@destroy'));
-
-	});
+ 	// CRUD za tags 
+  	Route::resource('attributes', 'AttributeController');
 
 
 	Route::group(array('prefix' => 'clients'), function()

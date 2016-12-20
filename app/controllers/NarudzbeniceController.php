@@ -234,6 +234,8 @@ class NarudzbeniceController extends \BaseController {
 		}
 
 		$narudzbenicacustomer = NarudzbeniceProducts::getNarudzbeniceByCustomer($id);
+		
+		//goDie($id);
 
 		$this->layout->title = 'Uređivanje narudžbenice | BillingCRM';
 
@@ -261,7 +263,6 @@ class NarudzbeniceController extends \BaseController {
 	 */
 	public function update($id)
 	{
-//goDie(Input::all());
 		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
 
 		$entryValidator = Validator::make(Input::all(), Narudzbenice::$update_rules);
@@ -270,6 +271,7 @@ class NarudzbeniceController extends \BaseController {
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
+		//goDie($entryValidator );
 
 		$update = $this->repo->update(
 		    Input::get('id'),
@@ -377,7 +379,7 @@ class NarudzbeniceController extends \BaseController {
 
 			$narudzbeniceData[] = array('narudzbenice' => $narudzbenice, 'employeeinfo' => $employeeinfo['entry'], 'productspernarudzbenice' => $productspernarudzbenice['narudzbenicabycustomer'], 'totalprice' => $totalprice);
 			
-
+			
 			
 			if ($narudzbenice['status'] == 0)
 			{
@@ -386,6 +388,7 @@ class NarudzbeniceController extends \BaseController {
 
 			
 			$datetitle = date('d-m-Y');
+			
 
 			$currdate = date('d. m. Y');
 

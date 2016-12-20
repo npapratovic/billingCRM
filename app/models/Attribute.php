@@ -8,14 +8,18 @@ class Attribute extends Eloquent
 	
 	protected $table = 'attributes';
 
+	protected $fillable = array('title', 'permalink');
+
 	// New entry validation
 	public static $store_rules = array(
 		'title'					=>	'required',
+		'permalink'				=>	'required'
 	);
 
 	// Edit entry validation
 	public static $update_rules = array(
-		'id'					=>	'required|integer',
+		'title'					=>	'required',
+		'permalink'				=>	'required'
 	);	
 
 	/*

@@ -21,13 +21,13 @@ class ServiceRepository {
 	 *
 	 * @return Response
 	 */
-	public function store($title, $content, $measurement, $amount, $price, $discount, $tax)
+	public function store($title, $intro, $measurement, $amount, $price, $discount, $tax)
 	{
 		try {
 
 			$entry = new ProductService;
 			$entry->title = $title;
-			$entry->content = $content;
+			$entry->intro = $intro;
 			$entry->measurement = $measurement;
 			$entry->amount = $amount;
 			$entry->price = $price;
@@ -52,14 +52,14 @@ class ServiceRepository {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id, $title, $content, $measurement, $amount, $price, $discount, $tax)
+	public function update($id, $title, $intro, $measurement, $amount, $price, $discount, $tax)
 	{
     	
     		try {
 
 			$entry = ProductService::find($id);
 			$entry->title = $title;
-			$entry->content = $content;
+			$entry->intro = $intro;
 			$entry->measurement = $measurement;
 			$entry->amount = $amount;
 			$entry->price = $price;

@@ -35,6 +35,7 @@ class ClientRepository {
 			$entry->last_name = $last_name;
 			$entry->address = $address;
 			$entry->mjesto = $mjesto;
+			$entry->city = '1';
 			$entry->zip = $zip;
 			$entry->country = $country;
 			$entry->phone = $phone;
@@ -95,6 +96,7 @@ class ClientRepository {
 			$entry->address = $address;
 			$entry->mjesto = $mjesto;
 			$entry->zip = $zip;
+			$entry->city = '1';
 			$entry->country = $country;
 			$entry->phone = $phone;
 			$entry->fax = $fax;
@@ -150,6 +152,7 @@ class ClientRepository {
 			$entry->address = $address;
 			$entry->mjesto = $mjesto;
 			$entry->zip = $zip;
+			$entry->city = '1';
 			$entry->country = $country;
 			$entry->phone = $phone;
 			$entry->fax = $fax;
@@ -207,6 +210,7 @@ class ClientRepository {
 			$entry->address = $address;
 			$entry->mjesto = $mjesto;
 			$entry->zip = $zip;
+			$entry->city = '1';
 			$entry->country = $country;
 			$entry->phone = $phone;
 			$entry->fax = $fax;

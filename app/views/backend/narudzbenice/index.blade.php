@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih narudžbenica ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih narudžbenica ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -25,8 +25,8 @@
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->narudzbenica_number }}</td>
                     <td>{{ $entry->first_name }} {{ $entry->last_name }} </td>
@@ -51,8 +51,8 @@
     </table>
 </div>
       
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     {{ Form::open(array('route' => 'NarudzbeniceSendMail', 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'method' => 'post')) }}
     {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
     
@@ -83,8 +83,8 @@
     @endforeach
 @endif 
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -109,20 +109,20 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
 
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-email-narudzbenica-id-{{ $entry->id }}").click(function() { 
                     $('#email-narudzbenica-id-{{ $entry->id }}').modal('show');
                 });

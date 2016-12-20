@@ -28,7 +28,7 @@ class ProductRepository {
 			DB::beginTransaction();
 
 
-			$entry = new ServiceProduct;
+			$entry = new ProductService;
 			$entry->title = $title;
 			$entry->intro = $intro;
 			$entry->product_id = $product_id;
@@ -83,7 +83,7 @@ class ProductRepository {
 
 			$entry->save();
 
-			$product = DB::table('products')->orderBy('created_at', 'desc')->first();
+			$product = DB::table('products_services')->orderBy('created_at', 'desc')->first();
 
 			$newproduct = $product->id;
 
@@ -145,7 +145,7 @@ class ProductRepository {
 
     			DB::beginTransaction();
 
-			$entry = ServiceProduct::find($id);
+			$entry = ProductService::find($id);
 			$entry->title = $title;
 			$entry->intro = $intro;
 			$entry->product_id = $product_id;
@@ -554,7 +554,7 @@ class ProductRepository {
 	{
 		try
 		{
-			$entry = Product::find($id);
+			$entry = ProductService::find($id);
 
 			$entry->delete();
 

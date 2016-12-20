@@ -378,7 +378,7 @@ class WorkingOrderController extends \BaseController {
 			$employeeinfo = User::getEntries($workingorder['entry']->employee_id);
 
 			$totalprice = 0;
-goDie($workingorder);
+//goDie($workingorder);
 			foreach($productsperworkingorder['workingorderbycustomer'] as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;

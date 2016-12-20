@@ -33,7 +33,7 @@ class TrashController extends \BaseController {
 
 		// Get data
 		switch ($trashed) {
-			case 'products_services':
+			case 'products':
 
 				$entries = ProductService::onlyTrashed()->select(
 					'products_services.id AS id',
@@ -73,14 +73,14 @@ class TrashController extends \BaseController {
 				$indexes = array("title", "deleted_at", "button");
 				$folder = "";
 			break;
-			case 'products_services':
+			case 'services':
 				$entries = ProductService::onlyTrashed()->select(
 					'products_services.id AS id',
 					'products_services.title AS title',
-					'products_services.description AS description',
+					'products_services.intro AS intro',
 					'products_services.deleted_at AS deleted_at')->paginate(10);
 				$items = array("Naziv usluge", "Opis usluge", "Obrisano", "Obnovi");
-				$indexes = array("title", "description", "deleted_at", "button");
+				$indexes = array("title", "intro", "deleted_at", "button");
 				$folder = "";
 			break;
 			case 'clients':
@@ -210,23 +210,23 @@ class TrashController extends \BaseController {
 			break;
 			case 'productcategories':
 			    	Category::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('CategoryIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));
+	            		return Redirect::route('admin.categories.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));
 			break;
 			case 'producttags':
 				Tag::withTrashed()->where('id', $id)->restore();
-		            	return Redirect::route('TagIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));
+		            	return Redirect::route('admin.tags.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));
 			break;
 			case 'productattributes':
 				Attribute::withTrashed()->where('id', $id)->restore();
-		            	return Redirect::route('AttributeIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+		            	return Redirect::route('admin.attributes.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			case 'services':
 				Service::withTrashed()->where('id', $id)->restore();
-		            	return Redirect::route('ServiceIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+		            	return Redirect::route('admin.services.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			case 'clients':
 				User::withTrashed()->where('id', $id)->restore();
-		            	return Redirect::route('ClientIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));
+		            	return Redirect::route('admin.clients.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));
 			break;
 			case 'orders':
 				Order::withTrashed()->where('id', $id)->restore();

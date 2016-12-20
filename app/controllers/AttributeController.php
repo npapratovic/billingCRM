@@ -7,22 +7,6 @@
 */
 
 class AttributeController extends \BaseController {
-
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new AttributeRepository;
-	}
 	/**
 	 * Display a listing of the attribute.
 	 *
@@ -30,24 +14,13 @@ class AttributeController extends \BaseController {
 	 */
 	public function index()
 	{
-		  
+		 
 		// Get data
 
-		$entries = Attribute::getEntries(null, null);
-		
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
+		$entries = Attribute::paginate(10);
+
 		$this->layout->title = 'Atributi | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
 		$this->layout->content = View::make('backend.attribute.index', array('entries' => $entries));
 	}
 
@@ -59,23 +32,17 @@ class AttributeController extends \BaseController {
 	 */
 	public function create()
 	{ 
-		$entries = Attribute::getEntries(null, null);
 
-		$this->layout->title = 'Unos novog atributa | BillingCRM';
-
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'
-			);
+		$entries = Attribute::paginate(5);
 
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
 
-		$this->layout->content = View::make('backend.attribute.create', array('postRoute' => 'AttributeStore', 'entries' => $entries));
+		$this->layout->title = 'Kreiranje novog atributa | BillingCRM';
+		
+		$this->layout->content = View::make('backend.attribute.create', compact('entries'));
 	}
 
 
@@ -86,29 +53,18 @@ class AttributeController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
-
-		$entryValidator = Validator::make(Input::all(), Attribute::$store_rules);
+		$attribute = Request::all(); 
+		
+		$entryValidator = Validator::make(Input::all(), Attribute::$store_rules); 
 
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+		  return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
 
-		$store = $this->repo->store(
-			Input::get('title'),
-			Input::get('permalink')
-		);
-
-
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('AttributeIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+		Attribute::create($attribute);  
+		
+		return Redirect::route('admin.attributes.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
 	}
 
 
@@ -144,30 +100,18 @@ class AttributeController extends \BaseController {
 	public function edit($id)
 	{
 	
-		// Get data
+		$entries = Attribute::paginate(5);
 
-		$entry = Attribute::getEntries($id, null);
-
-		$entries = Attribute::getEntries(null, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$this->layout->title = 'Uređivanje atributa | BillingCRM';
-
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
-
+		$attribute = Attribute::find($id);
+		
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
 
-		$this->layout->content = View::make('backend.attribute.edit', array('entry' => $entry['entry'], 'postRoute' => 'AttributeUpdate', 'entries' => $entries));
+		$this->layout->title = 'Uređivanje korisnika | BillingCRM';
+		
+		$this->layout->content = View::make('backend.attribute.edit', compact('attribute', 'entries'));
 	}
 
 
@@ -179,29 +123,20 @@ class AttributeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
+		$attribute = Request::all(); 
 
-		$entryValidator = Validator::make(Input::all(), Attribute::$update_rules);
+		$entryValidator = Validator::make(Input::all(), Attribute::$update_rules); 
 
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+		  return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
+		
+		$data = Attribute::find($id);
+		
+		$data->update($attribute);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('title'),
-			Input::get('permalink')
-		);
-
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('AttributeIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.attributes.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -213,32 +148,8 @@ class AttributeController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		if ($id == null)
-		{
-			return Redirect::route('AttributeIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Attribute::getEntries($id, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('AttributeIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('AttributeIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('AttributeIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		Attribute::find($id)->delete();
+		return Redirect::route('admin.attribute.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

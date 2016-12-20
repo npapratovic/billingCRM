@@ -66,7 +66,7 @@ class CategoryController extends \BaseController {
       } 
 
       //Image processing
-      $destinationPath = 'public_html/uploads/backend/category/'; // upload path
+      $destinationPath = public_path() . "/uploads/backend/category/"; // upload path
       $extension = $category['image']->getClientOriginalExtension(); // getting image extension
       $image = rand(11111,99999).'.'.$extension; // renameing image
       Image::make($category['image']->getRealPath())
@@ -108,9 +108,9 @@ class CategoryController extends \BaseController {
 	public function edit($id)
 	{
 
-	  $entries = Category::paginate(5);  
+	 $entries = Category::paginate(5);  
       
-      $category = Category::find($id);
+     	 $category = Category::find($id);
       
 	  $this->layout->title = 'Uređivanje kategorije | BillingCRM';
 
@@ -120,7 +120,7 @@ class CategoryController extends \BaseController {
 		'js/backend/speakingurl.min.js'
 	  );
 
-      $this->layout->content = View::make('backend.category.edit', compact('category', 'entries'));
+      $this->layout->content = View::make('backend.tag.edit', compact('category', 'entries'));
  
 	}
 
@@ -155,7 +155,7 @@ class CategoryController extends \BaseController {
       if (is_object($category['image'])) { 
 
         //Image processing
-        $destinationPath = 'public_html/uploads/backend/category/'; // upload path
+        $destinationPath = public_path() . "/uploads/backend/category/"; // upload path
         $extension = $category['image']->getClientOriginalExtension(); // getting image extension
         $image = rand(11111,99999).'.'.$extension; // renameing image
         Image::make($category['image']->getRealPath())

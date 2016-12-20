@@ -33,9 +33,15 @@
                 </div>  
 
                         <div class="form-group">  
-                    <label for="intro">Uvod u članak:</label>  
-                    {{ Form::textarea('intro', isset($entry->intro) ? $entry->intro : null, ['class' => 'form-control editor', 'placeholder' => 'Uvod u članak']) }}
+                    <label for="intro">Kratki opis proizvoda:</label>  
+                    {{ Form::textarea('intro', isset($entry->intro) ? $entry->intro : null, ['class' => 'form-control editor', 'placeholder' => 'Kratki opis']) }}
                     <small class="text-danger">{{ $errors->first('intro') }}</small>
+                </div>  
+
+                        <div class="form-group">  
+                    <label for="content">Opis proizvoda:</label>  
+                    {{ Form::textarea('content', isset($entry->content) ? $entry->content : null, ['class' => 'form-control editor', 'placeholder' => 'Opširniji opis proizvoda']) }}
+                    <small class="text-danger">{{ $errors->first('content') }}</small>
                 </div>  
             <ul class="nav nav-tabs">
              <li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-list-alt" aria-hidden="true"></i> Općenito</a></li>

@@ -109,7 +109,7 @@ class NarudzbeniceRepository {
 			$entry->save();
 
 
-			$narudzbenica = DB::table('narudzbenice')->orderBy('created_at', 'desc')->first();
+			$narudzbenica = DB::table('narudzbenice')->where('id', $id)->first();
 
 
 			$i = 0;
@@ -117,7 +117,7 @@ class NarudzbeniceRepository {
 
 			if ($product != null)
 			{
-				DB::table('narudzbenica_products')->where('narudzbenica_id', '=', $id)->delete();
+				DB::table('narudzbenice_products')->where('narudzbenica_id', '=', $id)->delete();
 				foreach ($product as $key=>$value)
 				{
 					if(++$i == $ilen) break;

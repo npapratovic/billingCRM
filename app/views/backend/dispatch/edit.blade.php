@@ -117,7 +117,7 @@
                 <div class="col-md-2">
                    <div class="form-group">  
                     <label for="amount">Količina:</label>
-                    {{ Form::text('amount[]', isset($singleproduct->quantity) ? $singleproduct->quantity : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
+                    {{ Form::text('amount[]', isset($singleproduct->amount) ? $singleproduct->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
                     <small class="text-danger">{{ $errors->first('amount') }}</small>
                 </div>    
                 </div>

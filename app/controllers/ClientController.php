@@ -31,24 +31,11 @@ class ClientController extends \BaseController {
 	{ 
 		// Get data
 
-		$entries = User::getUserByUserGroup('client');
-
-
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
+		$entries = User::whereNull('deleted_at')->where('user_group', 'client')->paginate(10);
 
 		$this->layout->title = 'Klijenti | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.client.index', array('entries' => $entries));
+		$this->layout->content = View::make('backend.client.index', compact('entries'));
 	}
 
 
@@ -60,7 +47,7 @@ class ClientController extends \BaseController {
 	public function create()
 	{
 		 
-		$entries = User::getUserByUserGroup('client');
+		$entries = User::whereNull('deleted_at')->where('user_group','client')->paginate(5);
 
 		$this->layout->title = 'Unos novog klijenta | BillingCRM';
 
@@ -76,7 +63,7 @@ class ClientController extends \BaseController {
 			'js/backend/datatables.js'
 		);
 
-		$this->layout->content = View::make('backend.client.create', array('postRoute' => 'ClientStore', 'entries' => $entries));
+		$this->layout->content = View::make('backend.client.create', compact('entries'));
 	}
 
 
@@ -87,7 +74,7 @@ class ClientController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
+		$client = Request::all();
 
 		$entryValidator = Validator::make(Input::all(), User::$store_rules_client);
 
@@ -96,35 +83,12 @@ class ClientController extends \BaseController {
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
 
-		$store = $this->repo->store(
-			Input::get('company_name'),
-			Input::get('client_type'),
-			Input::get('oib'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('address'),
-			Input::get('mjesto'),
-			Input::get('zip'),
-			Input::get('country'),
-			Input::get('phone'),
-			Input::get('fax'),
-			Input::get('mobile'),
-			Input::get('email'),
-			Input::get('web'),
-			Input::get('iban'),
-			Input::get('note')
+		$client['city'] = '1';
+		$client['user_group'] = 'client';
 
-		);
-		
+		User::create($client); 
 
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('ClientIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.clients.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
 	}
 
 
@@ -160,14 +124,10 @@ class ClientController extends \BaseController {
 	{ 
 		// Get data
 
-		$entry = User::getUserInfos($id);
-		
-		$entries = User::getUserByUserGroup('client');
+		$entries = User::whereNull('deleted_at')->where('user_group','client')->paginate(5);
 
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
+		$client = User::find($id);
+
 		$this->layout->title = 'Uređivanje korisnika | BillingCRM';
 
 		$this->layout->css_files = array(
@@ -178,11 +138,11 @@ class ClientController extends \BaseController {
 			'js/backend/bootstrap-filestyle.min.js',
 			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
+			
 		);
 
-		$this->layout->content = View::make('backend.client.edit', array('entry' => $entry['user'], 'postRoute' => 'ClientUpdate', 'entries' => $entries));
+		$this->layout->content = View::make('backend.client.edit', compact('client', 'entries'));
 	}
 
 
@@ -194,7 +154,7 @@ class ClientController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
+		$client = Request::all(); 
 
 		$entryValidator = Validator::make(Input::all(), User::$update_rules_client);
 
@@ -203,34 +163,11 @@ class ClientController extends \BaseController {
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('company_name'),
-			Input::get('client_type'),
-			Input::get('oib'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('address'),
-			Input::get('mjesto'),
-			Input::get('zip'),
-			Input::get('country'),
-			Input::get('phone'),
-			Input::get('fax'),
-			Input::get('mobile'),
-			Input::get('email'),
-			Input::get('web'),
-			Input::get('iban'),
-			Input::get('note')
-		);
+		$data = User::find($id);
+
+		$data->update($client);
 		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('ClientIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.clients.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -242,21 +179,8 @@ class ClientController extends \BaseController {
 	 */
 	public function destroy($id)
 	{ 
-		if ($id == null)
-		{
-			return Redirect::route('ClientIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('ClientIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('ClientIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		User::find($id)->delete();
+      	return Redirect::route('admin.clients.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

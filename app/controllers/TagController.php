@@ -7,21 +7,6 @@
 */
 
 class TagController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new TagRepository;
-	}
 	/**
 	 * Display a listing of the tag.
 	 *
@@ -32,21 +17,10 @@ class TagController extends \BaseController {
 		 
 		// Get data
 
-		$entries = Tag::getEntries(null, null);
+		$entries = Tag::paginate(10);
 
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Oznake | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
 		$this->layout->content = View::make('backend.tag.index', array('entries' => $entries));
 	}
 
@@ -58,25 +32,17 @@ class TagController extends \BaseController {
 	 */
 	public function create()
 	{
-	 
 
-		$entries = Tag::getEntries(null, null);
-
-		$this->layout->title = 'Unos novih oznaka | BillingCRM';
-
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'
-			);
+		$entries = Tag::paginate(5);
 
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
 
-		$this->layout->content = View::make('backend.tag.create', array('postRoute' => 'TagStore', 'entries' => $entries));
+		$this->layout->title = 'Kreiranje nove oznake | BillingCRM';
+		
+		$this->layout->content = View::make('backend.tag.create', compact('entries'));
 	}
 
 
@@ -87,30 +53,19 @@ class TagController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
 
-		$entryValidator = Validator::make(Input::all(), Tag::$store_rules);
+		$tag = Request::all(); 
+		
+		$entryValidator = Validator::make(Input::all(), Tag::$store_rules); 
 
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+		  return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
 
-		$store = $this->repo->store(
-			Input::get('title'),
-			Input::get('permalink'),
-			Input::get('description')
-		);
-
+		Tag::create($tag);  
 		
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('TagIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.tags.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
 	}
 
 
@@ -147,32 +102,18 @@ class TagController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-	 
+		$entries = Tag::paginate(5);
 
-		// Get data
-
-		$entry = Tag::getEntries($id, null);
-
-		$entries = Tag::getEntries(null, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$this->layout->title = 'Uređivanje oznake | BillingCRM';
-
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
-
+		$tag = Tag::find($id);
+		
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
 
-		$this->layout->content = View::make('backend.tag.edit', array('entry' => $entry['entry'], 'postRoute' => 'TagUpdate', 'entries' => $entries));
+		$this->layout->title = 'Uređivanje korisnika | BillingCRM';
+		
+		$this->layout->content = View::make('backend.tag.edit', compact('tag', 'entries'));
 	}
 
 
@@ -184,30 +125,20 @@ class TagController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
+		$tag = Request::all(); 
 
-		$entryValidator = Validator::make(Input::all(), Tag::$update_rules);
+		$entryValidator = Validator::make(Input::all(), Tag::$update_rules); 
 
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+		  return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
+		
+		$data = Tag::find($id);
+		
+		$data->update($tag);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('title'),
-			Input::get('permalink'),
-			Input::get('description')
-		);
-
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('TagIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.tags.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -219,34 +150,8 @@ class TagController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		 
-
-		if ($id == null)
-		{
-			return Redirect::route('TagIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Tag::getEntries($id, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('TagIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('TagIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('TagIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		Tag::find($id)->delete();
+		return Redirect::route('admin.tags.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

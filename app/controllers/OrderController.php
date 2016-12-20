@@ -261,6 +261,8 @@ class OrderController extends \BaseController {
 	{
 		 
 		$entry = Order::getEntries($id);
+		
+		$entry['entry']->order_date = date("Y-m-d",strtotime($entry['entry']->order_date));
 
 		// Getting all clients
 		$clientslist = array();

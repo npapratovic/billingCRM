@@ -106,6 +106,7 @@ class InvoiceRepository {
 			$entry->repeat_invoice = $repeat_invoice;
 			$entry->invoice_language = $invoice_language;
 			$entry->valute = $valute;
+			//goDie($imported_products);
 
 			$entry->save();
 
@@ -134,6 +135,8 @@ class InvoiceRepository {
 				}
 			}
 
+			if(!is_null($imported_products)){
+			
 			foreach($imported_products as $imported_product){
 				$imported_item = ImportedOrderProduct::getEntry($imported_product);
 				$orderproduct = new InvoicesProducts;
@@ -147,6 +150,10 @@ class InvoiceRepository {
 				$orderproduct->imported = '1';
 				$orderproduct->save();
 			}
+			
+			
+			}
+			
 
 			DB::commit();
 			return array('status' => 1);

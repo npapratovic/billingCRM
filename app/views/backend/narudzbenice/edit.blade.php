@@ -335,8 +335,9 @@ $("#client_id").change(function() {
                     $('#email-narudzbenica-id-{{ $entry->id }}').modal('show');
                 });
 
-            $('.datepicker').datepicker({
-                format: 'mm-dd-yyyy',
+           $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+
             });
     });
 </script>

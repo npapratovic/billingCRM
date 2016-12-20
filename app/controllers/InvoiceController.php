@@ -285,6 +285,7 @@ class InvoiceController extends \BaseController {
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator);
 		}
+		//goDie(Input::all());
 
 		$update = $this->repo->update(
 		    Input::get('id'),

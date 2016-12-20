@@ -243,7 +243,7 @@
                 <div class="col-md-12">
                 <div class="form-group">  
                     <label for="invoice_note">Napomene:</label>
-                    {{ Form::textarea('invoice_note', isset($entry->invoice_note) ? $entry->invoice_note : null, ['class' => 'form-control', 'id' => 'invoice_note', 'placeholder' => 'Napomene na računu']) }}
+                    {{ Form::textarea('invoice_note', isset($entry->offer_note) ? $entry->offer_note : null, ['class' => 'form-control', 'id' => 'invoice_note', 'placeholder' => 'Napomene na računu']) }}
                     <small class="text-danger">{{ $errors->first('invoice_note') }}</small>
                     </div>
                     </div>
