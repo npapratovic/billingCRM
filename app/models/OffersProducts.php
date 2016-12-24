@@ -3,6 +3,13 @@
 class OffersProducts extends Eloquent
 {
 	protected $table = 'offers_products';
+
+	protected $fillable = array('offer_id', 'product_id', 'measurement', 'amount', 'price', 'discount', 'taxpercent');
+
+	  public function productServices()
+    {
+        return $this->hasMany('ProductService', 'id', 'product_id');
+    }
 	
 
 	 	public static function getEntries($id = null)

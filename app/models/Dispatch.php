@@ -8,6 +8,8 @@ class Dispatch extends Eloquent
 	
 	protected $table = 'dispatches';
 
+	protected $fillable = array('dispatch_number', 'taxable', 'hide_amount', 'client_id', 'employee_id', 'client_address', 'client_oib', 'stock_label', 'dispatch_employee', 'dispatch_date_ship', 'dispatch_note', 'dispatch_language', 'valute');
+
 	// New entry validation
 	public static $store_rules = array(
 		'client_id'					=>	'required',
@@ -17,6 +19,16 @@ class Dispatch extends Eloquent
 	public static $update_rules = array(
 		'client_id'					=>	'required|integer',
 	);	
+
+	public function client()
+	{
+		return $this->belongsTo('Client', 'client_id', 'id');
+	}
+
+	public function products()
+	{
+		return $this->hasMany('DispatchesProducts');
+	}
 
 	/*
 	*	Get entries

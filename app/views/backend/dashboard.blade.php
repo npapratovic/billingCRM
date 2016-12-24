@@ -134,7 +134,7 @@
                                                   Izlazni računi
                                     </div>
                                     <div class="col-md-3 text-right">
-                                         <a href="{{ URL::route('InvoiceIndex') }}"><i class="fa fa-eye"></i> Svi računi</a>
+                                         <a href="{{ URL::route('admin.invoices.index') }}"><i class="fa fa-eye"></i> Svi računi</a>
                                     </div>
                                 </div>
                             </header>
@@ -164,7 +164,7 @@
                                                 <td>{{$entry->invoice_date_deadline}}</td>
                                                 <td></td>
                                                 <td> 
-                                                    <a href="{{ URL::route('InvoiceEdit', array('id' => $entry->id)) }}">
+                                                    <a href="{{ URL::route('admin.invoices.edit', array('id' => $entry->id)) }}">
                                                         <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                                                     </a>
                                                     <button type="button" id="btn-delete-invoice-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-invoice-id-{{ $entry->id }}"><i class="fa fa-times"></i></button>
@@ -508,10 +508,20 @@
                                     <p>Želite li obrisati račun:{{$entry->invoice_number}} ?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="{{ URL::route('InvoiceDestroy', array('id' => $entry->id)) }}">
-                                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                                    </a>
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                                      <div class="row">
+                                        <div class="col-md-7">
+                                        </div>
+                                        <div class="col-md-2">
+                                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.clients.destroy', $entry->id]]) }}
+                                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                                            {{ Form::close() }} 
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                                        </div>
+                                        <div class="col-md-1">
+                                        </div>
+                                    </div> 
                                 </div>
                             </div>
                         </div>

@@ -97,10 +97,26 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
  	Route::resource('employees', 'EmployeesController');
  	// CRUD za categories 
   	Route::resource('categories', 'CategoryController');
-  	// CRUD za categories 
+  	// CRUD za services 
   	Route::resource('services', 'ServiceController');
-  		// CRUD za categories 
+  	// CRUD za clients 
   	Route::resource('clients', 'ClientController');
+  	// CRUD za invoices 
+  	Route::resource('invoices', 'InvoiceController');
+  	// CRUD za orders 
+  	Route::resource('orders', 'OrderController');
+  	Route::get('createinvoice/{id}', array('as' => 'CreateInvoice', 'uses' => 'OrderController@createInvoice'));
+
+  	// CRUD za narudzbenice 
+  	Route::resource('narudzbenice', 'NarudzbeniceController');
+  	// CRUD za offers 
+  	Route::resource('offers', 'OfferController');
+
+  	// CRUD za dispatch
+  	Route::resource('dispatch', 'DispatchController');
+
+  	// CRUD za workingorder
+  	Route::resource('workingorder', 'WorkingOrderController');
 
 	//PDF routes
 	Route::group(array('prefix' => 'pdf'), function()

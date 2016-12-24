@@ -30,25 +30,11 @@ class DispatchController extends \BaseController {
 	public function index()
 	{
 
-		// Get data
+		$entries = Dispatch::with('client')->paginate(10);
 
-		$entries = Dispatch::getDispatchEntries();
- 		
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$this->layout->title = 'Otpremnice | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.dispatch.index', array('entries' => $entries));
+		$this->layout->title = 'Korisnici | BillingCRM';
+		
+		$this->layout->content = View::make('backend.dispatch.index', compact('entries'));
 	}
 
 
@@ -59,60 +45,47 @@ class DispatchController extends \BaseController {
 	 */
 	public function create()
 	{
-		$entries = Dispatch::getEntries(null, null);
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries();
-	 	
-	 	if ($products['status'] == 0)
+	 	$products = ProductService::get();
+
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
+		/*$lastdispatchnumber = Dispatch::orderBy('id', 'desc')->first()->id;
 
- 		$lastdispatchnumber = Dispatch::getLastDispatch();
- 		$newdispatchnumber = 0;
- 		if(DB::table('dispatches')->count() > 0){
- 			$newdispatchnumber = $lastdispatchnumber['entry']->dispatch_number + 1;
- 		} else {
- 			$newdispatchnumber = 0;
- 		}
+		$newdispatchnumber = 0;
+
+		if(DB::table('narudzbenice')->count() > 0){
+			$newdispatchnumber = $lastdispatchnumber + 1;
+		} */
 
 		$this->layout->title = 'Unos nove otpremnice | BillingCRM';
 
 		$this->layout->css_files = array(
-			'css/backend/summernote.css'
+
 			);
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.dispatch.create', array('postRoute' => 'DispatchStore', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'newdispatchnumber' => $newdispatchnumber));
+		$this->layout->content = View::make('backend.dispatch.create', compact('clientlist', 'productlist', 'newdispatchnumber'));
 	}
 
 
@@ -124,50 +97,45 @@ class DispatchController extends \BaseController {
 	public function store()
 	{
 
-		
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$dispatch = Request::all();
      
 		$entryValidator = Validator::make(Input::all(), Dispatch::$store_rules);
-
 		
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('dispatch_number', 'taxable', 'hide_amount', 'client_id', 'client_address', 'client_oib', 'stock_label', 'dispatch_employee', 'dispatch_date_ship', 'dispatch_note', 'dispatch_language', 'valute'));
 		}
 
+		$dispatch['employee_id'] = Auth::id();
+
+		Dispatch::create($dispatch);
 		
-		$store = $this->repo->store(
-			Input::get('dispatch_number'),
-			Input::get('taxable'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Auth::id(),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('stock_label'),
-			Input::get('dispatch_employee'),
-			Input::get('dispatch_date_ship'),
-			Input::get('dispatch_note'),
-			Input::get('dispatch_language'),
-			Input::get('valute')
-		);
+	 	$dispatch_id = Dispatch::orderBy('id', 'desc')->first()->id;
+	 	$product = $dispatch['product'];
+	 
+		$i = 0;
+		$ilen = count($product); 
 
-
-
-		if ($store['status'] == 0)
+		if ($product != null)
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+		
+				$product_dispatch['product_id'] = $value;
+				$product_dispatch['dispatch_id'] = $dispatch_id;
+			   	$product_dispatch['measurement'] = $dispatch['measurement'][$key];
+				$product_dispatch['amount'] = $dispatch['amount'][$key];
+				$product_dispatch['price'] = $dispatch['price'][$key];
+				$product_dispatch['discount'] = $dispatch['discount'][$key];
+				$product_dispatch['taxpercent'] = $dispatch['taxpercent'][$key];
+				DispatchesProducts::create($product_dispatch);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('DispatchIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+
+
+		return Redirect::route('DispatchIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
 	}
 
 
@@ -205,59 +173,44 @@ class DispatchController extends \BaseController {
 		
 		// Get data
 
-		$entry = Dispatch::getEntries($id, null);
+		$dispatch = Dispatch::find($id);
 
-        		$dispatchproducts = DispatchesProducts::getDispatchByCustomer($id);
-
-		$entries = Dispatch::getEntries(null, null);
+        		$dispatchproducts = DispatchesProducts::with(['products'])->where('dispatch_id', $id)->get();
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries();
-	 	
-	 	if ($products['status'] == 0)
+	 	$products = ProductService::get();
+
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
+		$postRoute = 'DispatchUpdate';
 
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Uređivanje otpremnice | BillingCRM';
 
 		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
+		
+		);
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.dispatch.edit', array('entry' => $entry['entry'], 'postRoute' => 'DispatchUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'dispatchproducts' => $dispatchproducts['dispatchbycustomer']));
+		$this->layout->content = View::make('backend.dispatch.edit', compact('postRoute', 'clientlist', 'productlist', 'dispatch', 'dispatchproducts'));
 	}
 
 
@@ -269,49 +222,46 @@ class DispatchController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$dispatch = Request::all();
       
 		$entryValidator = Validator::make(Input::all(), Dispatch::$store_rules);
-
 		
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
 
+		$data = Dispatch::find($id);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('dispatch_number'),
-			Input::get('taxable'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('stock_label'),
-			Input::get('dispatch_employee'),
-			Input::get('dispatch_date_ship'),
-			Input::get('dispatch_note'),
-			Input::get('dispatch_language'),
-			Input::get('valute')
-		);
+		$data->update($dispatch);
 
+	 	$dispatch_id = Dispatch::find($id)->id;
 
+	 	$product = $dispatch['product'];
+	 
+		$i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
+		{
+			DispatchesProducts::where('dispatch_id', $dispatch_id)->delete();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
 		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+				$product_dispatch['product_id'] = $value;
+				$product_dispatch['dispatch_id'] = $dispatch_id;
+			   	$product_dispatch['measurement'] = $dispatch['measurement'][$key];
+				$product_dispatch['amount'] = $dispatch['amount'][$key];
+				$product_dispatch['price'] = $dispatch['price'][$key];
+				$product_dispatch['discount'] = $dispatch['discount'][$key];
+				$product_dispatch['taxpercent'] = $dispatch['taxpercent'][$key];
+				DispatchesProducts::create($product_dispatch);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('DispatchIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+
+		return Redirect::route('DispatchIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
 	}
 
 	public function createPdf($id)
@@ -320,35 +270,28 @@ class DispatchController extends \BaseController {
 		if (isset($id))
 		{
 
-			$dispatch = Dispatch::getEntries($id);
+			$dispatch = Dispatch::with('client')->where('id', $id)->first();
 
-			$productsperdispatch = DispatchesProducts::getDispatchByCustomer($dispatch['entry']->id);
+			$productsperdispatch = DispatchesProducts::with(['products'])->get();
 
-			$employeeinfo = User::getEntries($dispatch['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($dispatch->employee_id);
 
 			$totalprice = 0;
 
-			foreach($productsperdispatch['dispatchbycustomer'] as $singleproduct){
+			foreach($productsperdispatch as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$dispatchesData[] = array('dispatch' => $dispatch, 'employeeinfo' => $employeeinfo['entry'], 'productsperdispatch' => $productsperdispatch['dispatchbycustomer'], 'totalprice' => $totalprice);
-			
-
-			
-			if ($dispatch['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
+			$dispatchesData[] = compact('dispatch', 'employeeinfo', 'productsperdispatch', 'totalprice');
 
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'otpremnica_obrazac_' . $dispatch['entry']->dispatch_number . '-' . $datetitle;
+			$pdfname = 'otpremnica_obrazac_' . $dispatch->dispatch_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/dispatches/" . $pdfname . '.pdf';
 

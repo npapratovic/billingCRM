@@ -4,6 +4,12 @@ class DispatchesProducts extends Eloquent
 {
 	protected $table = 'dispatches_products';
 	
+	protected $fillable = array('dispatch_id', 'product_id', 'measurement', 'amount', 'price', 'discount', 'taxpercent');
+
+
+	public function products(){
+		return $this->belongsTo('ProductService', 'product_id', 'id');
+	}
 
 	 	public static function getEntries($id = null)
 	{

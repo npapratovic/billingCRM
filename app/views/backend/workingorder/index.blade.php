@@ -3,7 +3,7 @@
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
     <li class="active"><a href="{{ URL::route('WorkingOrderIndex') }}">Pregled svih radnih naloga</a></li>
     
-    <a href="{{ URL::route('WorkingOrderCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ route('admin.workingorder.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novi radni nalog
         </button>
@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih radnih naloga ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih radnih naloga ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -25,14 +25,14 @@
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->workingorder_number }}</td>
-                    <td>{{ $entry->first_name }} {{ $entry->last_name }} </td>
+                    <td>{{ $entry->client->first_name }} {{ $entry->client->last_name }} </td>
                     <td class="col-md-1">
 
-                        <a href="{{ URL::route('WorkingOrderEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ route('admin.workingorder.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-tag-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-tag-id-{{ $entry->id }}"><i class="fa fa-times"></i>
@@ -51,8 +51,8 @@
     </table>
 </div>
       
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     {{ Form::open(array('route' => 'WorkingOrderSendMail', 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'method' => 'post')) }}
     {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
 
@@ -83,8 +83,8 @@
     @endforeach
 @endif 
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -98,7 +98,7 @@
                     <p>Želite li obrisati radni nalog: {{ $entry->workingorder_number }} ?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('WorkingOrderDestroy', array('id' => $entry->id)) }}">
+                    <a href="{{ route('admin.workingorder.destroy', array('id' => $entry->id)) }}">
                         <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
                     </a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
@@ -109,20 +109,20 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
 
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-email-workingorder-id-{{ $entry->id }}").click(function() { 
                     $('#email-workingorder-id-{{ $entry->id }}').modal('show');
                 });

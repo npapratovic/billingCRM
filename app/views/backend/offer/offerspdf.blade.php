@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje ponude {{ $offersdata['0']['offer']['entry']->id }}</title>
+	 		<title>Izdavanje ponude {{ $offersdata['0']['offer']->id }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj ponude #{{ $offersdata['0']['offer']['entry']->offer_number}} </td>
+            <td style="color:#595959;">Broj ponude #{{ $offersdata['0']['offer']->offer_number}} </td>
         </tr>
         <tr>
             <td style="color:#000000;">{{ $offersdata['0']['employeeinfo']->first_name }} {{ $offersdata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $offersdata['0']['offer']['entry']->first_name }} {{ $offersdata['0']['offer']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja ponude: {{ date('d.m.Y', strtotime($offersdata['0']['offer']['entry']->offer_start))}}</td>
+            <td style="color:#000000;">{{ $offersdata['0']['offer']->first_name }} {{ $offersdata['0']['offer']->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja ponude: {{ date('d.m.Y', strtotime($offersdata['0']['offer']->offer_start))}}</td>
             <td></td>
         </tr>
         <tr>
             <td style="color:#595959;">{{ $offersdata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $offersdata['0']['offer']['entry']->address }}</td>
+            <td style="color:#595959;">{{ $offersdata['0']['offer']->address }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Hrvatska, {{ $offersdata['0']['employeeinfo']->zip }} {{ $offersdata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $offersdata['0']['offer']['entry']->zip }} {{ $offersdata['0']['offer']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $offersdata['0']['offer']->zip }} {{ $offersdata['0']['offer']->cityname }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Telefon: {{ $offersdata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $offersdata['0']['offer']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $offersdata['0']['offer']->phone }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Email: {{ $offersdata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $offersdata['0']['offer']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $offersdata['0']['offer']->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -76,18 +76,22 @@
         <tr style="background:#ddd;">
             <th style="color:#595959; text-align:left;">Proizvod</th>
             <th style="color:#595959;">Cijena</th>
+            <th style="color:#595959;">Popust</th>
+            <th style="color:#595959;">Stopa</th>
             <th style="color:#595959;">Količina</th>
             <th style="color:#595959;">Ukupna cijena po proizvodu</th>
         </tr>
     </thead>
     <tbody>
 
-    @foreach($productsperoffer['offerbycustomer'] as $singleproduct)
+    @foreach($productsperoffer as $singleproduct)
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:left;">{{ $singleproduct['productServices'][0]->title }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
+            <td style="text-align:center;">{{ $singleproduct->discount }} %</td>
+            <td style="text-align:center;">{{ $singleproduct->taxpercent }} %</td>
             <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
-            <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->amount }} kn</td> 
+            <td style="text-align:center;">{{ number_format(($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
         </tr>
         @endforeach
     </tbody>
@@ -101,13 +105,13 @@
             <td style="color:#595959; text-align:right;"></td>
         </tr>
         <tr>
-            @if($offersdata['0']['offer']['entry']->payment_way == 'virman')
+            @if($offersdata['0']['offer']->payment_way == 'virman')
                 <td>Virman (bankovna transakcija)</td>
-            @elseif($offersdata['0']['offer']['entry']->payment_way == 'preuzimanje')
+            @elseif($offersdata['0']['offer']->payment_way == 'preuzimanje')
                 <td>Po preuzimanju</td>
-            @elseif($offersdata['0']['offer']['entry']->payment_way == 'kartica')
+            @elseif($offersdata['0']['offer']->payment_way == 'kartica')
                 <td>Kartično plaćanje</td>
-            @elseif($offersdata['0']['offer']['entry']->payment_way == 'paypal')
+            @elseif($offersdata['0']['offer']->payment_way == 'paypal')
                 <td>PayPal</td>
             @endif
             <td>

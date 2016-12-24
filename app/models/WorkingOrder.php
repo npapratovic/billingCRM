@@ -8,6 +8,8 @@ class WorkingOrder extends Eloquent
 	
 	protected $table = 'workingorders';
 
+	protected $fillable = array('workingorder_number', 'taxable', 'hide_amount', 'client_id', 'employee_id', 'client_address', 'client_oib', 'workingorder_employee', 'workingorder_date_ship', 'workingorder_note', 'workingorder_description');
+
 	// New entry validation
 	public static $store_rules = array(
 		'client_id'					=>	'required',
@@ -17,6 +19,16 @@ class WorkingOrder extends Eloquent
 	public static $update_rules = array(
 		'client_id'					=>	'required|integer',
 	);	
+
+	public function client()
+	{
+		return $this->belongsTo('Client', 'client_id', 'id');
+	}
+
+	public function products()
+	{
+		return $this->hasMany('WorkingOrdersProduct');
+	}
 
 	/*
 	*	Get entries

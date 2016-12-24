@@ -5,6 +5,17 @@ class ImportedOrderProduct extends Eloquent
 	protected $table = 'imported_order_products';
 
 
+	  public function invoices_products()
+    {
+        return $this->hasMany('InvoicesProducts');
+    }
+
+      public function ordersProducts()
+    {
+        return $this->hasMany('OrdersProducts');
+    }
+
+
 	public static function getEntry($id)
 	{
 		try

@@ -8,7 +8,7 @@ class ProductService extends Eloquent
 	
 	protected $table = 'products_services';
 
-	protected $fillable = array('title', 'intro', 'measurement','amount','price', 'discount', 'tax', 'created_at','updated_at');
+	protected $fillable = array('title', 'intro', 'measurement','amount','price', 'type', 'discount', 'tax', 'created_at','updated_at');
 
 	// New entry validation
 	public static $store_rules = array(
@@ -18,7 +18,21 @@ class ProductService extends Eloquent
 	// Edit entry validation
 	public static $update_rules = array(
 		'id'					=>	'required|integer',
-	);	
+	);
+
+	 public function invoices_products()
+    {
+        return $this->belongsTo('InvoicesProducts');
+    }
+
+    public function orderProducts()
+    {
+        return $this->hasMany('OrdersProducts');
+    }	
+
+    	public function narudzbeniceProducts(){
+    		return $this->belongsTo('NarudzbeniceProducts');
+    	}
 
 	public static function getEntries($id = null, $items = null)
 	{

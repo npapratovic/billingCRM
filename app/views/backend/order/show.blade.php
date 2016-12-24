@@ -1,7 +1,7 @@
 <!-- Main content --> 
 <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li><a href="{{ URL::route('OrderIndex') }}">Pregled svih narudžbi</a></li>
+    <li><a href="{{ URL::route('admin.orders.index') }}">Pregled svih narudžbi</a></li>
     <li class="active">Dodaj narudžbu</li>
 </ul>
 <div class="panel-heading">
@@ -19,7 +19,7 @@
     	<button class="btn btn-primary btn-md" id="btn-email-order-id-{{ $entry->id }}" data-target="#email-order-id-{{ $entry->id }}"> <i class="fa fa-envelope-o"></i> Pošalji klijentu</button>
     	</div>
     	<div class="col-md-1">
-      		<a href="{{ URL::route('OrderIndex') }}">
+      		<a href="{{ URL::route('admin.orders.index') }}">
                 <button class="btn btn-default btn-md pull-right"><i class="fa fa-caret-square-o-left"></i> Povratak</button>
             </a> 
     	</div>
@@ -43,7 +43,7 @@
 		 	<div class="col-md-4">
 		 	<div class="form-group">  
 	                <label for="user">Klijent:</label>  
-					{{ Form::label('user', $entry->first_name . ' ' . $entry->last_name, ['class' => '']) }}
+					{{ Form::label('user', $entry['client'][0]->first_name . ' ' . $entry['client'][0]->last_name, ['class' => '']) }}
 	            </div>
 	            </div>
 
@@ -62,6 +62,7 @@
  			<div class="row">
 			
 			@foreach($orderbycustomer as $singleorder)
+			
 			<div class="col-md-12">
 					<div class="item-block">
 						<div class="item-form">
@@ -71,13 +72,13 @@
 					        	<div class="col-md-6">
 						          <div class="form-group">  
 					                    <label for="order_date">Proizvod:</label>
-					                    {{ Form::label('productname', $singleorder->productname, ['class' => '']) }}
+					                    {{ Form::label('productname', $singleorder['importedorderproducts'][0]->name, ['class' => '']) }}
 					                    </div>
 					        	</div>
 					        	<div class="col-md-4">
 						         <div class="form-group">  
 					                    <label for="order_date">Količina:</label>
-					                    {{ Form::label('quantity', $singleorder->quantity, ['class' => '']) }}
+					                    {{ Form::label('quantity', $singleorder['importedorderproducts'][0]->quantity, ['class' => '']) }}
 					                    </div>
 
 					            </div>

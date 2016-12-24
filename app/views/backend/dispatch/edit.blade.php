@@ -11,12 +11,12 @@
         </div>
         <div class="col-md-3"></div>
         <div class="col-md-2">
-        <a href="{{ URL::route('DispatchCreatePdf', array('entry_id' => $entry->id)) }}" target="_blank">
+        <a href="{{ URL::route('DispatchCreatePdf', array('entry_id' => $dispatch->id)) }}" target="_blank">
         <button class="btn btn-warning btn-md pull-right" ><i class="fa fa-file-text-o"></i> Preuzmi PDF</button>
         </a>
         </div>
         <div class="col-md-2">
-        <button class="btn btn-primary btn-md" id="btn-email-dispatch-id-{{ $entry->id }}" data-target="#email-dispatch-id-{{ $entry->id }}"><i class="fa fa-envelope-o"></i> Pošalji klijentu</button>
+        <button class="btn btn-primary btn-md" id="btn-email-dispatch-id-{{ $dispatch->id }}" data-target="#email-dispatch-id-{{ $dispatch->id }}"><i class="fa fa-envelope-o"></i> Pošalji klijentu</button>
         </div>
         <div class="col-md-1">
             <a href="{{ URL::route('DispatchIndex') }}">
@@ -27,21 +27,20 @@
 </div>
 <div class="panel-body">
     <div class="row">
-        {{ Form::open(array('route' => $postRoute, 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'files' => true)) }}
-        {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
+        {{ Form::model($dispatch, ['method' => 'PATCH','route'=>['admin.dispatch.update', $dispatch->id], 'files' => 'false', 'class' => 'form-horizontal']) }}
         <div class="col-md-7">
                 <div class="col-md-3">
                 <div class="form-group">  
-                    <label for="dispatch_number">Broj otpremnice:</label>  
-                    {{ Form::text('dispatch_number', isset($entry->dispatch_number) ? $entry->dispatch_number : null, ['class' => 'form-control', 'id' => 'dispatch_number', 'placeholder' => 'Broj otpremnice']) }}
+                    {{ Form::label('dispatch_number', 'Broj otpremnice:') }}
+                    {{ Form::text('dispatch_number', isset($dispatch->dispatch_number) ? $dispatch->dispatch_number : null, ['class' => 'form-control', 'id' => 'dispatch_number', 'placeholder' => 'Broj otpremnice']) }}
                     <small class="text-danger">{{ $errors->first('dispatch_number') }}</small>
                 </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="taxable">Oporezivo:</label>
-                    {{ Form::select('taxable', array('0' => 'Ne', '1' => 'Da'), isset($entry->taxable) ? $entry->taxable : null, array('class'=>'form-control','style'=>'' )) }}
+                    {{ Form::label('taxable', 'Oporezivo:') }}
+                    {{ Form::select('taxable', array('0' => 'Ne', '1' => 'Da'), isset($dispatch->taxable) ? $dispatch->taxable : null, array('class'=>'form-control','style'=>'' )) }}
                     <small class="text-danger">{{ $errors->first('taxable') }}</small>
                 </div>  
                     </div>
@@ -50,8 +49,8 @@
 
                     <div class="col-md-2">
                    <div class="form-group">  
-                    <label for="hide_amount">Sakrij iznose:</label> 
-                    {{ Form::select('hide_amount', array('0' => 'Ne', '1' => 'Da'), isset($entry->hide_amount) ? $entry->hide_amount : null, array('class'=>'form-control','style'=>'' )) }}
+                    {{ Form::label('hide_amount', 'Sakrij iznose:') }}
+                    {{ Form::select('hide_amount', array('0' => 'Ne', '1' => 'Da'), isset($dispatch->hide_amount) ? $dispatch->hide_amount : null, array('class'=>'form-control','style'=>'' )) }}
                     <small class="text-danger">{{ $errors->first('hide_amount') }}</small>
                 </div>   
                 </div>
@@ -59,8 +58,8 @@
 
                 <div class="col-md-4">
                 <div class="form-group">  
-                    <label for="client_id">Naručitelj:</label>  
-                    {{ Form::select('client_id', $clientlist, isset($entry->client_id) ? $entry->client_id : null, array('class' => 'form-control', 'style' => 'width:100%', 'id' => 'client_id')) }}
+                    {{ Form::label('client_id', 'Naručitelj:') }}
+                    {{ Form::select('client_id', $clientlist, isset($dispatch->client_id) ? $dispatch->client_id : null, array('class' => 'form-control', 'style' => 'width:100%', 'id' => 'client_id')) }}
                     <small class="text-danger">{{ $errors->first('client_id') }}</small>
                 </div>
                 </div>
@@ -69,8 +68,8 @@
 
                 <div class="col-md-3">
                 <div class="form-group">  
-                    <label for="client_address">Adresa:</label>  
-                    {{ Form::text('client_address', isset($entry->client_address) ? $entry->client_address : null, ['class' => 'form-control', 'id' => 'client_address', 'placeholder' => 'Adresa']) }}
+                    {{ Form::label('client_address', 'Adresa:') }} 
+                    {{ Form::text('client_address', isset($dispatch->client_address) ? $dispatch->client_address : null, ['class' => 'form-control', 'id' => 'client_address', 'placeholder' => 'Adresa']) }}
                     <small class="text-danger">{{ $errors->first('client_address') }}</small>
                 </div>
                 </div>
@@ -79,8 +78,8 @@
 
                 <div class="col-md-3">
                 <div class="form-group">  
-                    <label for="client_oib">OIB:</label>  
-                    {{ Form::text('client_oib', isset($entry->client_oib) ? $entry->client_oib : null, ['class' => 'form-control', 'id' => 'client_oib', 'placeholder' => 'OIB']) }}
+                    {{ Form::label('client_oib', 'OIB:') }}
+                    {{ Form::text('client_oib', isset($dispatch->client_oib) ? $dispatch->client_oib : null, ['class' => 'form-control', 'id' => 'client_oib', 'placeholder' => 'OIB']) }}
                     <small class="text-danger">{{ $errors->first('client_oib') }}</small>
                 </div>
                 </div>
@@ -101,14 +100,14 @@
 
                 <div class="col-md-12">
                 <div class="form-group">  
-                    <label for="product">proizvod:</label>  
+                    {{ Form::label('product', 'Proizvod:') }} 
                     {{ Form::select('product[]', $productlist, isset($singleproduct->product_id) ? $singleproduct->product_id : null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')) }}
                     <small class="text-danger">{{ $errors->first('product') }}</small>
                         </div>
                         </div>
                 <div class="col-md-2">
                         <div class="form-group">  
-                    <label for="measurement">Jedinična mjera:</label>  
+                    {{ Form::label('measurement', 'Jedinična mjera:') }}
                     {{ Form::select('measurement[]',  array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'),isset($singleproduct->measurement) ? $singleproduct->measurement : 'piece', array('class'=>'form-control','style'=>'' )) }}
                     <small class="text-danger">{{ $errors->first('measurement') }}</small>
                 </div>     
@@ -116,7 +115,7 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                    <div class="form-group">  
-                    <label for="amount">Količina:</label>
+                    {{ Form::label('amount', 'Količina:') }}
                     {{ Form::text('amount[]', isset($singleproduct->amount) ? $singleproduct->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
                     <small class="text-danger">{{ $errors->first('amount') }}</small>
                 </div>    
@@ -124,7 +123,7 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                    <div class="form-group">  
-                    <label for="price">Cijena:</label>
+                    {{ Form::label('price', 'Cijena:') }}
                     {{ Form::text('price[]', isset($singleproduct->price) ? $singleproduct->price : null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']) }}
                     <small class="text-danger">{{ $errors->first('price') }}</small>
                 </div>    
@@ -132,7 +131,7 @@
                     <div class="col-md-1"></div>
                     <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="discount">Popust:</label>
+                    {{ Form::label('discount', 'Popust:') }}
                     {{ Form::text('discount[]', isset($singleproduct->discount) ? $singleproduct->discount : null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('discount') }}</small>
                 </div>    
@@ -140,7 +139,7 @@
                 <div class="col-md-1"></div>
                    <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="taxpercent">Stopa:</label>
+                    {{ Form::label('taxpercent', 'Stopa:') }}
                     {{ Form::text('taxpercent[]', isset($singleproduct->taxpercent) ? $singleproduct->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('taxpercent') }}</small>
                 </div>    
@@ -161,46 +160,46 @@
 
                 <div class="col-md-12">
 <div class="form-group">  
-                    <label for="product">Usluga:</label>  
-                    {{ Form::select('product[]', $productlist, isset($entry->product) ? $entry->product : null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')) }}
+                    {{ Form::label('product', 'Proizvod:') }}
+                    {{ Form::select('product[]', $productlist, isset($dispatch->product) ? $dispatch->product : null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')) }}
                     <small class="text-danger">{{ $errors->first('product') }}</small>
                         </div>
                         </div>
                 <div class="col-md-2">
                         <div class="form-group">  
-                    <label for="measurement">Jedinična mjera:<el>  
+                    {{ Form::label('measurement', 'Jedinična mjera:') }}
                     {{ Form::select('measurement[]', array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'), 'piece', array('class'=>'form-control','style'=>'' )) }}
                     <small class="text-danger">{{ $errors->first('measurement') }}</small>
                 </div>     
                 </div> 
                 <div class="col-md-3">
                    <div class="form-group">  
-                    <label for="amount">Količina:</label>
-                    {{ Form::text('amount[]', isset($entry->amount) ? $entry->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
+                    {{ Form::label('amount', 'Količina:') }}
+                    {{ Form::text('amount[]', isset($dispatch->amount) ? $dispatch->amount : null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
                     <small class="text-danger">{{ $errors->first('amount') }}</small>
                 </div>    
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                    <div class="form-group">  
-                    <label for="price">Cijena:</label>
-                    {{ Form::text('price[]', isset($entry->price) ? $entry->price : null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']) }}
+                    {{ Form::label('price', 'Cijena:') }}
+                    {{ Form::text('price[]', isset($dispatch->price) ? $dispatch->price : null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']) }}
                     <small class="text-danger">{{ $errors->first('price') }}</small>
                 </div>    
                 </div>
                     <div class="col-md-1"></div>
                     <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="discount">Popust:</label>
-                    {{ Form::text('discount[]', isset($entry->discount) ? $entry->discount : null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']) }}
+                    {{ Form::label('discount', 'Popust:') }}
+                    {{ Form::text('discount[]', isset($dispatch->discount) ? $dispatch->discount : null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('discount') }}</small>
                 </div>    
                 </div>
                 <div class="col-md-1"></div>
                    <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="taxpercent">Stopa:</label>
-                    {{ Form::text('taxpercent[]', isset($entry->taxpercent) ? $entry->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
+                    {{ Form::label('taxpercent', 'Stopa:') }}
+                    {{ Form::text('taxpercent[]', isset($dispatch->taxpercent) ? $dispatch->taxpercent : null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('taxpercent') }}</small>
                 </div>    
                 </div>
@@ -218,32 +217,32 @@
                 </div>
                 <div class="col-md-3">
                 <div class="form-group">  
-                    <label for="stock_label">Oznaka skladišta:</label>  
-                    {{ Form::text('stock_label', isset($entry->stock_label) ? $entry->stock_label : null, ['class' => 'form-control', 'id' => 'stock_label', 'placeholder' => 'Oznaka skladišta']) }}
+                    {{ Form::label('stock_label', 'Oznaka skladišta:') }}
+                    {{ Form::text('stock_label', isset($dispatch->stock_label) ? $dispatch->stock_label : null, ['class' => 'form-control', 'id' => 'stock_label', 'placeholder' => 'Oznaka skladišta']) }}
                     <small class="text-danger">{{ $errors->first('stock_label') }}</small>
                 </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                 <div class="form-group">  
-                    <label for="dispatch_employee">Djelatnik:</label>  
-                    {{ Form::text('dispatch_employee', isset($entry->dispatch_employee) ? $entry->dispatch_employee : null, ['class' => 'form-control', 'id' => 'dispatch_employee', 'placeholder' => 'Djelatnik']) }}
+                    {{ Form::label('dispatch_employee', 'Djelatnik:') }}
+                    {{ Form::text('dispatch_employee', isset($dispatch->dispatch_employee) ? $dispatch->dispatch_employee : null, ['class' => 'form-control', 'id' => 'dispatch_employee', 'placeholder' => 'Djelatnik']) }}
                     <small class="text-danger">{{ $errors->first('dispatch_employee') }}</small>
                 </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                 <div class="form-group">  
-                    <label for="dispatch_date_ship">Datum isporuke:</label>
-                    {{ Form::text('dispatch_date_ship', isset($entry->dispatch_date_ship) ? $entry->dispatch_date_ship : null, ['class' => 'form-control datepicker', 'id' => 'dispatch_date_ship', 'placeholder' => 'Datum']) }}
+                    {{ Form::label('dispatch_date_ship', 'Datum isporuke:') }}
+                    {{ Form::text('dispatch_date_ship', isset($dispatch->dispatch_date_ship) ? $dispatch->dispatch_date_ship : null, ['class' => 'form-control datepicker', 'id' => 'dispatch_date_ship', 'placeholder' => 'Datum']) }}
                     <small class="text-danger">{{ $errors->first('dispatch_date_ship') }}</small>
                     </div>
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-md-12">
                 <div class="form-group">  
-                    <label for="dispatch_note">Napomene:</label>
-                    {{ Form::textarea('dispatch_note', isset($entry->dispatch_note) ? $entry->dispatch_note : null, ['class' => 'form-control', 'id' => 'dispatch_note', 'placeholder' => 'Napomene na računu']) }}
+                    {{ Form::label('dispatch_note', 'Napomene:') }}
+                    {{ Form::textarea('dispatch_note', isset($dispatch->dispatch_note) ? $dispatch->dispatch_note : null, ['class' => 'form-control', 'id' => 'dispatch_note', 'placeholder' => 'Napomene na računu']) }}
                     <small class="text-danger">{{ $errors->first('dispatch_note') }}</small>
                     </div>
                     </div>
@@ -252,15 +251,15 @@
                 <div class="clearfix"></div>
                 <div class="col-md-2">
                         <div class="form-group">  
-                    <label for="dispatch_language">Jezik otpremnice:</label>
-                    {{ Form::select('dispatch_language', array('croatian' => 'Hrvatski', 'english' => 'Engleski', 'german' => 'Njemački', 'french' => 'Francuski', 'italian' => 'Talijanski'), isset($entry->dispatch_language) ? $entry->dispatch_language : null, array('class'=>'form-control','style'=>'' )) }}
+                    {{ Form::label('dispatch_language', 'Jezik otpremnice:') }}
+                    {{ Form::select('dispatch_language', array('croatian' => 'Hrvatski', 'english' => 'Engleski', 'german' => 'Njemački', 'french' => 'Francuski', 'italian' => 'Talijanski'), isset($dispatch->dispatch_language) ? $dispatch->dispatch_language : null, array('class'=>'form-control','style'=>'' )) }}
                     <small class="text-danger">{{ $errors->first('dispatch_language') }}</small>
                 </div>     
                 </div>
                    <div class="col-md-1">
                    <div class="form-group">  
-                    <label for="valute">Tečaj:</label>
-                    {{ Form::text('valute', isset($entry->valute) ? $entry->valute : null, ['class' => 'form-control', 'id' => 'valute', 'placeholder' => '%']) }}
+                    {{ Form::label('valute', 'Tečaj:') }}
+                    {{ Form::text('valute', isset($dispatch->valute) ? $dispatch->valute : null, ['class' => 'form-control', 'id' => 'valute', 'placeholder' => '%']) }}
                     <small class="text-danger">{{ $errors->first('valute') }}</small>
                 </div>    
                 </div>
@@ -274,21 +273,21 @@
 </div>
 
     {{ Form::open(array('route' => 'DispatchSendMail', 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'method' => 'post')) }}
-    {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
+    {{Form::hidden('id', $dispatch->id, array('id' => 'id'))}}
     
-    <!-- Modal {{ $entry->id }}-->
-    <div class="modal fade" id="email-dispatch-id-{{ $entry->id }}" role="dialog">
+    <!-- Modal {{ $dispatch->id }}-->
+    <div class="modal fade" id="email-dispatch-id-{{ $dispatch->id }}" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Slanje otpremnice u PDF obliku klijentu: {{ $entry->first_name }}  {{ $entry->last_name }}</h4>
+                    <h4 class="modal-title">Slanje otpremnice u PDF obliku klijentu: {{ $dispatch->first_name }}  {{ $dispatch->last_name }}</h4>
                 </div>
                 <div class="modal-body">
                                 <div class="form-group">  
                                 <label for="dispatch_comment">Upišite komentar ispod otpremnice:</label>
-                                {{ Form::textarea('dispatch_comment', isset($entry->dispatch_comment) ? $entry->dispatch_comment : null, ['class' => 'form-control', 'id' => 'dispatch_comment']) }}
+                                {{ Form::textarea('dispatch_comment', isset($dispatch->dispatch_comment) ? $dispatch->dispatch_comment : null, ['class' => 'form-control', 'id' => 'dispatch_comment']) }}
                                 <small class="text-danger">{{ $errors->first('dispatch_comment') }}</small>
                                 </div>
                 </div>
@@ -325,13 +324,11 @@ $("#client_id").change(function() {
 <script type="text/javascript">
     $(document).ready(function() {
         $(":file").filestyle();
-        $('.editor').summernote({
-            height: 200
-        });
+
         $("#title").stringToSlug();
 
-                $("#btn-email-dispatch-id-{{ $entry->id }}").click(function() { 
-                    $('#email-dispatch-id-{{ $entry->id }}').modal('show');
+                $("#btn-email-dispatch-id-{{ $dispatch->id }}").click(function() { 
+                    $('#email-dispatch-id-{{ $dispatch->id }}').modal('show');
                 });
 
             $('.datepicker').datepicker({

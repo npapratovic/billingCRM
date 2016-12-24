@@ -30,24 +30,11 @@ class WorkingOrderController extends \BaseController {
 	public function index()
 	{
 		 
-		// Get data
+		$entries = WorkingOrder::with('client')->paginate(10);
 
-		$entries = WorkingOrder::getWorkingOrderEntries();
-
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Radni nalozi | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.workingorder.index', array('entries' => $entries));
+		
+		$this->layout->content = View::make('backend.workingorder.index', compact('entries'));
 	}
 
 
@@ -58,61 +45,46 @@ class WorkingOrderController extends \BaseController {
 	 */
 	public function create()
 	{
-	 
-
-
-		$entries = WorkingOrder::getEntries(null, null);
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$servicelist = array();
 
-	 	$services = ProductService::getListedServices(null, null);
-	 	
-	 	if ($services['status'] == 0)
+	 	$services = ProductService::where('type', 'service')->get();
+
+		foreach ($services as $service)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$servicelist[$service->id] = $service->title;
 		}
 
-		foreach ($services['entries'] as $services)
-		{
-			$servicelist[$services->id] = $services->title;
-		}
-
-		$lastworkingordernumber = WorkingOrder::getLastWorkingOrder();
 		$newworkingordernumber = 0;
+
 		if(DB::table('workingorders')->count() > 0){
-			$newworkingordernumber = $lastworkingordernumber['entry']->workingorder_number + 1;
+			$lastworkingordernumber = WorkingOrder::orderBy('id', 'desc')->first()->id;
+			$newworkingordernumber = $lastworkingordernumber + 1;
 		} 
 
 		$this->layout->title = 'Unos novog radnog naloga | BillingCRM';
 
 		$this->layout->css_files = array(
-			'css/backend/summernote.css'
+
 			);
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.workingorder.create', array('postRoute' => 'WorkingOrderStore', 'entries' => $entries, 'clientlist' => $clientlist, 'servicelist' => $servicelist, 'newworkingordernumber' => $newworkingordernumber));
+		$this->layout->content = View::make('backend.workingorder.create', compact('clientlist', 'servicelist', 'servicelist', 'newworkingordernumber'));
 	}
 
 
@@ -124,46 +96,45 @@ class WorkingOrderController extends \BaseController {
 	public function store()
 	{
 
-        
-
-		Input::merge(array_map('trim', Input::except('service', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$workingorder = Request::all();
      
 		$entryValidator = Validator::make(Input::all(), WorkingOrder::$store_rules);
-
 		
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('workingorder_number', 'taxable', 'hide_amount', 'client_id', 'client_address', 'client_oib', 'workingorder_employee', 'workingorder_date_ship', 'workingorder_date_ship', 'workingorder_note', 'workingorder_description'));
 		}
 
-		$store = $this->repo->store(
-			Input::get('workingorder_number'),
-			Input::get('taxable'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Auth::id(),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('service'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('workingorder_employee'),
-			Input::get('workingorder_date_ship'),
-			Input::get('workingorder_note'),
-			Input::get('workingorder_description')
-		);
+		$workingorder['employee_id'] = Auth::id();
 
-		if ($store['status'] == 0)
+		WorkingOrder::create($workingorder);
+
+	 	$workingorder_id = WorkingOrder::orderBy('id', 'desc')->first()->id;
+	 	$service = $workingorder['service'];
+	 
+		$i = 0;
+		$ilen = count($service); 
+
+		if ($service != null)
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+			foreach ($service as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+		
+				$service_workingorder['service_id'] = $value;
+				$service_workingorder['workingorder_id'] = $workingorder_id;
+			   	$service_workingorder['measurement'] = $workingorder['measurement'][$key];
+				$service_workingorder['amount'] = $workingorder['amount'][$key];
+				$service_workingorder['price'] = $workingorder['price'][$key];
+				$service_workingorder['discount'] = $workingorder['discount'][$key];
+				$service_workingorder['taxpercent'] = $workingorder['taxpercent'][$key];
+				WorkingOrdersServices::create($service_workingorder);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('WorkingOrderIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+
+		return Redirect::route('WorkingOrderIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
+
 	}
 
 
@@ -199,66 +170,44 @@ class WorkingOrderController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-	 
 
-		// Get data
+		$workingorder = WorkingOrder::find($id);
 
-		$entry = WorkingOrder::getEntries($id, null);
-
-       
-
-
-		$entries = WorkingOrder::getEntries(null, null);
-
-		$workingorderservices = WorkingOrdersServices::getEntries($id);
+		$workingorderservices = WorkingOrdersServices::with(['services'])->where('workingorder_id', $id)->get();
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$servicelist = array();
 
-	 	$services = ProductService::getListedServices(null, null);
-	 	
-	 	if ($services['status'] == 0)
+	 	$services = ProductService::where('type', 'service')->get();
+
+		foreach ($services as $service)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$servicelist[$service->id] = $service->title;
 		}
 
-		foreach ($services['entries'] as $services)
-		{
-			$servicelist[$services->id] = $services->title;
-		}
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Uređivanje radnog naloga | BillingCRM';
 
 		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
+
+		);
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.workingorder.edit', array('entry' => $entry['entry'], 'postRoute' => 'WorkingOrderUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'servicelist' => $servicelist, 'workingorderservices' => $workingorderservices['entry']));
+		$this->layout->content = View::make('backend.workingorder.edit', compact('clientlist', 'servicelist', 'workingorder', 'workingorderservices'));
+
 	}
 
 
@@ -271,45 +220,46 @@ class WorkingOrderController extends \BaseController {
 	public function update($id)
 	{
 
-        
-		Input::merge(array_map('trim', Input::except('service', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$workingorder = Request::all();
      
 		$entryValidator = Validator::make(Input::all(), WorkingOrder::$store_rules);
-
 		
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('workingorder_number'),
-			Input::get('taxable'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('service'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('workingorder_employee'),
-			Input::get('workingorder_date_ship'),
-			Input::get('workingorder_note'),
-			Input::get('workingorder_description')
-		);
+		$data = WorkingOrder::find($id);
+
+		$data->update($workingorder);
+
+	 	$workingorder_id = WorkingOrder::find($id)->id;
+
+	 	$service = $workingorder['service'];
+	 
+		$i = 0;
+		$ilen = count($service); 
+
+		if ($service != null)
+		{
+			WorkingOrdersServices::where('workingorder_id', $workingorder_id)->delete();
+			foreach ($service as $key=>$value)
+			{
+				if(++$i == $ilen) break;
 		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+				$service_workingorder['service_id'] = $value;
+				$service_workingorder['workingorder_id'] = $workingorder_id;
+			   	$service_workingorder['measurement'] = $workingorder['measurement'][$key];
+				$service_workingorder['amount'] = $workingorder['amount'][$key];
+				$service_workingorder['price'] = $workingorder['price'][$key];
+				$service_workingorder['discount'] = $workingorder['discount'][$key];
+				$service_workingorder['taxpercent'] = $workingorder['taxpercent'][$key];
+				WorkingOrdersServices::create($service_workingorder);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('WorkingOrderIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+
+		return Redirect::route('WorkingOrderIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
 	} 
 
 	public function createPdf($id)
@@ -318,42 +268,35 @@ class WorkingOrderController extends \BaseController {
 		if (isset($id))
 		{
 
-			$workingorder = WorkingOrder::getEntries($id);
+			$workingorder = WorkingOrder::with('client')->where('id', $id)->first();
 
-			$productsperworkingorder = WorkingOrdersServices::getWorkingOrderByCustomer($workingorder['entry']->id);
+			$productsperworkingorder = WorkingOrdersServices::with(['services'])->get();
 
-			$employeeinfo = User::getEntries($workingorder['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($workingorder->employee_id);
 
 			$totalprice = 0;
 
-			foreach($productsperworkingorder['workingorderbycustomer'] as $singleproduct){
+			foreach($productsperworkingorder as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$workingordersData[] = array('workingorder' => $workingorder, 'employeeinfo' => $employeeinfo['entry'], 'productsperworkingorder' => $productsperworkingorder['workingorderbycustomer'], 'totalprice' => $totalprice);
-			
-
-			
-			if ($workingorder['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
+			$workingordersData[] = compact('workingorder', 'employeeinfo', 'productsperworkingorder', 'totalprice');
 
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'ponuda_obrazac_' . $workingorder['entry']->workingorder_number . '-' . $datetitle;
+			$pdfname = 'ponuda_obrazac_' . $workingorder->workingorder_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/workingorders/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.workingorder.workingorderspdf', array('workingordersdata' => $workingordersData, 'productsperworkingorder' => $productsperworkingorder, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.workingorder.workingorderspdf', compact('workingordersData', 'productsperworkingorder', 'currdate'))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}
@@ -369,37 +312,28 @@ class WorkingOrderController extends \BaseController {
 	public function sendEmail($id)
 	{
 		try{
-			$id = Input::get('id');
+			$workingorder = WorkingOrder::with('client')->where('id', $id)->first();
 
-			$workingorder = WorkingOrder::getEntries($id);
+			$productsperworkingorder = WorkingOrdersServices::with(['services'])->get();
 
-			$productsperworkingorder = WorkingOrdersServices::getWorkingOrderByCustomer($workingorder['entry']->id);
-
-			$employeeinfo = User::getEntries($workingorder['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($workingorder->employee_id);
 
 			$totalprice = 0;
-//goDie($workingorder);
-			foreach($productsperworkingorder['workingorderbycustomer'] as $singleproduct){
+
+			foreach($productsperworkingorder as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$workingordersData[] = array('workingorder' => $workingorder, 'employeeinfo' => $employeeinfo['entry'], 'productsperworkingorder' => $productsperworkingorder['workingorderbycustomer'], 'totalprice' => $totalprice);
-			
-
-			
-			if ($workingorder['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
+			$workingordersData[] = compact('workingorder', 'employeeinfo', 'productsperworkingorder', 'totalprice');
 
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'radni_nalog_' . $workingorder['entry']->workingorder_number . '-' . $datetitle;
+			$pdfname = 'ponuda_obrazac_' . $workingorder->workingorder_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/workingorders/" . $pdfname . '.pdf';
 

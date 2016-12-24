@@ -1,9 +1,9 @@
  
  <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ URL::route('OrderIndex') }}">Pregled svih narudžbi</a></li>
+    <li class="active"><a href="{{ URL::route('admin.orders.index') }}">Pregled svih narudžbi</a></li>
     
-    <a href="{{ URL::route('OrderCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ URL::route('admin.orders.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novu narudžbu
         </button>
@@ -34,33 +34,33 @@
                     {{ $entry->order_id }}
                     </td>
                     <td> 
-                    {{ $entry->first_name }}  {{ $entry->last_name }}
+                    {{ $entry['client'][0]->first_name }}  {{ $entry['client'][0]->last_name }}
                     </td>
                     <td> {{ $entry->shipping_address }}</td>
                     <td> {{ date('d.m.Y', strtotime($entry->order_date))}}</td>
                     <td> 
                     @foreach($allproducts[$val] as $key => $product)
-
                   <div class="row"><div class="col-md-12">
-                  @if($product['entry'][0]->existing == '0')
-                    <span style="color:lightslategray;"> {{ $product['entry'][0]->title }}</span>
+                  @if($product->existing == '0')
+                    <span style="color:lightslategray;"> {{ $product->name }}</span>
                     <span style="color:maroon;"> Nepostojeći proizvod</span>
                   @else
-                  @if($product['entry'][0]->type == 'service')
-                  <a href="{{ URL::route('ServiceEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
+                  @if($product->type == 'service')
+                  <a href="{{ URL::route('admin.services.edit', array('id' => $product->id)) }}">{{ $product->title }}</a>
                   @else
-                   <a href="{{ URL::route('ProductEdit', array('id' => $product['entry'][0]->id)) }}">{{ $product['entry'][0]->title }}</a>
+                   <a href="{{ URL::route('ProductEdit', array('id' => $product->id)) }}">{{ $product->title }}</a>
                    @endif
                    @endif
                    </div></div>
                     @endforeach
                     </td>
-                    <td class="col-md-2">  
+                    <td class="col-md-2">
+
                         @if($entry->show_only == '1')
-                        <a href="{{ URL::route('OrderShow', array('id' => $entry->id)) }}">
+                        <a href="{{ URL::route('admin.orders.show', array('id' => $entry->id)) }}">
                         <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
                         @else
-                        <a href="{{ URL::route('OrderEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ URL::route('admin.orders.edit', array('id' => $entry->id)) }}">
                         <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         @endif
                         </a>
@@ -129,13 +129,23 @@
                     <h4 class="modal-title">Pozor!</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Želite li obrisati narudžbu:{{$entry->id}} ?</p>
+                    <p>Želite li obrisati narudžbu: {{$entry->order_id}} ?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('OrderDestroy', array('id' => $entry->id)) }}">
-                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    <div class="row">
+                        <div class="col-md-7">
+                        </div>
+                        <div class="col-md-2">
+                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.orders.destroy', $entry->id]]) }}
+                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                            {{ Form::close() }} 
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>

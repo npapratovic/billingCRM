@@ -230,27 +230,27 @@ class TrashController extends \BaseController {
 			break;
 			case 'orders':
 				Order::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));
+	            		return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));
 			break;
 			case 'offers':
 				Offer::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('OfferIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+	            		return Redirect::route('admin.offers.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			case 'invoices':
 				Invoice::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('InvoiceIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));
+	            		return Redirect::route('admin.invoices.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));
 			break;
 			case 'dispatches':
 				Dispatch::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('DispatchIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+	            		return Redirect::route('admin.dispatch.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			case 'workingorders':
 				WorkingOrder::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('WorkingOrderIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+	            		return Redirect::route('admin.workingorder.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			case 'narudzbenice':
 				Narudzbenice::withTrashed()->where('id', $id)->restore();
-	            		return Redirect::route('NarudzbeniceIndex')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
+	            		return Redirect::route('admin.narudzbenice.index')->with('success_message', Lang::get('core.msg_success_entry_restored'));	
 			break;
 			default:
 				

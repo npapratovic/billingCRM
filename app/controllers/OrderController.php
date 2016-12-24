@@ -9,6 +9,7 @@
 
 class OrderController extends \BaseController {
 
+
 	// Enviroment variables
 	protected $repo;
 	protected $moduleInfo;
@@ -34,51 +35,39 @@ class OrderController extends \BaseController {
 	 *
 	 * @return Response
 	 */
+
+
+
 	public function index()
 	{
 		// Get data
-		$entries = Order::getOrdersEntries(null); 
+		$entries = Order::with('client')->paginate(10); 
+		
 
-
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 
 		$allproducts = array();
 
-		foreach ($entries['entries'] as $order)
-		{
+		foreach ($entries as $order){
 			$productsperorder = array();
-	 		$productdata = OrdersProducts::getEntries($order->id);
-		 		foreach($productdata['entry'] as $product)
+	 		$productdata = OrdersProducts::where('order_id', $order->id)->get();
+		 		foreach($productdata as $product)
 				{
 					if($order->show_only == '1'){
-						
-						$singleproduct = ImportedOrderProduct::getEntry($product->product_id);
+						$singleproduct = ImportedOrderProduct::find($product->product_id);
 					}
 					else {
-						$singleproduct = ProductService::getEntry($product->product_id);
-					}
+						$singleproduct = ProductService::find($product->product_id);
 
+					}
 					array_push($productsperorder, $singleproduct);
 				}
-
 				$allproducts[] = $productsperorder;
-
 		}
+
 
 		$this->layout->title = 'Narudžbe | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-
-		$this->layout->content = View::make('backend.order.index', array('entries' => $entries['entries'], 'allproducts' => $allproducts));
+		$this->layout->content = View::make('backend.order.index', compact('entries', 'allproducts'));
 	}
 
 
@@ -93,38 +82,30 @@ class OrderController extends \BaseController {
 		// Getting all clients
 		$clientslist = array();
 
-		$clients = User::getListEntries(null, null);
+		$clients = User::where('user_group', 'client')->get();
 
-		if ($clients['status'] == 0)
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientslist[$clients->id] = $clients->first_name . '  ' . $clients->last_name;
+			$clientslist[$client->id] = $client->first_name . '  ' . $client->last_name;
 		}
 
 		// Getting all products
 		$productlist = array();
+		
+	 	$products = ProductService::get();
 
-		$products = ProductService::getEntries(null, null);
-
-		if ($products['status'] == 0)
+		foreach ($products as $product)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title . ' (' . $products->price . ' kn)';
+			$productlist[$product->id] = $product->title . ' (' . $product->price . ' kn)';
 
 		}
 
-		$singleprices = ProductService::getPrices();
-		//goDie($singleprices);
- 		$lastordernumber = Order::getLastOrder();
+		$singleprices = ProductService::get();
+ 		$lastordernumber = Order::orderBy('created_at', 'desc')->first();
  		$newordernumber = 0;
+
  		if(DB::table('orders')->count() > 0){
- 			$newordernumber = $lastordernumber['entry']->order_id + 1;
+ 			$newordernumber = $lastordernumber->order_id + 1;
  		}
  		
 		$this->layout->title = 'Unos nove narudžbe | BillingCRM';
@@ -141,7 +122,8 @@ class OrderController extends \BaseController {
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.order.create', array('postRoute' => 'OrderStore', 'clientslist' => $clientslist, 'productlist' => $productlist, 'singleprices' => $singleprices, 'newordernumber' => $newordernumber));
+		$this->layout->content = View::make('backend.order.create', compact('clientslist', 'productlist', 'singleprices', 
+			'newordernumber'));
 	}
 
 
@@ -152,39 +134,48 @@ class OrderController extends \BaseController {
 	 */
 	public function store()
 	{
-		
-		 Input::merge(array_map('trim', Input::except('products_array', 'quantity', 'singleprice')));
+		$order = Request::all();
 
-		 $entryValidator = Validator::make(Input::all(), Order::$store_rules);
-		 
+		$entryValidator = Validator::make(Input::all(), Order::$store_rules); 
+
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('order_id', 'user_id', 'order_date', 'shipping_way', 'payment_way', 'payment_status', 'newaddress', 'address', 'note'));
+		return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
+
+        Order::create($order);
+
+        $orderprice = 0;
+
+    	$order_id = Order::orderBy('id', 'desc')->first()->id;
+
+	 	$product = $order['products_array'];
+
+        $i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
+		{
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+				$singleprice = ProductService::where('id', $value)->first();
+				$product_order['order_id'] = $order_id;
+				$product_order['product_id'] = $value;
+			   	$product_order['quantity'] = $order['quantity'][$key];
+			   	$product_order['price'] = $singleprice->price;
+				$orderprice = $orderprice + ($singleprice->price * $order['quantity'][$key]);
+				OrdersProducts::create($product_order);
+
+			}
 		}
 
-		$store = $this->repo->store(
-			Input::get('order_id'),
-			Input::get('user_id'),
-			Auth::id(),
-			Input::get('order_date'),
-			Input::get('products_array'),
-			Input::get('quantity'),
-			Input::get('shipping_way'),
-			Input::get('payment_way'),
-			Input::get('payment_status'),
-			Input::get('billing_address'),
-			Input::get('shipping_address'),
-			Input::get('note')
-		);
+		$data = Order::find($order_id);
+		$update_price['price'] = $orderprice;
+		$data->update($update_price);
 
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+		return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
+
 	}
 
 
@@ -198,39 +189,31 @@ class OrderController extends \BaseController {
 	{
 
 		 
-		$entry = Order::getEntries($id);
+		$entry = Order::with(['client'])->find($id);
 
 		// Getting all clients
 		$clientslist = array();
 
-		$clients = User::getListEntries(null, null);
+		$clients = User::where('user_group', 'client')->get();
 
-		if ($clients['status'] == 0)
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientslist[$clients->id] = $clients->first_name . '  ' . $clients->last_name;
+			$clientslist[$client->id] = $client->first_name . '  ' . $client->last_name;
 		}
 			
 		// Getting all products
 		$productlist = array();
 
-		$products = ImportedOrderProduct::getProductsByOrder(null, null);
+		$products = ImportedOrderProduct::get();
 
-		if ($products['status'] == 0)
+		foreach ($products as $product)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title . ' (' . $products->price . ' kn)';
+			$productlist[$product->id] = $product->title . ' (' . $product->price . ' kn)';
 
 		}
 
+		$orderbycustomer = OrdersProducts::with(['orders', 'importedOrderProducts'])->where('order_id', $id)->get();
 
-		$orderbycustomer = OrdersProducts::getImportedOrderByCustomer($id);
 
 		$this->layout->title = 'Pregled narudžbe | BillingCRM';
 
@@ -247,7 +230,7 @@ class OrderController extends \BaseController {
 
 		);
 
-		$this->layout->content = View::make('backend.order.show', array('entry' => $entry['entry'], 'postRoute' => 'OrderUpdate', 'clientslist' => $clientslist, 'productlist' => $productlist, 'orderbycustomer' => $orderbycustomer['orderbycustomer']));
+		$this->layout->content = View::make('backend.order.show', compact('entry', 'clientslist', 'productlist', 'orderbycustomer'));
 	}
 
 
@@ -260,40 +243,35 @@ class OrderController extends \BaseController {
 	public function edit($id)
 	{
 		 
-		$entry = Order::getEntries($id);
+		$entry = Order::with(['client'])->find($id);
 		
-		$entry['entry']->order_date = date("Y-m-d",strtotime($entry['entry']->order_date));
+		$entry->order_date = date("Y-m-d",strtotime($entry->order_date));
 
 		// Getting all clients
 		$clientslist = array();
 
-		$clients = User::getListEntries(null, null);
+		$clients = User::where('user_group', 'client')->get();
 
-		if ($clients['status'] == 0)
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientslist[$clients->id] = $clients->first_name . '  ' . $clients->last_name;
+			$clientslist[$client->id] = $client->first_name . '  ' . $client->last_name;
 		}
  		
 		// Getting all products
 		$productlist = array();
 
-		$products = ProductService::getListedProducts(null, null);
+		$products = ProductService::get();
 
-		if ($products['status'] == 0)
+		foreach ($products as $product)
 		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title . ' (' . $products->price . ' kn)';
+			$productlist[$product->id] = $product->title . ' (' . $product->price . ' kn)';
 
 		}
 
-		$orderbycustomer = OrdersProducts::getOrderByCustomer($id);
+		$orderbycustomer = OrdersProducts::with(['orders', 'productServices'])->where('order_id', $id)->get();
+
+		
+
 		
 		$this->layout->title = 'Uređivanje narudžbe | BillingCRM';
 
@@ -310,7 +288,7 @@ class OrderController extends \BaseController {
 
 		);
 
-		$this->layout->content = View::make('backend.order.edit', array('entry' => $entry['entry'], 'postRoute' => 'OrderUpdate', 'clientslist' => $clientslist, 'productlist' => $productlist, 'orderbycustomer' => $orderbycustomer['orderbycustomer']));
+		$this->layout->content = View::make('backend.order.edit', compact('entry', 'clientslist', 'productlist', 'orderbycustomer'));
 	}
 
 
@@ -323,132 +301,125 @@ class OrderController extends \BaseController {
 	public function update($id)
 	{
 		//goDie(Input::all());
-		Input::merge(array_map('trim', Input::except('products_array', 'quantity', 'singleprice')));
+		$order = Request::all(); 
+
 		$entryValidator = Validator::make(Input::all(), Order::$store_rules);
-
-
 
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('order_id', 'user_id', 'order_date', 'shipping_way', 'payment_way', 'payment_status', 'newaddress', 'address', 'note'));
 		}
-		 
-		$update = $this->repo->update(
-			Input::get('id'),
-			Input::get('order_id'),
-			Input::get('user_id'),
-			Input::get('order_date'),
-			Input::get('products_array'),
-			Input::get('quantity'),
-			Input::get('shipping_way'),
-			Input::get('payment_way'),
-			Input::get('payment_status'),
-			Input::get('billing_address'),
-			Input::get('shipping_address'),
-			Input::get('note')
-		);
 
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+		$data = Order::find($id);
+		$data->update($order);
+
+        $orderprice = 0;
+
+	 	$product = $order['products_array'];
+
+        $i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
+		{	
+			OrdersProducts::where('order_id', $id)->delete();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+				$singleprice = ProductService::where('id', $value)->first();
+				$product_order['order_id'] = $id;
+				$product_order['product_id'] = $value;
+			   	$product_order['quantity'] = $order['quantity'][$key];
+			   	$product_order['price'] = $singleprice->price;
+				$orderprice = $orderprice + ($singleprice->price * $order['quantity'][$key]);
+				OrdersProducts::create($product_order);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+
+		$data = Order::find($id);
+		$update_price['price'] = $orderprice;
+		$data->update($update_price);
+		 
+		return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
+		
 	}
 
 	public function createInvoice($id)
 	{
-		try{
-			$order = Order::getEntries($id);
+		// try{
+			$order = Order::with('client')->find($id);
 
-			if($order['entry']->show_only == '1')
+			if($order->show_only == '1')
 			{
-				$productsperorder = OrdersProducts::getImportedOrderByCustomer($order['entry']->id);
+				$productsperorder = OrdersProducts::with('importedOrderProducts')->where('order_id', $order->id)->get();
 				
 			}
 			else {
-				$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+				$productsperorder = OrdersProducts::with('productServices')->where('order_id', $order->id)->get();
+
 			}
 
-			$product = array();
-			$measurement = array();
-			$quantity = array();
-			$price = array(); 
-			$discount = array();
-			$taxpercent = array();
+			
+			$invoice['invoice_number'] = $order->order_id;
+			$invoice['client_id'] = $order->user_id;
+			$invoice['employee_id'] = '0';
+			$invoice['invoice_type'] = 'N';
+			$invoice['tax'] = '0';
+			$invoice['payment_way'] = $order->payment_way;
+			$invoice['invoice_date'] = $order->order_date;
+			$invoice['invoice_note'] = $order->note;
+			$invoice['repeat_invoice'] = '0';
+			$invoice['invoice_language'] = 'croatian';
+			$invoice['valute'] = '0';
+			$invoice['from_order'] = '1';
+			Invoice::create($invoice);
 
-			foreach($productsperorder['orderbycustomer'] as $singleproduct){
-				array_push($product, $singleproduct->product_id);
-				array_push($quantity, $singleproduct->quantity);
+			$invoice_id = Invoice::orderBy('created_at', 'desc')->pluck('id');
 
-				array_push($measurement, 0);
-				array_push($price, 0);
-				array_push($discount, 0);
-				array_push($taxpercent, 0);
-			}
 
-			if($order['entry']->show_only == '1')
+			if($order->show_only == '1')
 			{
-						$store = $this->invoicerepo->convertToInvoice(
-						$order['entry']->order_id,
-						'N',					//	order_id
-						0,					//	tax
-						$order['entry']->user_id,			//	user
-						$order['entry']->employee_id,		//	employee_id
-						$product,
-						$measurement,
-						$quantity,
-						$price,
-						$discount,
-						$taxpercent,
-						$order['entry']->cityname,
-						$order['entry']->payment_way,
-						$order['entry']->order_date,
-						'0',					//	invoice_date_deadline
-						'0',					//	invoice_date_ship
-						$order['entry']->note,
-						'',					//	intern_note
-						0,					//	repeat_invoice
-						'croatian',				//	invoice_language
-						0					//	valute
-				);
+				foreach($productsperorder as $singleproduct){
+				$product_invoice['product_id'] = $singleproduct->product_id;
+				$product_invoice['invoice_id'] = $invoice_id;
+			   	$product_invoice['measurement'] = '0';
+				$product_invoice['amount'] =  $singleproduct->quantity;
+				$product_invoice['price'] = $singleproduct->price;
+				$product_invoice['discount'] = '0';
+				$product_invoice['taxpercent'] = '0';
+				$product_invoice['imported'] = '1';
+				InvoicesProducts::create($product_invoice);
+			}
 				
 			}
 			else {
-						$store = $this->invoicerepo->convert(
-						$order['entry']->order_id,
-						'N',					//	order_id
-						0,					//	tax
-						$order['entry']->user_id,			//	user
-						$order['entry']->employee_id,		//	employee_id
-						$product,
-						$measurement,
-						$quantity,
-						$price,
-						$discount,
-						$taxpercent,
-						$order['entry']->payment_way,
-						$order['entry']->order_date,
-						'0',					//	invoice_date_deadline
-						'0',					//	invoice_date_ship
-						$order['entry']->note,
-						'',					//	intern_note
-						0,					//	repeat_invoice
-						'croatian',				//	invoice_language
-						0					//	valute
-				);
+				foreach($productsperorder as $singleproduct){
+				$product_invoice['product_id'] = $singleproduct->product_id;
+				$product_invoice['invoice_id'] = $invoice_id;
+			   	$product_invoice['measurement'] = '0';
+				$product_invoice['amount'] =  $singleproduct->quantity;
+				$product_invoice['price'] = $singleproduct->price;
+				$product_invoice['discount'] = '0';
+				$product_invoice['taxpercent'] = '0';
+				$product_invoice['imported'] = '0';
+				InvoicesProducts::create($product_invoice);
 			}
 
-			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_invoice_created'));
-		}
+			}
+
+			
+
+			
+
+			return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_invoice_created'));
+		//}
 
 
-		catch (Exception $exp)
-		{
-			return Redirect::route('OrderIndex')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-		}
+		// catch (Exception $exp)
+		// {
+		// 	return Redirect::route('admin.orders.index')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
+		// }
 
 
 	}
@@ -460,45 +431,40 @@ class OrderController extends \BaseController {
 		if (isset($id))
 		{
 
-			$order = Order::getEntries($id);
+			$order = Order::with('client')->find($id);
 
-			if($order['entry']->show_only == '1'){
-				$productsperorder = OrdersProducts::getImportedOrderByCustomer($id);
+			if($order->show_only == '1'){
+				$productsperorder = OrdersProducts::with('importedOrderProducts')->where('order_id', $order->id)->get();
 			}
 			else{
-				$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+				$productsperorder = OrdersProducts::with('productServices')->where('order_id', $order->id)->get();
 			}
 
-			$employeeinfo = User::getEntries($order['entry']->employee_id);
+
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($order['client'][0]->id);
 
 			$totalprice = 0;
 
-			foreach($productsperorder['orderbycustomer'] as $singleproduct){
+			foreach($productsperorder as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->quantity;
 			}
 
-			$ordersData[] = array('order' => $order, 'employeeinfo' => $employeeinfo['entry'], 'productsperorder' => $productsperorder['orderbycustomer'], 'totalprice' => $totalprice);
-			
-			
-			if ($order['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
+			$ordersdata[] = compact('order', 'employeeinfo', 'productsperinvoice', 'totalprice');
 
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'narudzba_obrazac_' . $order['entry']->order_id . '-' . $datetitle;
+			$pdfname = 'narudzba_obrazac_' . $order->order_id . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/orders/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.order.orderspdf', array('ordersdata' => $ordersData, 'productsperorder' => $productsperorder, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.order.orderspdf', compact('ordersdata', 'imported', 'productsperorder', 'currdate'))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}
@@ -513,62 +479,56 @@ class OrderController extends \BaseController {
 	// Send PDF in email
 	public function sendEmail($id)
 	{
-		try{
+		// try{
 
 			$id = Input::get('id');
-			$order = Order::getEntries($id);
+			$order = Order::with('client')->find($id);
 
-			$productsperorder = OrdersProducts::getOrderByCustomer($order['entry']->id);
+			$productsperorder = OrdersProducts::with('productServices')->where('order_id', $order->id)->get();
 
-			$employeeinfo = User::getEntries($order['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($order['client'][0]->id);
 
 			$totalprice = 0;
 
-			foreach($productsperorder['orderbycustomer'] as $singleproduct){
+			foreach($productsperorder as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->quantity;
 			}
 
-			$ordersData[] = array('order' => $order, 'employeeinfo' => $employeeinfo['entry'], 'productsperorder' => $productsperorder['orderbycustomer'], 'totalprice' => $totalprice);
-			
-			
-			if ($order['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
 
+			$ordersdata[] = compact('order', 'employeeinfo', 'productsperorder', 'totalprice');
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'narudzba_' . $order['entry']->order_id . '-' . $datetitle;
+			$pdfname = 'narudzba_' . $order->order_id . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/orders/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.order.orderspdf', array('ordersdata' => $ordersData, 'productsperorder' => $productsperorder, 'currdate' => $currdate));
+			$pdf = PDF::loadView('backend.order.orderspdf', compact('ordersdata', 'productsperorder', 'currdate'));
 
-			Mail::send('backend.email.ordermail', array( 'comment' => Input::get('order_comment'), 'first_name' => $order['entry']->first_name, 'last_name' => $order['entry']->last_name, 'number' => $order['entry']->order_id), function($message) use($pdf, $order, $pdfname)
+			Mail::send('backend.email.ordermail', array( 'comment' => Input::get('order_comment'), 'first_name' => $order->first_name, 'last_name' => $order->last_name, 'number' => $order->order_id), function($message) use($pdf, $order, $pdfname)
 			{
 			    $message->from('info@crm.go.hr', 'info@crm.go.hr');
 
-			    $message->to($order['entry']->email)->subject('Narudžba ' . $order['entry']->order_id);
+			    $message->to($order->email)->subject('Narudžba ' . $order->order_id);
 
 			    $message->attachData($pdf->output(), $pdfname . '.pdf');
 			});
 			//goDie($pdf);
 
-			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_email_sent'));
+			return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_email_sent'));
 
-		}
+		// }
 
-		catch (Exception $exp)
-		{
-			return Redirect::route('OrderIndex')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-		}
+		// catch (Exception $exp)
+		// {
+		// 	return Redirect::route('admin.orders.index')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
+		// }
 	  
 	}
 
@@ -582,33 +542,8 @@ class OrderController extends \BaseController {
 	public function destroy($id)
 	{
 		 
-
-		if ($id == null)
-		{
-			return Redirect::route('OrderIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Order::getEntries($id, null, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('OrderIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('OrderIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('OrderIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		Order::find($id)->delete();
+      	return Redirect::route('admin.orders.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

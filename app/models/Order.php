@@ -19,6 +19,22 @@ class Order extends Eloquent
 		'id'					=>	'required|integer' 
 	);
 
+	protected $fillable = array('order_id', 'user_id', 'employee_id', 'price', 'shipping_way', 'payment_way', 'payment_status', 'cityname', 'billing_address', 'shipping_address', 'note', 'order_date', 'show_only', 'deleted_at');
+
+
+  	public function client()
+    {
+        return $this->hasMany('User', 'id', 'user_id');
+    }
+
+    public function orderProducts()
+    {
+        return $this->hasMany('OrdersProducts');
+    }
+
+
+
+
 	/*
 	*	Get entries
 	*

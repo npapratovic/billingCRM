@@ -21,12 +21,30 @@ class Invoice extends Eloquent
 		'invoice_number'				=>	'required|integer'
 	);	
 
+	protected $fillable = array('invoice_number', 'client_id', 'employee_id', 'invoice_type', 'tax', 'address', 'cityname', 'payment_way',
+		'invoice_date', 'invoice_date_deadline', 'invoice_date_ship', 'invoice_note', 'intern_note', 'repeat_invoice', 'invoice_language',
+		'valute', 'from_order', 'deleted_at');
 	/*
 	*	Get entries
 	*
 	*	$id 		->	integer or null	->	if ID, retrieve specific entry
 	*	$items		->	integer	or null ->	number of items to retrieve, fallback to all
 	*/
+
+
+	  public function client()
+    {
+        return $this->belongsTo('User');
+    }
+
+     public function invoicesProducts()
+    {
+        return $this->hasMany('InvoicesProducts', 'invoice_id', 'id');
+    }
+
+
+
+
 	public static function getEntries($id = null, $items = null)
 	{
 		try

@@ -7,31 +7,12 @@
 */
 
 class ClientController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new ClientRepository;
-	}
-	/**
-	 * Display a listing of the client.
-	 *
-	 * @return Response
-	 */
+	
 	public function index()
 	{ 
 		// Get data
 
-		$entries = User::whereNull('deleted_at')->where('user_group', 'client')->paginate(10);
+		$entries = User::where('user_group', 'client')->paginate(10);
 
 		$this->layout->title = 'Klijenti | BillingCRM';
 
@@ -47,7 +28,7 @@ class ClientController extends \BaseController {
 	public function create()
 	{
 		 
-		$entries = User::whereNull('deleted_at')->where('user_group','client')->paginate(5);
+		$entries = User::where('user_group','client')->paginate(5);
 
 		$this->layout->title = 'Unos novog klijenta | BillingCRM';
 
@@ -59,8 +40,8 @@ class ClientController extends \BaseController {
 			'js/backend/bootstrap-filestyle.min.js',
 			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
+		
 		);
 
 		$this->layout->content = View::make('backend.client.create', compact('entries'));
@@ -124,7 +105,7 @@ class ClientController extends \BaseController {
 	{ 
 		// Get data
 
-		$entries = User::whereNull('deleted_at')->where('user_group','client')->paginate(5);
+		$entries = User::where('user_group','client')->paginate(5);
 
 		$client = User::find($id);
 

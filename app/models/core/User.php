@@ -19,6 +19,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     	'mjesto', 'zip', 'country', 'city',  'phone', 'fax', 'mobile','email', 'web', 'iban', 'note', 'password', 'created_at', 
     	'updated_at', 'deleted_at');
 
+
 	/**
 	 * The database table used by the model.
 	 *
@@ -113,7 +114,41 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 		'email'		=>	'required|email|exists:users,email'
 	);
 
+
+
+	 public function invoices()
+    {
+        return $this->hasMany('Invoice');
+    }
+
+    public function userCity()
+    {
+    	return $this->hasOne('City', 'id', 'city');
+    }
+
+    public function userRegion()
+    {
+    	return $this->hasOne('Region', 'id', 'region');
+    }
+
 	 
+	public function narudzbenice()
+	{
+		return $this->hasMany('Narudzbenice');
+	}
+
+
+	  public function orders()
+    {
+        return $this->hasMany('Order');
+    }
+
+      public function offers()
+    {
+        return $this->hasMany('Offer', 'client_id', 'id');
+    }
+
+ 
 
 	/*
 	*	Retrieve user's informations

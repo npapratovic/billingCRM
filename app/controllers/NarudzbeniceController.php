@@ -29,24 +29,11 @@ class NarudzbeniceController extends \BaseController {
 	 */
 	public function index()
 	{
-		// Get data
+		$entries = Narudzbenice::with('client')->paginate(10);
 
-		$entries = Narudzbenice::getEntries(null, null);
-
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
 		$this->layout->title = 'Narudžbenice | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.narudzbenice.index', array('entries' => $entries));
+		$this->layout->content = View::make('backend.narudzbenice.index', compact('entries'));
 	}
 
 
@@ -60,38 +47,27 @@ class NarudzbeniceController extends \BaseController {
 		
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntriesProducts(null, null);
-	 	
-	 	if ($products['status'] == 0)
+	 	$products = ProductService::get();
+
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
-
-		$entries = Narudzbenice::getEntries(null, null);
-
-		$lastnarudzbenicanumber = Narudzbenice::getLastNarudzbenica();
 		$newnarudzbenicanumber = 0;
+
 		if(DB::table('narudzbenice')->count() > 0){
-			$newnarudzbenicanumber = $lastnarudzbenicanumber['entry']->narudzbenica_number + 1;
+			$lastnarudzbenicanumber = Narudzbenice::orderBy('id', 'desc')->first()->id;
+			$newnarudzbenicanumber = $lastnarudzbenicanumber + 1;
 		} 
 
 		$this->layout->title = 'Unos nove narudžbenice | BillingCRM';
@@ -102,14 +78,12 @@ class NarudzbeniceController extends \BaseController {
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.narudzbenice.create', array('postRoute' => 'NarudzbeniceStore', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'newnarudzbenicanumber' => $newnarudzbenicanumber));
+		$this->layout->content = View::make('backend.narudzbenice.create', compact('clientlist', 'productlist', 'newnarudzbenicanumber'));
 	}
 
 
@@ -120,45 +94,45 @@ class NarudzbeniceController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$narudzbenica = Request::all();
 
 		$entryValidator = Validator::make(Input::all(), Narudzbenice::$store_rules);
-		//goDie(Input::all());
+
 		if ($entryValidator->fails())
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('narudzbenica_number', 'tax', 'hide_amount', 'client_id', 'client_address', 'client_oib', 'payment_way', 'narudzbenica_start', 'narudzbenica_end', 'narudzbenica_note', 'narudzbenica_language', 'valute'));
 		}
 
-		$store = $this->repo->store(
-			Input::get('narudzbenica_number'),
-			Input::get('tax'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Auth::id(),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('narudzbenica_start'),
-			Input::get('narudzbenica_end'),
-			Input::get('narudzbenica_note'),
-			Input::get('narudzbenica_language'),
-			Input::get('valute')
-		);
+		$narudzbenica['employee_id'] = Auth::id();
 
-		if ($store['status'] == 0)
+		Narudzbenice::create($narudzbenica);
+
+	 	$narudzbenica_id = Narudzbenice::orderBy('id', 'desc')->first()->id;
+	 	$product = $narudzbenica['product'];
+	 
+		$i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+		
+				$product_narudzbenica['product_id'] = $value;
+				$product_narudzbenica['narudzbenica_id'] = $narudzbenica_id;
+			   	$product_narudzbenica['measurement'] = $narudzbenica['measurement'][$key];
+				$product_narudzbenica['amount'] = $narudzbenica['amount'][$key];
+				$product_narudzbenica['price'] = $narudzbenica['price'][$key];
+				$product_narudzbenica['discount'] = $narudzbenica['discount'][$key];
+				$product_narudzbenica['taxpercent'] = $narudzbenica['taxpercent'][$key];
+				NarudzbeniceProducts::create($product_narudzbenica);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('NarudzbeniceIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+
+		return Redirect::route('NarudzbeniceIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
+
 	}
 
 
@@ -193,65 +167,44 @@ class NarudzbeniceController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-	
-		// Get data
 
-		$entry = Narudzbenice::getEntries($id, null);
-
-		$entries = Narudzbenice::getEntries(null, null);
+		$narudzbenica = Narudzbenice::find($id);
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntriesProducts(null, null);
-	 	
-	 	if ($products['status'] == 0)
+	 	$products = ProductService::get();
+
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$narudzbenicacustomer = NarudzbeniceProducts::getNarudzbeniceByCustomer($id);
-		
-		//goDie($id);
+		$narudzbenicacustomer = NarudzbeniceProducts::with(['products'])->where('narudzbenica_id', $id)->get();
 
 		$this->layout->title = 'Uređivanje narudžbenice | BillingCRM';
 
 		$this->layout->css_files = array(
-			'css/backend/summernote.css'		);
+
+		);
 
 		$this->layout->js_footer_files = array(
 			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.narudzbenice.edit', array('entry' => $entry['entry'], 'postRoute' => 'NarudzbeniceUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'narudzbenicacustomer' => $narudzbenicacustomer['narudzbenicabycustomer']));
+		$this->layout->content = View::make('backend.narudzbenice.edit', compact('clientlist', 'productlist', 'narudzbenica', 'narudzbenicacustomer'));
+
 	}
 
 
@@ -263,7 +216,7 @@ class NarudzbeniceController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+		$narudzbenica = Request::all();
 
 		$entryValidator = Validator::make(Input::all(), Narudzbenice::$update_rules);
 
@@ -271,38 +224,39 @@ class NarudzbeniceController extends \BaseController {
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
-		//goDie($entryValidator );
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('narudzbenica_number'),
-			Input::get('tax'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('narudzbenica_start'),
-			Input::get('narudzbenica_end'),
-			Input::get('narudzbenica_note'),
-			Input::get('narudzbenica_language'),
-			Input::get('valute')
-		);
-		//goDie($update);
-		if ($update['status'] == 0)
+		$data = Narudzbenice::find($id);
+
+		$data->update($narudzbenica);
+
+	 	$narudzbenica_id = Narudzbenice::find($id)->id;
+
+	 	$product = $narudzbenica['product'];
+	 
+		$i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+			NarudzbeniceProducts::where('narudzbenica_id', $narudzbenica_id)->delete();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+		
+				$product_narudzbenica['product_id'] = $value;
+				$product_narudzbenica['narudzbenica_id'] = $narudzbenica_id;
+			   	$product_narudzbenica['measurement'] = $narudzbenica['measurement'][$key];
+				$product_narudzbenica['amount'] = $narudzbenica['amount'][$key];
+				$product_narudzbenica['price'] = $narudzbenica['price'][$key];
+				$product_narudzbenica['discount'] = $narudzbenica['discount'][$key];
+				$product_narudzbenica['taxpercent'] = $narudzbenica['taxpercent'][$key];
+				NarudzbeniceProducts::create($product_narudzbenica);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('NarudzbeniceIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+
+		return Redirect::route('NarudzbeniceIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
+
 	}
 
 	public function createPdf($id)
@@ -311,42 +265,35 @@ class NarudzbeniceController extends \BaseController {
 		if (isset($id))
 		{
 
-			$narudzbenice = Narudzbenice::getEntries($id);
+			$narudzbenice = Narudzbenice::with('client')->where('id', $id)->first();
 
-			$productspernarudzbenice = NarudzbeniceProducts::getNarudzbeniceByCustomer($narudzbenice['entry']->id);
+			$productspernarudzbenice = NarudzbeniceProducts::with(['products'])->get();
 
-			$employeeinfo = User::getEntries($narudzbenice['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($narudzbenice->employee_id);
 
 			$totalprice = 0;
 
-			foreach($productspernarudzbenice['narudzbenicabycustomer'] as $singleproduct){
+			foreach($productspernarudzbenice as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$narudzbeniceData[] = array('narudzbenice' => $narudzbenice, 'employeeinfo' => $employeeinfo['entry'], 'productspernarudzbenice' => $productspernarudzbenice['narudzbenicabycustomer'], 'totalprice' => $totalprice);
-			
+			$narudzbeniceData[] = compact('narudzbenice', 'employeeinfo', 'productspernarudzbenice', 'totalprice');
 
-			
-			if ($narudzbenice['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
 
-			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'narudzbenica_obrazac_' . $narudzbenice['entry']->narudzbenica_number . '-' . $datetitle;
+			$pdfname = 'narudzbenica_obrazac_' . $narudzbenice->narudzbenica_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/narudzbenice/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.narudzbenice.narudzbenicepdf', array('narudzbenicedata' => $narudzbeniceData, 'productspernarudzbenice' => $productspernarudzbenice, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.narudzbenice.narudzbenicepdf', compact('narudzbeniceData', 'productspernarudzbenice', 'currdate'))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}
@@ -362,37 +309,28 @@ class NarudzbeniceController extends \BaseController {
 	{
 		try{
 
-			$id = Input::get('id');
-			$narudzbenice = Narudzbenice::getEntries($id);
+			$narudzbenice = Narudzbenice::with('client')->where('id', $id)->first();
 
-			$productspernarudzbenice = NarudzbeniceProducts::getNarudzbeniceByCustomer($narudzbenice['entry']->id);
+			$productspernarudzbenice = NarudzbeniceProducts::with(['products'])->get();
 
-			$employeeinfo = User::getEntries($narudzbenice['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($narudzbenice->employee_id);
 
 			$totalprice = 0;
 
-			foreach($productspernarudzbenice['narudzbenicabycustomer'] as $singleproduct){
+			foreach($productspernarudzbenice as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$narudzbeniceData[] = array('narudzbenice' => $narudzbenice, 'employeeinfo' => $employeeinfo['entry'], 'productspernarudzbenice' => $productspernarudzbenice['narudzbenicabycustomer'], 'totalprice' => $totalprice);
-			
-			
-			
-			if ($narudzbenice['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
+			$narudzbeniceData[] = compact('narudzbenice', 'employeeinfo', 'productspernarudzbenice', 'totalprice');
 
-			
+
 			$datetitle = date('d-m-Y');
-			
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'narudzbenica_' . $narudzbenice['entry']->narudzbenica_number . '-' . $datetitle;
+			$pdfname = 'narudzbenica_obrazac_' . $narudzbenice->narudzbenica_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/narudzbenice/" . $pdfname . '.pdf';
 

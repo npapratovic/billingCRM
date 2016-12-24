@@ -297,32 +297,32 @@ More details about us can be found on our official website: http://www.shopcenta
                         </ul>
                     </li>
                     <li>
-                        <a href="{{ URL::route('OrderIndex') }}">
+                        <a href="{{ URL::route('admin.orders.index') }}">
                            <i class="fa fa-truck" aria-hidden="true"></i>Narudžbe</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('OfferIndex') }}">
+                        <a href="{{ URL::route('admin.offers.index') }}">
                             <i class="fa fa-certificate" aria-hidden="true"></i><span>Ponude</span>
                         </a>
                     </li> 
                      <li>
-                        <a href="{{ URL::route('InvoiceIndex') }}">
+                        <a href="{{ URL::route('admin.invoices.index') }}">
                             <i class="fa fa-ticket" aria-hidden1="true"></i><span>Računi</span>
                         </a>
                     </li> 
                     <li>
-                        <a href="{{ URL::route('DispatchIndex') }}">
+                        <a href="{{ URL::route('admin.dispatch.index') }}">
                             <i class="fa fa-certificate" aria-hidden="true"></i><span>Otpremnice</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('WorkingOrderIndex') }}">
+                        <a href="{{ URL::route('admin.workingorder.index') }}">
                             <i class="fa fa-certificate" aria-hidden="true"></i><span>Radni nalozi</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('NarudzbeniceIndex') }}">
+                        <a href="{{ URL::route('admin.narudzbenice.index') }}">
                             <i class="fa fa-ticket" aria-hidden1="true"></i><span>Narudžbenice</span>
                         </a>
                     </li>

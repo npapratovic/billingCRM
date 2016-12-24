@@ -3,7 +3,25 @@
 class OrdersProducts extends Eloquent
 {
 	protected $table = 'orders_products';
-	
+
+	protected $fillable = array('order_id', 'product_id', 'quantity', 'price');
+
+	  public function orders()
+    {
+        return $this->belongsTo('Order', 'order_id', 'id');
+    }
+
+      public function productServices()
+    {
+        return $this->hasMany('ProductService', 'id', 'product_id');
+    }
+
+     public function importedOrderProducts()
+    {
+        return $this->hasMany('ImportedOrderProduct', 'id', 'product_id');
+    }
+
+
 
 	 	public static function getEntries($id = null)
 	{

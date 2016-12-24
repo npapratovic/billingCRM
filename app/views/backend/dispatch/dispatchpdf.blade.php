@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje otpremnice {{ $dispatchdata['0']['dispatch']['entry']->dispatch_number }}</title>
+	 		<title>Izdavanje otpremnice {{ $dispatchdata['0']['dispatch']->dispatch_number }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj otpremnice #{{ $dispatchdata['0']['dispatch']['entry']->dispatch_number}} </td>
+            <td style="color:#595959;">Broj otpremnice #{{ $dispatchdata['0']['dispatch']->dispatch_number}} </td>
         </tr>
         <tr>
             <td style="color:#000000;">{{ $dispatchdata['0']['employeeinfo']->first_name }} {{ $dispatchdata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $dispatchdata['0']['dispatch']['entry']->first_name }} {{ $dispatchdata['0']['dispatch']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja otpremnice: {{ date('d.m.Y', strtotime($dispatchdata['0']['dispatch']['entry']->dispatch_date_ship))}}</td>
+            <td style="color:#000000;">{{ $dispatchdata['0']['dispatch']->client->first_name }} {{ $dispatchdata['0']['dispatch']->client->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja otpremnice: {{ date('d.m.Y', strtotime($dispatchdata['0']['dispatch']->dispatch_date_ship))}}</td>
             <td></td>
         </tr>
         <tr>
             <td style="color:#595959;">{{ $dispatchdata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $dispatchdata['0']['dispatch']['entry']->address }}</td>
+            <td style="color:#595959;">{{ $dispatchdata['0']['dispatch']->client->address }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Hrvatska, {{ $dispatchdata['0']['employeeinfo']->zip }} {{ $dispatchdata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $dispatchdata['0']['dispatch']['entry']->zip }} {{ $dispatchdata['0']['dispatch']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $dispatchdata['0']['dispatch']->client->zip }} {{ $dispatchdata['0']['dispatch']->client->cityname }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Telefon: {{ $dispatchdata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $dispatchdata['0']['dispatch']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $dispatchdata['0']['dispatch']->client->phone }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Email: {{ $dispatchdata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $dispatchdata['0']['dispatch']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $dispatchdata['0']['dispatch']->client->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -81,10 +81,9 @@
         </tr>
     </thead>
     <tbody>
-
-    @foreach($productsperdispatch['dispatchbycustomer'] as $singleproduct)
+    @foreach($productsperdispatch as $singleproduct)
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:left;">{{ $singleproduct->products->title }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
             <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
             <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->amount }} kn</td> 

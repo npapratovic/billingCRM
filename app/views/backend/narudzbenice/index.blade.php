@@ -1,9 +1,9 @@
  
  <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ URL::route('NarudzbeniceIndex') }}">Pregled svih narudžbenica</a></li>
+    <li class="active"><a href="{{ route('admin.narudzbenice.index') }}">Pregled svih narudžbenica</a></li>
     
-    <a href="{{ URL::route('NarudzbeniceCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ route('admin.narudzbenice.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novu narudžbenicu
         </button>
@@ -29,15 +29,15 @@
                 @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->narudzbenica_number }}</td>
-                    <td>{{ $entry->first_name }} {{ $entry->last_name }} </td>
+                    <td>{{ $entry->client->first_name }} {{ $entry->client->last_name }} </td>
                     <td class="col-md-1">
 
-                        <a href="{{ URL::route('NarudzbeniceEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ route('admin.narudzbenice.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-tag-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-tag-id-{{ $entry->id }}"><i class="fa fa-times"></i>
                         </button>
-                        <a href="{{ URL::route('NarudzbeniceCreatePdf', array('entry_id' => $entry->id)) }}" target="_blank">
+                        <a href="{{ route('NarudzbeniceCreatePdf', array('entry_id' => $entry->id)) }}" target="_blank">
                         <button type="button" id="btn-pdf-narudzbenica-id-{{ $entry->id }}" class="btn btn-warning btn-xs"><i class="fa fa-file-text-o"></i>
                         </button>
                         </a>
@@ -98,7 +98,7 @@
                     <p>Želite li obrisati račun: {{ $entry->narudzbenica_number }} ?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('NarudzbeniceDestroy', array('id' => $entry->id)) }}">
+                    <a href="{{ route('admin.narudzbenice.destroy', array('id' => $entry->id)) }}">
                         <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
                     </a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>

@@ -12,7 +12,7 @@ class ServiceController extends \BaseController {
 	{
 		 
 		// Get data
-		$entries = ProductService::whereNull('deleted_at')->paginate(10);
+		$entries = ProductService::where('type', 'service')->paginate(10);
 
 		$this->layout->title = 'Usluge | BillingCRM';
 
@@ -29,7 +29,7 @@ class ServiceController extends \BaseController {
 	{
 		 
 
-		$entries = ProductService::where('type', 'service')->whereNull('deleted_at')->paginate(5);
+		$entries = ProductService::where('type', 'service')->paginate(5);
 
 		$this->layout->title = 'Unos nove usluge | BillingCRM';
 
@@ -41,8 +41,7 @@ class ServiceController extends \BaseController {
 			'js/backend/bootstrap-filestyle.min.js',
 			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/speakingurl.min.js'
 		);
 
 		$this->layout->content = View::make('backend.service.create', compact('entries'));
@@ -65,6 +64,8 @@ class ServiceController extends \BaseController {
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
+
+		$service['type'] = 'service';
 
 
 		ProductService::create($service); 
@@ -97,7 +98,7 @@ class ServiceController extends \BaseController {
 		 
 
 		// Get data
-		$entries = ProductService::whereNull('deleted_at')->paginate(5);
+		$entries = ProductService::where('type', 'service')->paginate(5);
 
 		$service = ProductService::find($id);
 

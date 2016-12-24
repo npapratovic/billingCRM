@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje računa {{ $invoicesdata['0']['invoice']['entry']->invoice_number }}</title>
+	 		<title>Izdavanje računa {{ $invoicesdata['0']['invoice']->invoice_number }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj računa #{{ $invoicesdata['0']['invoice']['entry']->invoice_number}} </td>
+            <td style="color:#595959;">Broj računa #{{ $invoicesdata['0']['invoice']->invoice_number}} </td>
         </tr>
         <tr>
             <td style="color:#000000;">{{ $invoicesdata['0']['employeeinfo']->first_name }} {{ $invoicesdata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $invoicesdata['0']['invoice']['entry']->first_name }} {{ $invoicesdata['0']['invoice']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja računa: {{ date('d.m.Y', strtotime($invoicesdata['0']['invoice']['entry']->invoice_date))}}</td>
+            <td style="color:#000000;">{{ $invoicesdata['0']['invoice']->first_name }} {{ $invoicesdata['0']['invoice']->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja računa: {{ date('d.m.Y', strtotime($invoicesdata['0']['invoice']->invoice_date))}}</td>
             <td></td>
         </tr>
         <tr>
             <td style="color:#595959;">{{ $invoicesdata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $invoicesdata['0']['invoice']['entry']->address }}</td>
+            <td style="color:#595959;">{{ $invoicesdata['0']['invoice']->address }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Hrvatska, {{ $invoicesdata['0']['employeeinfo']->zip }} {{ $invoicesdata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $invoicesdata['0']['invoice']['entry']->zip }} {{ $invoicesdata['0']['invoice']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $invoicesdata['0']['invoice']->zip }} {{ $invoicesdata['0']['invoice']->cityname }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Telefon: {{ $invoicesdata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $invoicesdata['0']['invoice']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $invoicesdata['0']['invoice']->phone }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Email: {{ $invoicesdata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $invoicesdata['0']['invoice']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $invoicesdata['0']['invoice']->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -78,32 +78,35 @@
             <th style="color:#595959;">Cijena</th>
             <th style="color:#595959;">Količina</th>
             <th style="color:#595959;">Popust</th>
+            <th style="color:#595959;">Stopa</th>
             <th style="color:#595959;">Cijena s popustom</th>
             <th style="color:#595959;">Ukupna cijena po proizvodu</th>
         </tr>
     </thead>
     <tbody>
     @if($imported != '0')
-    @foreach($imported['orderbycustomer'] as $singleproduct)
+    @foreach($imported as $singleproduct)
+   
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
-            <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
+            <td style="text-align:left;">{{ $singleproduct['importedOrders'][0]->name }}</td>
+            <td style="text-align:center;">{{ $singleproduct['importedOrders'][0]->price }} kn</td>
             <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
-            <td style="text-align:center;">{{ $singleproduct->taxpercent }}%</td> 
-            <td style="text-align:center;">{{ number_format($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
-            <td style="text-align:center;">{{ ($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100))) * $singleproduct->amount }} kn</td> 
+            <td style="text-align:center;">{{ $singleproduct->discount }}%</td>
+            <td style="text-align:center;">{{ $singleproduct->taxpercent }}%</td>  
+            <td style="text-align:center;">{{ number_format($singleproduct['importedOrders'][0]->price - ($singleproduct['importedOrders'][0]->price * ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
+            <td style="text-align:center;">{{ number_format(($singleproduct['importedOrders'][0]->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
         </tr>
         @endforeach
-        @endif
-
-    @foreach($productsperinvoice['orderbycustomer'] as $singleproduct)
+    @endif
+    @foreach($productsperinvoice as $singleproduct)
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:left;">{{ $singleproduct['productServices'][0]->title }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
-            <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
+            <td style="text-align:center;">{{ $singleproduct->amount }}</td>
+            <td style="text-align:center;">{{ $singleproduct->discount }}%</td>  
             <td style="text-align:center;">{{ $singleproduct->taxpercent }}%</td> 
             <td style="text-align:center;">{{ number_format($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
-            <td style="text-align:center;">{{ ($singleproduct->price - ($singleproduct->price * ($singleproduct->taxpercent / 100))) * $singleproduct->amount }} kn</td> 
+            <td style="text-align:center;">{{ number_format(($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100)), 2, '.', ',') }} kn</td> 
         </tr>
         @endforeach
     </tbody>
@@ -117,17 +120,17 @@
             <td style="color:#595959; text-align:right;"></td>
         </tr>
         <tr>
-            @if($invoicesdata['0']['invoice']['entry']->payment_way == 'virman')
+            @if($invoicesdata['0']['invoice']->payment_way == 'virman')
                 <td>Virman (bankovna transakcija)</td>
-            @elseif($invoicesdata['0']['invoice']['entry']->payment_way == 'preuzimanje')
+            @elseif($invoicesdata['0']['invoice']->payment_way == 'preuzimanje')
             <td>Po preuzimanju</td>
-            @elseif($invoicesdata['0']['invoice']['entry']->payment_way == 'kartica')
+            @elseif($invoicesdata['0']['invoice']->payment_way == 'kartica')
             <td>Kartično plaćanje</td>
-            @elseif($invoicesdata['0']['invoice']['entry']->payment_way == 'paypal')
+            @elseif($invoicesdata['0']['invoice']->payment_way == 'paypal')
             <td>PayPal</td>
             @endif
-            @if($invoicesdata['0']['invoice']['entry']->from_order == '1')
-            <td>{{ $invoicesdata['0']['invoice']['entry']->payment_way}}</td>
+            @if($invoicesdata['0']['invoice']->from_order == '1')
+            <td>{{ $invoicesdata['0']['invoice']->payment_way}}</td>
             @endif
             <td>
                 <table style="width:100%;">

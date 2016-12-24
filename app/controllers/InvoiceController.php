@@ -32,24 +32,23 @@ class InvoiceController extends \BaseController {
 	public function index()
 	{
 		// Get data
+		$entries = Invoice::with(['client', 'invoicesProducts'])->paginate(10);
 
-		$entries = Invoice::getEntries(null, null);
+		foreach($entries as $entry){
+			$product_price = 0;
 
+			foreach ($entry['invoicesProducts'] as $product) {
+				$product_price += ($product->price * ( 1 - ($product->discount / 100)) * $product->amount) * ( 1 + ($product->taxpercent / 100));
+			}
 
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
+			$entry['invoicesProducts']['totalprice'] = $product_price;
+			
 		}
+
+
 		$this->layout->title = 'Računi | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.invoice.index', array('entries' => $entries));
+		$this->layout->content = View::make('backend.invoice.index', compact('entries'));
 	}
 
 
@@ -61,42 +60,30 @@ class InvoiceController extends \BaseController {
 	public function create()
 	{
  
-		$entries = Invoice::getEntries(null, null);
-
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
+	 	$clients = User::where('user_group', 'client')->get();
 	 	
-	 	if ($clients['status'] == 0)
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries(null, null);
-	 	
-	 	if ($products['status'] == 0)
+	 	$products = ProductService::get();
+	 
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
-
-		$lastinvoicenumber = Invoice::getLastInvoice();
+		$lastinvoicenumber = Invoice::orderBy('created_at', 'desc')->first();
 
 		$newinvoicenumber = 0;
 
 		if(DB::table('invoices')->count() > 0){
-			$newinvoicenumber = $lastinvoicenumber['entry']->invoice_number + 1;
+			$newinvoicenumber = $lastinvoicenumber->invoice_number + 1;
 		}
 
 		$this->layout->title = 'Unos novog računa | BillingCRM';
@@ -110,11 +97,10 @@ class InvoiceController extends \BaseController {
 			'js/backend/summernote.js',
 			'js/backend/jquery.stringtoslug.min.js',
 			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js',
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.invoice.create', array('postRoute' => 'InvoiceStore', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'newinvoicenumber' => $newinvoicenumber));
+		$this->layout->content = View::make('backend.invoice.create', compact('clientlist', 'productlist', 'newinvoicenumber'));
 	}
 
 
@@ -125,47 +111,45 @@ class InvoiceController extends \BaseController {
 	 */
 	public function store()
 	{
-		//goDie(Input::all());
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+	    $invoice = Request::all();
 
-		$entryValidator = Validator::make(Input::all(), Invoice::$store_rules);
-		
+		$entryValidator = Validator::make(Input::all(), Invoice::$store_rules); 
+
 		if ($entryValidator->fails())
 		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('invoice_number', 'invoice_type', 'tax', 'client_id', 'payment_way', 'invoice_date', 'invoice_date_deadline', 'invoice_date_ship', 'invoice_note', 'intern_note', 'repeat_invoice', 'invoice_language', 'valute'));
+		return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+		} 
+
+        Invoice::create($invoice);  
+ 
+	 	$invoice_id = Invoice::orderBy('id', 'desc')->first()->id;
+	 	$product = $invoice['product'];
+  
+		$i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
+		{
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
+		
+				$product_invoice['product_id'] = $value;
+				$product_invoice['invoice_id'] = $invoice_id;
+			   	$product_invoice['measurement'] = $invoice['measurement'][$key];
+				$product_invoice['amount'] = $invoice['amount'][$key];
+				$product_invoice['price'] = $invoice['price'][$key];
+				$product_invoice['discount'] = $invoice['discount'][$key];
+				$product_invoice['taxpercent'] = $invoice['taxpercent'][$key];
+				$product_invoice['imported'] = '0';
+				InvoicesProducts::create($product_invoice);
+
+			}
 		}
 
-		$store = $this->repo->store(
-			Input::get('invoice_number'),
-			Input::get('invoice_type'),
-			Input::get('tax'),
-			Input::get('client_id'),
-			Auth::id(),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('invoice_date'),
-			Input::get('invoice_date_deadline'),
-			Input::get('invoice_date_ship'),
-			Input::get('invoice_note'),
-			Input::get('intern_note'),
-			Input::get('repeat_invoice'),
-			Input::get('invoice_language'),
-			Input::get('valute')
-		);
 
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('InvoiceIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+   		return Redirect::route('admin.invoices.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
+
 	}
 
 
@@ -202,51 +186,39 @@ class InvoiceController extends \BaseController {
 	{
 		  
 		// Get data
+		$entry = Invoice::with('client')->find($id);
 
-		$entry = Invoice::getEntries($id, null);
-
-		$entries = Invoice::getEntries(null, null);
-
+		$entries = Invoice::with('client')->get();
+		
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$clients = User::where('user_group', '=', 'client')->get();
 
-		foreach ($clients['entries'] as $clients)
+	 
+		foreach ($clients as $client)
 		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries(null, null);
-	 	
-	 	if ($products['status'] == 0)
-		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
+	 	$products = ProductService::get();
 
-		foreach ($products['entries'] as $products)
+		foreach ($products as $products)
 		{
 			$productlist[$products->id] = $products->title;
 		}
 
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if($entry['entry']->from_order == '1'){
-			$imported = InvoicesProducts::getImportedByCustomer($id);
-			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
+		if($entry->from_order == '1'){
+			$imported = InvoicesProducts::with(['importedOrders'])->where('invoices_products.invoice_id', '=', $id)
+ 				->where('invoices_products.imported', '1')->get();
+			$invoicecustomer = InvoicesProducts::with(['productServices'])
+				->where('invoice_id', '=', $id)->where('imported', '0')->get();
 		}
 		else{
 			$imported = 0;
-			$invoicecustomer = InvoicesProducts::getOrderByCustomer($id);
+			$invoicecustomer = InvoicesProducts::with(['productServices'])
+				->where('invoice_id', '=', $id)->where('imported', '0')->get();
 		}
 
 		$this->layout->title = 'Uređivanje računa | BillingCRM';
@@ -264,7 +236,8 @@ class InvoiceController extends \BaseController {
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.invoice.edit', array('entry' => $entry['entry'], 'postRoute' => 'InvoiceUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'imported' => $imported, 'invoicecustomer' => $invoicecustomer['orderbycustomer']));
+
+		$this->layout->content = View::make('backend.invoice.edit', compact('entry', 'entries', 'clientlist', 'productlist', 'imported', 'invoicecustomer'));
 	}
 
 
@@ -277,7 +250,7 @@ class InvoiceController extends \BaseController {
 	public function update($id)
 	{
 
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent', 'imported_products')));
+		$invoice = Request::all(); 
 
 		$entryValidator = Validator::make(Input::all(), Invoice::$update_rules);
 //dd($entryValidator);
@@ -285,40 +258,36 @@ class InvoiceController extends \BaseController {
 		{
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator);
 		}
-		//goDie(Input::all());
+		$data = Invoice::find($id);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('invoice_number'),
-			Input::get('invoice_type'),
-			Input::get('tax'),
-			Input::get('client_id'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('invoice_date'),
-			Input::get('invoice_date_deadline'),
-			Input::get('invoice_date_ship'),
-			Input::get('invoice_note'),
-			Input::get('intern_note'),
-			Input::get('repeat_invoice'),
-			Input::get('invoice_language'),
-			Input::get('valute'),
-			Input::get('imported_products')
-		);
+		$data->update($invoice);
+
+	 	$product = $invoice['product'];
+  
+		$i = 0;
+		$ilen = count($product); 
+
+		if ($product != null)
+		{
+			InvoicesProducts::where('invoice_id', $id)->delete();
+			foreach ($product as $key=>$value)
+			{
+				if(++$i == $ilen) break;
 		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
+				$product_invoice['product_id'] = $value;
+				$product_invoice['invoice_id'] = $id;
+			   	$product_invoice['measurement'] = $invoice['measurement'][$key];
+				$product_invoice['amount'] = $invoice['amount'][$key];
+				$product_invoice['price'] = $invoice['price'][$key];
+				$product_invoice['discount'] = $invoice['discount'][$key];
+				$product_invoice['taxpercent'] = $invoice['taxpercent'][$key];
+				$product_invoice['imported'] = '0';
+				InvoicesProducts::create($product_invoice);
+
+			}
 		}
-		else
-		{
-			return Redirect::route('InvoiceIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+		
+		return Redirect::route('admin.invoices.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -329,48 +298,61 @@ class InvoiceController extends \BaseController {
 		if (isset($id))
 		{
 
-			$invoice = Invoice::getEntries($id);
+			$invoice = Invoice::with(['client'])->where('invoices.id', '=', $id)->first();
+			$totalprice = 0;
 
-			if($invoice['entry']->from_order == '1'){
-				$imported = InvoicesProducts::getImportedByCustomer($id);
-				$productsperinvoice = InvoicesProducts::getOrderByCustomer($id);
+			if($invoice->from_order == '1'){
+				$imported = InvoicesProducts::with(['importedOrders'])->where('invoices_products.invoice_id', '=', $id)
+ 				->where('invoices_products.imported', '1')->get();
+
+
+				$productsperinvoice = InvoicesProducts::with(['productServices'])
+				->where('invoice_id', '=', $id)->where('imported', '0')->get();
+
+
+				foreach($imported as $singleproduct){
+
+				$totalprice += ($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100));
+				}
+
+				if($totalprice <= 0){
+					foreach($productsperinvoice as $singleproduct){
+
+					$totalprice += ($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100));
+					}
+				}
+
+
+
 			}
 			else{
 				$imported = 0;
-				$productsperinvoice = InvoicesProducts::getOrderByCustomer($id);
+				$productsperinvoice = InvoicesProducts::with(['productServices'])
+				->where('invoice_id', '=', $id)->where('imported', '0')->get();
+
+				foreach($productsperinvoice as $singleproduct){
+
+				$totalprice += ($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100));
+				}
+
 			}
 
-			$employeeinfo = User::getEntries($invoice['entry']->employee_id);
-
-			$totalprice = 0;
-
-			foreach($productsperinvoice['orderbycustomer'] as $singleproduct){
-
-				$totalprice += $singleproduct->price * $singleproduct->amount;
-			}
-
-
-			$invoicesData[] = array('invoice' => $invoice, 'employeeinfo' => $employeeinfo['entry'], 'productsperinvoice' => $productsperinvoice['orderbycustomer'], 'totalprice' => $totalprice);
-			
-			
-			if ($invoice['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
 
 			
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($invoice['client']->id);
+
+			$invoicesdata[] = compact('invoice', 'employeeinfo', 'productsperinvoice', 'totalprice');
+
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'racun_obrazac_' . $invoice['entry']->invoice_number . '-' . $datetitle;
+			$pdfname = 'racun_obrazac_' . $invoice->invoice_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/invoices/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
-
-
-			$pdf = PDF::loadView('backend.invoice.invoicespdf', array('invoicesdata' => $invoicesData, 'imported' => $imported, 'productsperinvoice' => $productsperinvoice, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.invoice.invoicespdf', compact('invoicesdata', 'imported', 'productsperinvoice', 'currdate'))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}
@@ -384,63 +366,57 @@ class InvoiceController extends \BaseController {
 	// Send PDF in email
 	public function sendEmail($id)
 	{
-		try{
+		// try{
 
 			$id = Input::get('id');
-			$invoice = Invoice::getEntries($id);
+			$invoice = Invoice::with(['client'])->find($id);
 
-			$productsperinvoice = InvoicesProducts::getOrderByCustomer($invoice['entry']->id);
+			$productsperinvoice = InvoicesProducts::with(['productServices'])
+				->where('invoice_id', '=', $id)->where('imported', '0')->get();
 
-			$employeeinfo = User::getEntries($invoice['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($invoice['client']->id);
 
 			$totalprice = 0;
+			$imported = 0;
 
-			foreach($productsperinvoice['orderbycustomer'] as $singleproduct){
+			foreach($productsperinvoice as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
-
-			$invoicesData[] = array('invoice' => $invoice, 'employeeinfo' => $employeeinfo['entry'], 'productsperinvoice' => $productsperinvoice['orderbycustomer'], 'totalprice' => $totalprice);
-			
-			
-			if ($invoice['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
-
-			
+			$invoicesdata[] = compact('invoice', 'employeeinfo', 'productsperinvoice', 'totalprice');
+		
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'racun_' . $invoice['entry']->invoice_number . '-' . $datetitle;
+			$pdfname = 'racun_' . $invoice->invoice_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/invoices/" . $pdfname . '.pdf';
 
+
 			//call createPdf method to create pdf
 
+			$pdf = PDF::loadView('backend.invoice.invoicespdf', compact('invoicesdata', 'imported', 'productsperinvoice', 'currdate'));
 
-			$pdf = PDF::loadView('backend.invoice.invoicespdf', array('invoicesdata' => $invoicesData, 'productsperinvoice' => $productsperinvoice, 'currdate' => $currdate));
-
-			Mail::send('backend.email.invoicemail', array( 'comment' => Input::get('invoice_comment'), 'first_name' => $invoice['entry']->first_name, 'last_name' => $invoice['entry']->last_name, 'number' => $invoice['entry']->invoice_number), function($message) use($pdf, $invoice, $pdfname)
+			Mail::send('backend.email.invoicemail', array( 'comment' => Input::get('invoice_comment'), 'first_name' => $invoice->first_name, 'last_name' => $invoice->last_name, 'number' => $invoice->invoice_number), function($message) use($pdf, $invoice, $pdfname)
 			{
 			    $message->from('info@crm.go.hr', 'info@crm.go.hr');
 
-			    $message->to($invoice['entry']->email)->subject('Račun ' . $invoice['entry']->invoice_number);
+			    $message->to($invoice->email)->subject('Račun ' . $invoice->invoice_number);
 
 			    $message->attachData($pdf->output(), $pdfname . '.pdf');
 			});
 			//goDie($pdf);
 
-			return Redirect::route('InvoiceIndex')->with('success_message', Lang::get('core.msg_success_entry_edited'));
+			return Redirect::route('admin.invoices.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 
-		}
+		// }
 
-		catch (Exception $exp)
-		{
-			return Redirect::route('InvoiceIndex')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-		}
+		// catch (Exception $exp)
+		// {
+		// 	return Redirect::route('admin.invoices.index')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
+		// }
 	  
 	}
 
@@ -454,32 +430,8 @@ class InvoiceController extends \BaseController {
 	 */
 	public function destroy($id)
 	{ 
-		if ($id == null)
-		{
-			return Redirect::route('InvoiceIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Invoice::getEntries($id, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('InvoiceIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('InvoiceIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('InvoiceIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		Invoice::find($id)->delete();
+      	return Redirect::route('admin.invoices.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

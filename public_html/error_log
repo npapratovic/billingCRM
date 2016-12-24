@@ -4,3 +4,10 @@
 [19-Dec-2016 12:05:48 Europe/Zagreb] PHP Fatal error:  Cannot use isset() on the result of a function call (you can use "null !== func()" instead) in /home2/crmgo/public_html/app/storage/views/8b6859c786997ea1cecbb9c36ba9dcb7 on line 61
 [19-Dec-2016 12:07:40 Europe/Zagreb] PHP Fatal error:  Cannot use isset() on the result of a function call (you can use "null !== func()" instead) in /home2/crmgo/public_html/app/storage/views/8b6859c786997ea1cecbb9c36ba9dcb7 on line 61
 [19-Dec-2016 15:04:57 Europe/Zagreb] PHP Fatal error:  Cannot use object of type stdClass as array in /home2/crmgo/public_html/app/controllers/OrderController.php on line 265
+[23-Dec-2016 13:22:50 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 13:23:05 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 13:26:55 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 13:27:06 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 13:27:39 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 13:30:16 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861
+[23-Dec-2016 17:43:23 Europe/Zagreb] PHP Fatal error:  Class 'offersProducts' not found in /home2/crmgo/public_html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php on line 861

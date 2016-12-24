@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje radnog naloga {{ $workingordersdata['0']['workingorder']['entry']->id }}</title>
+	 		<title>Izdavanje radnog naloga {{ $workingordersData['0']['workingorder']->id }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj radnog naloga #{{ $workingordersdata['0']['workingorder']['entry']->workingorder_number}} </td>
+            <td style="color:#595959;">Broj radnog naloga #{{ $workingordersData['0']['workingorder']->workingorder_number}} </td>
         </tr>
         <tr>
-            <td style="color:#000000;">{{ $workingordersdata['0']['employeeinfo']->first_name }} {{ $workingordersdata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $workingordersdata['0']['workingorder']['entry']->first_name }} {{ $workingordersdata['0']['workingorder']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja radnog naloga: {{ date('d.m.Y', strtotime($workingordersdata['0']['workingorder']['entry']->workingorder_date_ship))}}</td>
+            <td style="color:#000000;">{{ $workingordersData['0']['employeeinfo']->first_name }} {{ $workingordersData['0']['employeeinfo']->last_name }}</td>
+            <td style="color:#000000;">{{ $workingordersData['0']['workingorder']->client->first_name }} {{ $workingordersData['0']['workingorder']->client->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja radnog naloga: {{ date('d.m.Y', strtotime($workingordersData['0']['workingorder']->client->workingorder_date_ship))}}</td>
             <td></td>
         </tr>
         <tr>
-            <td style="color:#595959;">{{ $workingordersdata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $workingordersdata['0']['workingorder']['entry']->address }}</td>
+            <td style="color:#595959;">{{ $workingordersData['0']['employeeinfo']->address }}</td>
+            <td style="color:#595959;">{{ $workingordersData['0']['workingorder']->client->address }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Hrvatska, {{ $workingordersdata['0']['employeeinfo']->zip }} {{ $workingordersdata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $workingordersdata['0']['workingorder']['entry']->zip }} {{ $workingordersdata['0']['workingorder']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $workingordersData['0']['employeeinfo']->zip }} {{ $workingordersData['0']['employeeinfo']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $workingordersData['0']['workingorder']->client->zip }} {{ $workingordersData['0']['workingorder']->client->cityname }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Telefon: {{ $workingordersdata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $workingordersdata['0']['workingorder']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $workingordersData['0']['employeeinfo']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $workingordersData['0']['workingorder']->client->phone }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Email: {{ $workingordersdata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $workingordersdata['0']['workingorder']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $workingordersData['0']['employeeinfo']->email }}</td>
+            <td style="color:#595959;">Email: {{ $workingordersData['0']['workingorder']->client->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -82,9 +82,9 @@
     </thead>
     <tbody>
 
-    @foreach($productsperworkingorder['workingorderbycustomer'] as $singleproduct)
+    @foreach($productsperworkingorder as $singleproduct)
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:left;">{{ $singleproduct->services->title }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
             <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
             <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->amount }} kn</td> 
@@ -105,7 +105,7 @@
                     <tbody>
                         <tr>
                             <td></td>
-                            <td style="text-align: right;">Ukupno: {{ $workingordersdata['0']['totalprice'] }} kn</td>
+                            <td style="text-align: right;">Ukupno: {{ $workingordersData['0']['totalprice'] }} kn</td>
                         </tr>
                     </tbody>
                 </table>
@@ -121,7 +121,7 @@
 <p style="font-size:10px; text-align:center;">Izvršitelj radova</p>
 <br>
 <p style="font-size:10px; text-align:center;">________________________________</p>
-<p style="font-size:16px; text-align:center;">{{ $workingordersdata['0']['employeeinfo']->first_name }} {{ $workingordersdata['0']['employeeinfo']->last_name }}</p>
+<p style="font-size:16px; text-align:center;">{{ $workingordersData['0']['employeeinfo']->first_name }} {{ $workingordersData['0']['employeeinfo']->last_name }}</p>
 </div>
 <div style="width:20%;display:inline-block"></div>
 <div style="float:right; width:40%; display:inline-block;">

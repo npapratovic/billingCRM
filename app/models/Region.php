@@ -4,6 +4,10 @@ class Region extends Eloquent
 {
 	protected $table = 'region';
 
+	  public function client()
+    {
+        return $this->hasMany('User', 'region', 'id');
+    }
 
 	/*
 	*	Get entries

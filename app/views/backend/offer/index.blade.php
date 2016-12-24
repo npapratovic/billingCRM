@@ -1,9 +1,9 @@
  
  <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ URL::route('OfferIndex') }}">Pregled svih ponuda</a></li>
+    <li class="active"><a href="{{ URL::route('admin.offers.index') }}">Pregled svih ponuda</a></li>
     
-    <a href="{{ URL::route('OfferCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ URL::route('admin.offers.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novu ponudu
         </button>
@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih ponuda ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih ponuda ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -21,18 +21,22 @@
             <tr>
                 <th>Broj ponude</th>
                 <th>Ime kupca</th>
+                <th>Ukupna cijena</th>
+                <th>Kraj Ponude</th>
                 <th>Akcije</th>
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
                     <td>{{ $entry->offer_number }}</td>
-                    <td>{{ $entry->first_name }} {{ $entry->last_name }} </td>
+                    <td>{{ $entry['client'][0]->first_name }} {{ $entry['client'][0]->last_name }} </td>
+                     <td> {{$entry['offersProducts']['totalprice'] }}kn</td>
+                    <td>{{ $entry->offer_end}}</td>
                     <td class="col-md-1">
 
-                        <a href="{{ URL::route('OfferEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ URL::route('admin.offers.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-tag-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-tag-id-{{ $entry->id }}"><i class="fa fa-times"></i>
@@ -51,8 +55,8 @@
     </table>
 </div>
       
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     {{ Form::open(array('route' => 'OfferSendMail', 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'method' => 'post')) }}
     {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
 
@@ -83,8 +87,8 @@
     @endforeach
 @endif 
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -98,10 +102,20 @@
                     <p>Želite li obrisati ponudu: {{ $entry->offer_number }} ?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('OfferDestroy', array('id' => $entry->id)) }}">
-                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    <div class="row">
+                        <div class="col-md-7">
+                        </div>
+                        <div class="col-md-2">
+                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.offers.destroy', $entry->id]]) }}
+                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                            {{ Form::close() }} 
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -109,20 +123,20 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
 
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-email-offer-id-{{ $entry->id }}").click(function() { 
                     $('#email-offer-id-{{ $entry->id }}').modal('show');
                 });

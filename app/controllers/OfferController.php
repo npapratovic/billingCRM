@@ -32,22 +32,27 @@ class OfferController extends \BaseController {
 	
 		// Get data
 
-		$entries = Offer::getEntries(null, null);
+		$entries = Offer::with(['client', 'offersProducts'])->paginate(10);
 
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
+
+		foreach($entries as $entry){
+			$product_price = 0;
+
+			foreach ($entry['offersProducts'] as $product) {
+				$product_price += ($product->price * ( 1 - ($product->discount / 100)) * $product->amount) * ( 1 + ($product->taxpercent / 100));
+
+			}
+
+			$entry['offersProducts']['totalprice'] = $product_price;
+			
 		}
+		
+
+
+
 		$this->layout->title = 'Ponude | BillingCRM';
 
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.offer.index', array('entries' => $entries));
+		$this->layout->content = View::make('backend.offer.index', compact('entries'));
 	}
 
 
@@ -61,38 +66,29 @@ class OfferController extends \BaseController {
 		
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
+	 	$clients = User::where('user_group', 'client')->get();
 	 	
-	 	if ($clients['status'] == 0)
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries(null, null);
+	 	$products = ProductService::get();
 
-	 	if ($products['status'] == 0)
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
+		$entries = Offer::with(['client'])->get();
 
-		$entries = Offer::getEntries(null, null);
-
- 		$lastoffernumber = Offer::getLastOffer();
+ 		$lastoffernumber = Offer::orderBy('created_at', 'desc')->first();
  		$newoffernumber = 0;
+
  		if(DB::table('offers')->count() > 0){
- 			$newoffernumber = $lastoffernumber['entry']->offer_number + 1;
+ 			$newoffernumber = $lastoffernumber->offer_number + 1;
  		} else {
  			$newoffernumber = 0;
  		}
@@ -112,7 +108,9 @@ class OfferController extends \BaseController {
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.offer.create', array('postRoute' => 'OfferStore', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'newoffernumber' => $newoffernumber));
+
+
+		$this->layout->content = View::make('backend.offer.create', compact('entries', 'clientlist', 'productlist', 'newoffernumber'));
 	}
 
 
@@ -123,7 +121,8 @@ class OfferController extends \BaseController {
 	 */
 	public function store()
 	{	
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+
+        $offer = Request::all();
 
 		$entryValidator = Validator::make(Input::all(), Offer::$store_rules);
 		
@@ -133,36 +132,34 @@ class OfferController extends \BaseController {
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput(Input::only('offer_number', 'tax', 'hide_amount', 'client_id', 'client_address', 'client_oib', 'payment_way', 'offer_start', 'offer_end', 'offer_note', 'offer_language', 'valute'));
 		}
 
-		$store = $this->repo->store(
-			Input::get('offer_number'),
-			Input::get('tax'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Auth::id(),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('offer_start'),
-			Input::get('offer_end'),
-			Input::get('offer_note'),
-			Input::get('offer_language'),
-			Input::get('valute')
-		);
 
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('OfferIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+        Offer::create($offer);
+
+        $offer_id = Offer::orderBy('id', 'desc')->first()->id;
+        $product = $offer['product'];
+
+        $i = 0;
+        $ilen = count($product); 
+
+        if ($product != null)
+        {
+            foreach ($product as $key=>$value)
+            {
+                if(++$i == $ilen) break;
+        
+                $product_offer['product_id'] = $value;
+                $product_offer['offer_id'] = $offer_id;
+                $product_offer['measurement'] = $offer['measurement'][$key];
+                $product_offer['amount'] = $offer['amount'][$key];
+                $product_offer['price'] = $offer['price'][$key];
+                $product_offer['discount'] = $offer['discount'][$key];
+                $product_offer['taxpercent'] = $offer['taxpercent'][$key];
+                OffersProducts::create($product_offer);
+
+            }
+        }
+
+        return Redirect::route('admin.offers.index')->with('success_message', Lang::get('core.msg_success_entry_added'));
 	}
 
 
@@ -199,44 +196,33 @@ class OfferController extends \BaseController {
 		
 		// Get data
 
-		$entry = Offer::getEntries($id, null);
 
-		$entries = Offer::getEntries(null, null);
+		$entry = Offer::with(['client'])->find($id);
+
+		$entries = Offer::with(['client'])->get();
 
 		$clientlist = array();
 
-	 	$clients = User::getListEntries(null, null);
-	 	
-	 	if ($clients['status'] == 0)
+	 	$clients = User::where('user_group', '=', 'client')->get();
+	
+		foreach ($clients as $client)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
-		}
-
-		foreach ($clients['entries'] as $clients)
-		{
-			$clientlist[$clients->id] = $clients->first_name . ' ' . $clients->last_name;
+			$clientlist[$client->id] = $client->first_name . ' ' . $client->last_name;
 		}
 
 		$productlist = array();
 
-	 	$products = ProductService::getEntries(null, null);
+	 	$products = ProductService::get();
 	 	
-	 	if ($products['status'] == 0)
+		foreach ($products as $product)
 		{
-			return Redirect::route('getlanding')->with('error_message', Lang::get('core.msg_error_getting_entries'));
+			$productlist[$product->id] = $product->title;
 		}
 
-		foreach ($products['entries'] as $products)
-		{
-			$productlist[$products->id] = $products->title;
-		}
 
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
+		$offercustomer = OffersProducts::with('productServices')->where('offer_id', $id)->get();
 
-		$offercustomer = OffersProducts::getOfferByCustomer($id);
+		
 //goDie($offercustomer['offerbycustomer']);
 		$this->layout->title = 'Uređivanje ponude | BillingCRM';
 
@@ -252,7 +238,8 @@ class OfferController extends \BaseController {
 			'js/backend/bootstrap-datepicker.min.js'
 		);
 
-		$this->layout->content = View::make('backend.offer.edit', array('entry' => $entry['entry'], 'postRoute' => 'OfferUpdate', 'entries' => $entries, 'clientlist' => $clientlist, 'productlist' => $productlist, 'offercustomer' => $offercustomer['offerbycustomer']));
+
+		$this->layout->content = View::make('backend.offer.edit', compact('entry', 'entries', 'clientlist', 'productlist', 'offercustomer','offercustomer'));
 	}
 
 
@@ -264,8 +251,8 @@ class OfferController extends \BaseController {
 	 */
 	public function update($id)
 	{
-//goDie(Input::all());
-		Input::merge(array_map('trim', Input::except('product', 'measurement', 'amount', 'price', 'discount', 'taxpercent')));
+
+		$offer = Request::all(); 
 
 		$entryValidator = Validator::make(Input::all(), Offer::$update_rules);
 
@@ -274,36 +261,36 @@ class OfferController extends \BaseController {
 			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
 		}
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('offer_number'),
-			Input::get('tax'),
-			Input::get('hide_amount'),
-			Input::get('client_id'),
-			Input::get('client_address'),
-			Input::get('client_oib'),
-			Input::get('product'),
-			Input::get('measurement'),
-			Input::get('amount'),
-			Input::get('price'),
-			Input::get('discount'),
-			Input::get('taxpercent'),
-			Input::get('payment_way'),
-			Input::get('offer_start'),
-			Input::get('offer_end'),
-			Input::get('offer_note'),
-			Input::get('offer_language'),
-			Input::get('valute')
-		);
-		//goDie($update);
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('OfferIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+		$data = Offer::find($id);
+		$data->update($offer);
+
+        $product = $offer['product'];
+
+        $i = 0;
+        $ilen = count($product); 
+
+        if ($product != null)
+        {
+            OffersProducts::where('offer_id', $id)->delete();
+            foreach ($product as $key=>$value)
+            {
+                if(++$i == $ilen) break;
+        
+                $product_offer['product_id'] = $value;
+                $product_offer['offer_id'] = $id;
+                $product_offer['measurement'] = $offer['measurement'][$key];
+                $product_offer['amount'] = $offer['amount'][$key];
+                $product_offer['price'] = $offer['price'][$key];
+                $product_offer['discount'] = $offer['discount'][$key];
+                $product_offer['taxpercent'] = $offer['taxpercent'][$key];
+                OffersProducts::create($product_offer);
+
+            }
+        }
+        
+        return Redirect::route('admin.offers.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
+
+	
 	}
 
 	public function createPdf($id)
@@ -312,42 +299,35 @@ class OfferController extends \BaseController {
 		if (isset($id))
 		{
 
-			$offer = Offer::getEntries($id);
+			$offer = Offer::with(['client'])->find($id);
 
-			$productsperoffer = OffersProducts::getOfferByCustomer($offer['entry']->id);
+			$productsperoffer = OffersProducts::with('productServices')->where('offer_id', $offer->id)->get();
 
-			$employeeinfo = User::getEntries($offer['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($offer['client'][0]->id);
 
 			$totalprice = 0;
 
-			foreach($productsperoffer['offerbycustomer'] as $singleproduct){
+			foreach($productsperoffer as $singleproduct){
+                
+				$totalprice += ($singleproduct->price * ( 1 - ($singleproduct->discount / 100)) * $singleproduct->amount) * ( 1 + ($singleproduct->taxpercent / 100));
 
-				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
 
-			$offersData[] = array('offer' => $offer, 'employeeinfo' => $employeeinfo['entry'], 'productsperoffer' => $productsperoffer['offerbycustomer'], 'totalprice' => $totalprice);
-			
-
-			
-			if ($offer['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
-
+			$offersdata[] = compact('offer', 'employeeinfo', 'productsperinvoice', 'totalprice');
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'ponuda_obrazac_' . $offer['entry']->offer_number . '-' . $datetitle;
+			$pdfname = 'ponuda_obrazac_' . $offer->offer_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/offers/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.offer.offerspdf', array('offersdata' => $offersData, 'productsperoffer' => $productsperoffer, 'currdate' => $currdate))->save( $pdfreportfullpath );
+			$pdf = PDF::loadView('backend.offer.offerspdf',compact('offersdata', 'productsperoffer', 'currdate'))->save( $pdfreportfullpath );
 			return $pdf->stream();
 
 		}
@@ -365,61 +345,52 @@ class OfferController extends \BaseController {
 		try{
 
 			$id = Input::get('id');
-			$offer = Offer::getEntries($id);
+			$offer = Offer::with(['client'])->find($id);
 
-			$productsperoffer = OffersProducts::getOfferByCustomer($offer['entry']->id);
+			$productsperoffer = OffersProducts::with('productServices')->where('offer_id', $offer->id)->get();
 
-			$employeeinfo = User::getEntries($offer['entry']->employee_id);
+			$employeeinfo = User::with(['userCity', 'userRegion'])->find($offer['client'][0]->id);
 
 			$totalprice = 0;
 
-			foreach($productsperoffer['offerbycustomer'] as $singleproduct){
+			foreach($productsperoffer as $singleproduct){
 
 				$totalprice += $singleproduct->price * $singleproduct->amount;
 			}
 
-
-			$offersData[] = array('offer' => $offer, 'employeeinfo' => $employeeinfo['entry'], 'productsperoffer' => $productsperoffer['offerbycustomer'], 'totalprice' => $totalprice);
-			
-
-			
-			if ($offer['status'] == 0)
-			{
-				return Redirect::back()->with('error_message', Lang::get('messages.msg_error_getting_entry'));
-			}
-
+			$offersData[] = compact('offer', 'employeeinfo', 'productsperinvoice', 'totalprice');
 			
 			$datetitle = date('d-m-Y');
 
 			$currdate = date('d. m. Y');
 
-			$pdfname = 'ponuda_' . $offer['entry']->offer_number . '-' . $datetitle;
+			$pdfname = 'ponuda_' . $offer->offer_number . '-' . $datetitle;
 
 			$pdfreportfullpath = public_path() . "/uploads/backend/offers/" . $pdfname . '.pdf';
 
 			//call createPdf method to create pdf
 
 
-			$pdf = PDF::loadView('backend.offer.offerspdf', array('offersdata' => $offersData, 'productsperoffer' => $productsperoffer, 'currdate' => $currdate));
+			$pdf = PDF::loadView('backend.offer.offerspdf', compact('offersdata', 'productsperoffer', 'currdate'));
 
 
-			Mail::send('backend.email.offermail', array( 'comment' => Input::get('offer_comment'), 'first_name' => $offer['entry']->first_name, 'last_name' => $offer['entry']->last_name, 'number' => $offer['entry']->offer_number), function($message) use($pdf, $offer, $pdfname)
+			Mail::send('backend.email.offermail', array( 'comment' => Input::get('offer_comment'), 'first_name' => $offer->first_name, 'last_name' => $offer->last_name, 'number' => $offer->offer_number), function($message) use($pdf, $offer, $pdfname)
 			{
 			    $message->from('info@crm.go.hr', 'info@crm.go.hr');
 
-			    $message->to($offer['entry']->email)->subject('Ponuda ' . $offer['entry']->offer_number);
+			    $message->to($offer->email)->subject('Ponuda ' . $offer->offer_number);
 
 			    $message->attachData($pdf->output(), $pdfname . '.pdf');
 			});
 			//goDie($pdf);
 
-			return Redirect::route('OfferIndex')->with('success_message', Lang::get('core.msg_success_entry_edited'));
+			return Redirect::route('admin.offers.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 
 		}
 
 		catch (Exception $exp)
 		{
-			return Redirect::route('OfferIndex')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
+			return Redirect::route('admin.offers.index')->with('error_message', Lang::get('messages.msg_error_getting_entry'));
 		}
 	  
 	}
@@ -434,32 +405,8 @@ class OfferController extends \BaseController {
 	public function destroy($id)
 	{
 		
-		if ($id == null)
-		{
-			return Redirect::route('OfferIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$entry = Offer::getEntries($id, null);
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		if (!is_object($entry['entry']))
-		{
-			return Redirect::route('OfferIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('OfferIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('OfferIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		Offer::find($id)->delete();
+        return Redirect::route('admin.offers.index')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
 	}
 
 

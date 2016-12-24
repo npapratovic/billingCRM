@@ -73,6 +73,8 @@ class AllMigrations extends Migration {
 			$table->string('consumer_secret');
 
 			$table->foreign('language')->references('id')->on('languages');
+			$table->foreign('city')->references('id')->on('city');
+			$table->foreign('region')->references('id')->on('region');
 
 			$table->softDeletes();
 
@@ -137,26 +139,6 @@ class AllMigrations extends Migration {
 		});
 
 
-		//products imported from woocommerce
-		Schema::create('imported_order_products', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->string('subtotal')->nullable();
-			$table->string('subtotal_tax')->nullable();
-			$table->string('total')->nullable();
-			$table->string('total_tax')->nullable();
-			$table->string('price')->nullable();
-			$table->integer('quantity')->nullable();
-			$table->string('tax_class')->nullable();
-			$table->string('name')->nullable();
-			$table->string('product_id')->nullable();
-			$table->string('sku')->nullable();
-			$table->integer('existing')->nullable();
-			$table->string('type')->nullable();
-			$table->timestamp('created_at')->nullable();
-			$table->timestamp('updated_at')->nullable();
-			$table->softDeletes();
-		});
 
 		Schema::create('categories', function(Blueprint $table)
 		{
@@ -187,8 +169,8 @@ class AllMigrations extends Migration {
 		{
 			$table->increments('id')->unsigned();
 			$table->integer('invoice_number');
-			$table->integer('client_id');
-			$table->integer('employee_id');
+			$table->integer('client_id')->unsigned();
+			$table->integer('employee_id')->unsigned();
 			$table->string('invoice_type');
 			$table->integer('tax');
 			$table->string('address');
@@ -206,6 +188,8 @@ class AllMigrations extends Migration {
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 			$table->softDeletes();
+
+			$table->foreign('client_id')->references('id')->on('users');
 		});
 
 
@@ -244,19 +228,6 @@ class AllMigrations extends Migration {
 			$table->timestamp('updated_at')->nullable();
 		});
 
-		Schema::create('dispatches_products', function(Blueprint $table)
-		{
-			$table->increments('id')->unsigned();
-			$table->integer('dispatch_id');
-			$table->integer('product_id');
-			$table->string('measurement');
-			$table->integer('amount');
-			$table->float('price');
-			$table->float('discount');
-			$table->float('taxpercent');
-			$table->timestamp('created_at')->nullable();
-			$table->timestamp('updated_at')->nullable();
-		});
 
 		// Password reminders
 		Schema::create('password_reminders', function(Blueprint $table)
@@ -328,6 +299,32 @@ class AllMigrations extends Migration {
 		});
 
 
+		//products imported from woocommerce
+		Schema::create('imported_order_products', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->string('subtotal')->nullable();
+			$table->string('subtotal_tax')->nullable();
+			$table->string('total')->nullable();
+			$table->string('total_tax')->nullable();
+			$table->string('price')->nullable();
+			$table->integer('quantity')->nullable();
+			$table->string('tax_class')->nullable();
+			$table->string('name')->nullable();
+			$table->integer('product_id')->unsigned();
+			$table->string('sku')->nullable();
+			$table->integer('existing')->nullable();
+			$table->string('type')->nullable();
+			$table->timestamp('created_at')->nullable();
+			$table->timestamp('updated_at')->nullable();
+			$table->softDeletes(); 
+			
+		});
+
+		Schema::table('imported_order_products', function($table) {
+		   $table->foreign('product_id')->references('product_id')->on('invoices_products');
+		});
+
 		Schema::create('company', function(Blueprint $table)
 		{
 			$table->increments('id');
@@ -363,7 +360,7 @@ class AllMigrations extends Migration {
 			$table->integer('dispatch_number');
 			$table->integer('taxable');
 			$table->integer('hide_amount');
-			$table->integer('client_id');
+			$table->integer('client_id')->unsigned();
 			$table->integer('employee_id');
 			$table->string('client_address');
 			$table->integer('client_oib');
@@ -375,15 +372,19 @@ class AllMigrations extends Migration {
 			$table->string('valute');
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
-			$table->softDeletes();
+			$table->softDeletes(); 
+		}); 
+
+		Schema::table('dispatches', function($table) {
+		  	$table->foreign('client_id')->references('id')->on('users');
 		});
 
 		// Create dispatches_services
 		Schema::create('dispatches_services', function($table)
 		{
 			$table->increments('id')->unsigned();
-			$table->integer('dispatch_id');
-			$table->integer('service_id');
+			$table->integer('dispatch_id')->unsigned();
+			$table->integer('service_id')->unsigned();
 			$table->string('measurement');
 			$table->integer('amount');
 			$table->float('price');
@@ -393,26 +394,36 @@ class AllMigrations extends Migration {
 			$table->dateTime('updated_at');
 		});
 
-		// Create dispatches_services
-		Schema::create('workingorders_services', function($table)
+		Schema::table('dispatches_services', function($table) {
+			$table->foreign('dispatch_id')->references('id')->on('dispatches');
+			$table->foreign('service_id')->references('id')->on('products_services');
+		});
+
+		Schema::create('dispatches_products', function(Blueprint $table)
 		{
 			$table->increments('id')->unsigned();
-			$table->integer('workingorder_id');
-			$table->integer('service_id');
+			$table->integer('dispatch_id')->unsigned();
+			$table->integer('product_id')->unsigned();
 			$table->string('measurement');
 			$table->integer('amount');
 			$table->float('price');
 			$table->float('discount');
 			$table->float('taxpercent');
-			$table->dateTime('created_at');
-			$table->dateTime('updated_at');
+			$table->timestamp('created_at')->nullable();
+			$table->timestamp('updated_at')->nullable();
+ 
 		});
 
+		Schema::table('dispatches_products', function($table) {
+			$table->foreign('dispatch_id')->references('id')->on('dispatches');
+			$table->foreign('product_id')->references('id')->on('products_services');
+		});
+ 
 		Schema::create('narudzbenice', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->integer('narudzbenica_number');
-			$table->integer('client_id');
+			$table->integer('client_id')->unsigned();
 			$table->integer('employee_id');
 			$table->integer('tax');
 			$table->integer('hide_amount');
@@ -426,14 +437,18 @@ class AllMigrations extends Migration {
 			$table->integer('valute');
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
-			$table->softDeletes();
+			$table->softDeletes(); 
+		});
+
+		Schema::table('narudzbenice', function($table) { 
+			$table->foreign('client_id')->references('id')->on('users');
 		});
 
 		// Creates the narudzbenice_products (Many-to-Many relation) table
 		Schema::create('narudzbenice_products', function ($table) {
 			$table->increments('id');
-			$table->integer('narudzbenica_id');
-			$table->integer('product_id');
+			$table->integer('narudzbenica_id')->unsigned();
+			$table->integer('product_id')->unsigned();
 			$table->string('measurement');
 			$table->integer('amount');
 			$table->float('price');
@@ -441,9 +456,12 @@ class AllMigrations extends Migration {
 			$table->float('taxpercent');
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
+ 
+		});
 
-			//$table->foreign('narudzbenice_id')->references('id')->on('narudzbenice')->onUpdate('cascade')->onDelete('cascade');
-			//$table->foreign('product_id')->references('id')->on('products');
+		Schema::table('narudzbenice_products', function($table) { 
+			$table->foreign('narudzbenica_id')->references('id')->on('narudzbenice');
+			$table->foreign('product_id')->references('id')->on('products_services');
 		});
 
 		// Create orders
@@ -487,7 +505,7 @@ class AllMigrations extends Migration {
 			$table->string('workingorder_number', 255);
 			$table->integer('taxable');
 			$table->integer('hide_amount');
-			$table->string('client_id', 255);
+			$table->integer('client_id')->unsigned();
 			$table->integer('employee_id');
 			$table->string('client_address');
 			$table->integer('client_oib');
@@ -498,8 +516,34 @@ class AllMigrations extends Migration {
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 			$table->softDeletes();
+
+
 		});
  
+		Schema::table('workingorders', function($table) { 
+			$table->foreign('client_id')->references('id')->on('users');
+		});
+		
+		// Create workingorders_services
+		Schema::create('workingorders_services', function($table)
+		{
+			$table->increments('id')->unsigned();
+			$table->integer('workingorder_id')->unsigned();
+			$table->integer('service_id')->unsigned();
+			$table->string('measurement');
+			$table->integer('amount');
+			$table->float('price');
+			$table->float('discount');
+			$table->float('taxpercent');
+			$table->dateTime('created_at');
+			$table->dateTime('updated_at');
+ 
+		});
+
+		Schema::table('workingorders_services', function($table) {
+			$table->foreign('workingorder_id')->references('id')->on('workingorders');
+			$table->foreign('service_id')->references('id')->on('products_services');
+		});
 
 	}
 

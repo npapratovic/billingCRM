@@ -4,6 +4,12 @@ class NarudzbeniceProducts extends Eloquent
 {
 	protected $table = 'narudzbenice_products';
 	
+	protected $fillable = array('product_id', 'narudzbenica_id', 'measurement', 'amount', 'price', 'discount', 'taxpercent');
+	
+
+	public function products(){
+		return $this->belongsTo('ProductService', 'product_id', 'id');
+	}
 
 	 	public static function getEntries($id = null)
 	{

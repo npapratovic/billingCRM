@@ -1,7 +1,7 @@
 <!-- Main content --> 
 <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li><a href="{{ URL::route('OrderIndex') }}">Pregled svih narudžbi</a></li>
+    <li><a href="{{ URL::route('admin.orders.index') }}">Pregled svih narudžbi</a></li>
     <li class="active">Dodaj narudžbu</li>
 </ul>
 <div class="panel-heading">
@@ -10,7 +10,7 @@
     		<h4>Dodaj narudžbu</h4>
     	</div>
     	<div class="col-md-2">
-      		<a href="{{ URL::route('OrderIndex') }}">
+      		<a href="{{ URL::route('admin.orders.index') }}">
                 <button class="btn btn-default btn-md pull-right"><i class="fa fa-caret-square-o-left"></i> Povratak</button>
             </a> 
     	</div>
@@ -19,39 +19,37 @@
 <div class="panel-body">
 	<div class="row">
 	<div class="col-md-8">
-		{{ Form::open(array('route' => $postRoute, 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'files' => false)) }}
+		{{ Form::open(['url' => 'admin/orders', 'files' => 'false']) }}
 		 	<div class="row">
 		 	<div class="col-md-12">
 		 	<div class="row">
 		 	<div class="col-md-6">
-					 <div class="form-group">  
-			                    <label for="order_id">Broj narudžbe:</label>
-			                    {{ Form::text('order_id', isset($newordernumber) ? $newordernumber : null, ['class' => 'form-control', 'id' => 'order_id', 'placeholder' => 'Broj narudžbe']) }}
-			                    <small class="text-danger">{{ $errors->first('order_id') }}</small>
-			                    </div>
+				<div class="form-group">  
+                {{ Form::label('order_id', 'Broj narudžbe:') }}
+                {{ Form::text('order_id', null, ['class' => 'form-control']) }}
+                <small class="text-danger">{{ $errors->first('order_id') }}</small>
+                </div>
 		 	</div>
 		 	</div>
 		 	<div class="row">
 		 	<div class="col-md-4">
 		 	<div class="form-group">  
-	                <label for="user_id">Klijent:</label>  
-					{{ Form::select('user_id', $clientslist, isset($entry->user_id) ? $entry->user_id : null, array('class' => 'form-control', 'style' => 'width:100%', 'id' => 'user_id', 'required')) }} 
-					<small class="text-danger">{{ $errors->first('user_id') }}</small>
+	            {{ Form::label('user_id', 'Klijent:') }}  
+				{{ Form::select('user_id', $clientslist, null, array('class' => 'form-control', 'style' => 'width:100%')) }} 
+				<small class="text-danger">{{ $errors->first('user_id') }}</small>
 	            </div>
 	            </div>
-
 	            <div class="col-md-1"></div>
 	            <div class="col-md-5">
-	                            <div class="form-group">  
-                    <label for="order_date">Datum isporuke:</label>
-                    {{ Form::text('order_date', isset($entry->order_date) ? $entry->order_date : null, ['class' => 'form-control datepicker margin-bot30', 'id' => 'order_date', 'placeholder' => 'Datum']) }}
+                    <div class="form-group">  
+                    {{ Form::label('order_date', 'Datum isporuke:') }}
+                	{{ Form::text('order_date', null, ['class' => 'form-control datepicker margin-bot30']) }}
                     <small class="text-danger">{{ $errors->first('order_date') }}</small>
                     </div>
-                    </div>
-	            </div>
-	            </div>
-	            </div>
- 
+                </div>
+            </div>
+            </div>
+	        </div>
  			<div class="row">
 			<div class="col-md-12">
 			 			<div class="row">
@@ -59,18 +57,18 @@
 					        	<div class="col-md-6">
 				            		<div class="input-group">
 			               			<span class="input-group-addon">Proizvod</span> 
-			          				{{ Form::select('products_array[]', $productlist, isset($entry->id) ? $entry->id : null, array('class' => 'form-control selector', 'style' => 'width:100%', 'id' => 'id', 'required')) }}
+			          				{{ Form::select('products_array[]', $productlist, null, array('class' => 'form-control selector', 'style' => 'width:100%')) }}
 			          				</div>
 					        	</div>
 					        	<div class="col-md-4">
 					            	<div class="input-group">
-			                   			<span class="input-group-addon">Količina</span> 
-										{{ Form::text('quantity[]', isset($entry->quantity) ? $entry->quantity : null, ['class' => 'form-control', 'id' => 'quantity', 'placeholder' => 'Unesite željenu količinu']) }}
+		                   			<span class="input-group-addon">Količina</span> 
+									{{ Form::text('quantity[]', null, ['class' => 'form-control']) }}
 									<small class="text-danger">{{ $errors->first('quantity') }}</small>
-			              			</div>
-					            </div>
-					        </div>
-					    </div>
+		              			</div>
+				            </div>
+				        </div>
+				    </div>
 				</div>
 		    </div>
 		 
@@ -85,13 +83,13 @@
 					        	<div class="col-md-6">
 				            		<div class="input-group">
 			               			<span class="input-group-addon">Proizvod</span> 
-			          				{{ Form::select('products_array[]', $productlist, isset($entry->id) ? $entry->id : null, array('class' => 'form-control selector', 'style' => 'width:100%', 'id' => 'id', 'required')) }}
+			          				{{ Form::select('products_array[]', $productlist, null, array('class' => 'form-control selector', 'style' => 'width:100%')) }}
 			          				</div>
 					        	</div>
 					        	<div class="col-md-4">
 					            	<div class="input-group">
 			                   			<span class="input-group-addon">Količina</span> 
-										{{ Form::text('quantity[]', isset($entry->quantity) ? $entry->quantity : null, ['class' => 'form-control', 'id' => 'quantity', 'placeholder' => 'Unesite željenu količinu']) }}
+										{{ Form::text('quantity[]', null, ['class' => 'form-control']) }}
 									<small class="text-danger">{{ $errors->first('quantity') }}</small>
 			              			</div>
 					            </div>
@@ -99,7 +97,7 @@
 							 <div class="col-md-1">
 							<a class="btn btn-danger btn-float btn-remove"><i class="ti-close"></i></a>
 							</div>
-					        </div>
+				        </div>
 					</div>
 				</div>
 			</div>
@@ -108,63 +106,61 @@
 </div>
   		 
       	<div class="col-md-11">
-        <a class="btn btn-success btn-duplicator margin-bot30">Dodaj proizvod</a>
+        <a class="btn btn-success btn-duplicator margin-bot30" style="margin-top: 30px;">Dodaj proizvod</a>
       	</div>
       	<div class="row">
       	<div class="col-md-3">
-		        <div class="form-group">
-		            <label for="shipping_way">Način dostave:</label>
-		            {{ Form::select('shipping_way', array('overseas' => 'Overseas', 'cityexpress' => 'Cityexpress', 'hrvatskaposta' => 'Hrvatska pošta', 'tisakpaketi' => 'Tisak paketi', 'dpd' => 'DPD', 'dhl' => 'DHL', 'gls' => 'GLS', 'intereuropa' => 'Intereuropa'), isset($entry->shipping_way) ? $entry->shipping_way : null, array('class'=>'form-control','style'=>'' )) }}
-		        </div>
-	</div>
-	<div class="col-md-1"></div>
+	        <div class="form-group">
+		            {{ Form::label('shipping_way', 'Način dostave:') }}
+		            {{ Form::select('shipping_way', array('overseas' => 'Overseas', 'cityexpress' => 'Cityexpress', 'hrvatskaposta' => 'Hrvatska pošta', 'tisakpaketi' => 'Tisak paketi', 'dpd' => 'DPD', 'dhl' => 'DHL', 'gls' => 'GLS', 'intereuropa' => 'Intereuropa'), null, array('class'=>'form-control')) }}
+	        </div>
+		</div>
+		<div class="col-md-1"></div>
       	<div class="col-md-4">
-		        <div class="form-group">
-		            <label for="payment_way">Naćin plaćanja: </label>
-		            {{ Form::select('payment_way', array('virman' => 'Virman (bankovna transakcija)', 'preuzimanje' => 'Po preuzimanju', 'kartica' => 'Kartično plaćanje', 'paypal' => 'PayPal'), isset($entry->payment_way) ? $entry->payment_way : null, array('class'=>'form-control','style'=>'' )) }}
-		        </div>
-	</div>
-	<div class="col-md-1"></div>
-	      	<div class="col-md-3">
-		        <div class="form-group">
-		            <label for="payment_status">Status narudžbe: </label>
-		            {{ Form::select('payment_status', array('obrada' => 'Obrada uplate', 'procesuiranje' => 'Precesuiranje', 'cekanje' => 'Na čekanju', 'zavrseno' => 'Završeno', 'otkazano' => 'Otkazano', 'refundirano' => 'Refundirano', 'neuspjesno' => 'Neuspješno'), isset($entry->payment_status) ? $entry->payment_status : null, array('class'=>'form-control','style'=>'' )) }}
-		        </div>
-	</div>
-	</div>
-	<div class="row">
-	      	<div class="col-md-3">
+	        <div class="form-group">
+		            {{ Form::label('payment_way', 'Način plaćanja:') }}
+		            {{ Form::select('payment_way', array('virman' => 'Virman (bankovna transakcija)', 'preuzimanje' => 'Po preuzimanju', 'kartica' => 'Kartično plaćanje', 'paypal' => 'PayPal'), null, array('class'=>'form-control')) }}
+	        </div>
+		</div>
+		<div class="col-md-1"></div>
+      	<div class="col-md-3">
+	        <div class="form-group">
+		            {{ Form::label('payment_status', 'Status narudžbe:') }}
+		            {{ Form::select('payment_status', array('obrada' => 'Obrada uplate', 'procesuiranje' => 'Precesuiranje', 'cekanje' => 'Na čekanju', 'zavrseno' => 'Završeno', 'otkazano' => 'Otkazano', 'refundirano' => 'Refundirano', 'neuspjesno' => 'Neuspješno'), null, array('class'=>'form-control')) }}
+	        </div>
+		</div>
+		</div>
+		<div class="row">
+		<div class="col-md-3">
 			 <div class="form-group">  
-	                    <label for="billing_address">Adresa računa:</label>
-	                    {{ Form::text('billing_address', isset($billing_address) ? $billing_address : null, ['class' => 'form-control', 'id' => 'billing_address', 'placeholder' => 'Adresa računa']) }}
+	                    {{ Form::label('billing_address', 'Adresa računa:') }}
+	                    {{ Form::text('billing_address', null, ['class' => 'form-control']) }}
 	                    <small class="text-danger">{{ $errors->first('billing_address') }}</small>
-	                    </div>
-	</div>
-	<div class="col-md-1"></div>
-	<div class="col-md-3">
+            </div>
+		</div>
+		<div class="col-md-1"></div>
+		<div class="col-md-3">
 			 <div class="form-group">  
-	                    <label for="shipping_address">Adresa dostave:</label>
-	                    {{ Form::text('shipping_address', isset($shipping_address) ? $shipping_address : null, ['class' => 'form-control', 'id' => 'shipping_address', 'placeholder' => 'Adresa dostave']) }}
+	                    {{ Form::label('shipping_address', 'Adresa dostave:') }}
+	                    {{ Form::text('shipping_address', null, ['class' => 'form-control']) }}
 	                    <small class="text-danger">{{ $errors->first('shipping_address') }}</small>
-	                    </div>
-	</div>
-	</div>
-	        	<div class="form-group">
-                <label for="note">Napomena</label>
-               	{{ Form::textarea('note', isset($entry->note) ? $entry->note : null, ['class' => 'form-control editor', 'placeholder' => 'Napomena']) }}
+            </div>
+		</div>
+		</div>
+        	<div class="form-group">
+                {{ Form::label('note', 'Napomena:') }}
+               	{{ Form::textarea('note', null, ['class' => 'form-control editor']) }}
 				<small class="text-danger">{{ $errors->first('note') }}</small>
             </div> 
-            	   	<div class="col-md-1 pull-right"> 
-		    {{ Form::button('<i class="fa fa-floppy-o"></i>   ' . Lang::get('core.save'), array('type' => 'submit', 'class' => 'btn btn-info pull-right')) }}
+    	   	<div class="col-md-1 pull-right"> 
+		     {{ Form::button('<i class="fa fa-floppy-o"></i>   ' . Lang::get('core.save'), array('type' => 'submit', 'class' => 'btn btn-info pull-right')) }}
 		</div>
 	</div> 
-
-
 </div> 
-  
+  {{ Form::close() }}
  
 
-{{ Form::close() }}
+
 
 <script type="text/javascript">
 

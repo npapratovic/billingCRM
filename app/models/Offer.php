@@ -8,6 +8,9 @@ class Offer extends Eloquent
 	
 	protected $table = 'offers';
 
+	protected $fillable = array('offer_number', 'client_id', 'employee_id', 'tax', 'hide_amount', 'client_address',
+		'client_oib', 'payment_way', 'offer_start', 'offer_end', 'offer_note', 'offer_language', 'valute', 'deleted_at');
+
 	// New entry validation
 	public static $store_rules = array(
 		'offer_number'					=>	'required',
@@ -21,7 +24,22 @@ class Offer extends Eloquent
 		'offer_number'			=>	'required',
 		'client_id'				=>	'required',
 		'client_address'			=>	'required'
-	);	
+	);
+
+      public function client()
+    {
+        return $this->hasMany('User', 'id', 'client_id');
+    }
+
+     public function offersProducts()
+    {
+        return $this->hasMany('offersProducts', 'offer_id', 'id');
+    }
+
+    //   public function city()
+    // {
+    //     return $this->hasMany('City', 'id', 'id');
+    // }	
 
 	/*
 	*	Get entries

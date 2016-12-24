@@ -4,7 +4,16 @@ class City extends Eloquent
 {
 	protected $table = 'city';
 
+	  public function client()
+    {
 
+        return $this->hasMany('User', 'city', 'id');
+    }
+
+	  public function offers()
+    {
+        return $this->hasMany('Offer');
+    }
 	/*
 	*	Get entries
 	*

@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje narudžbenice {{ $narudzbenicedata['0']['narudzbenice']['entry']->narudzbenica_number }}</title>
+	 		<title>Izdavanje narudžbenice {{ $narudzbeniceData['0']['narudzbenice']->narudzbenica_number }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj narudžbenice #{{ $narudzbenicedata['0']['narudzbenice']['entry']->narudzbenica_number}} </td>
+            <td style="color:#595959;">Broj narudžbenice #{{ $narudzbeniceData['0']['narudzbenice']->narudzbenica_number}} </td>
         </tr>
         <tr>
-            <td style="color:#000000;">{{ $narudzbenicedata['0']['employeeinfo']->first_name }} {{ $narudzbenicedata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $narudzbenicedata['0']['narudzbenice']['entry']->first_name }} {{ $narudzbenicedata['0']['narudzbenice']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja narudžbenice: {{ date('d.m.Y', strtotime($narudzbenicedata['0']['narudzbenice']['entry']->narudzbenica_start))}}</td>
+            <td style="color:#000000;">{{ $narudzbeniceData['0']['employeeinfo']->first_name }} {{ $narudzbeniceData['0']['employeeinfo']->last_name }}</td>
+            <td style="color:#000000;">{{ $narudzbeniceData['0']['narudzbenice']->client->first_name }} {{ $narudzbeniceData['0']['narudzbenice']->client->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja narudžbenice: {{ date('d.m.Y', strtotime($narudzbeniceData['0']['narudzbenice']->narudzbenica_start))}}</td>
             <td></td>
         </tr>
         <tr>
-            <td style="color:#595959;">{{ $narudzbenicedata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $narudzbenicedata['0']['narudzbenice']['entry']->address }}</td>
+            <td style="color:#595959;">{{ $narudzbeniceData['0']['employeeinfo']->address }}</td>
+            <td style="color:#595959;">{{ $narudzbeniceData['0']['narudzbenice']->client->address }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Hrvatska, {{ $narudzbenicedata['0']['employeeinfo']->zip }} {{ $narudzbenicedata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $narudzbenicedata['0']['narudzbenice']['entry']->zip }} {{ $narudzbenicedata['0']['narudzbenice']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $narudzbeniceData['0']['employeeinfo']->zip }} {{ $narudzbeniceData['0']['employeeinfo']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $narudzbeniceData['0']['narudzbenice']->client->zip }} {{ $narudzbeniceData['0']['narudzbenice']->client->cityname }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Telefon: {{ $narudzbenicedata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $narudzbenicedata['0']['narudzbenice']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $narudzbeniceData['0']['employeeinfo']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $narudzbeniceData['0']['narudzbenice']->client->phone }}</td>
         </tr>
         <tr>
-            <td style="color:#595959;">Email: {{ $narudzbenicedata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $narudzbenicedata['0']['narudzbenice']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $narudzbeniceData['0']['employeeinfo']->email }}</td>
+            <td style="color:#595959;">Email: {{ $narudzbeniceData['0']['narudzbenice']->client->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -81,10 +81,9 @@
         </tr>
     </thead>
     <tbody>
-
-    @foreach($productspernarudzbenice['narudzbenicabycustomer'] as $singleproduct)
-        <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+    @foreach($productspernarudzbenice as $singleproduct)
+            <tr>
+            <td style="text-align:left;">{{ $singleproduct->products->title }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
             <td style="text-align:center;">{{ $singleproduct->amount }}</td> 
             <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->amount }} kn</td> 
@@ -101,13 +100,13 @@
             <td style="color:#595959; text-align:right;"></td>
         </tr>
         <tr>
-            @if($narudzbenicedata['0']['narudzbenice']['entry']->payment_way == 'virman')
+            @if($narudzbeniceData['0']['narudzbenice']->payment_way == 'virman')
                 <td>Virman (bankovna transakcija)</td>
-            @elseif($narudzbenicedata['0']['narudzbenice']['entry']->payment_way == 'preuzimanje')
+            @elseif($narudzbeniceData['0']['narudzbenice']->payment_way == 'preuzimanje')
             <td>Po preuzimanju</td>
-            @elseif($narudzbenicedata['0']['narudzbenice']['entry']->payment_way == 'kartica')
+            @elseif($narudzbeniceData['0']['narudzbenice']->payment_way == 'kartica')
             <td>Kartično plaćanje</td>
-            @elseif($narudzbenicedata['0']['narudzbenice']['entry']->payment_way == 'paypal')
+            @elseif($narudzbeniceData['0']['narudzbenice']->payment_way == 'paypal')
             <td>PayPal</td>
             @endif
             <td>
@@ -115,7 +114,7 @@
                     <tbody>
                         <tr>
                             <td>Ukupno:</td>
-                            <td style="text-align: right;">{{ $narudzbenicedata['0']['totalprice'] }} kn</td>
+                            <td style="text-align: right;">{{ $narudzbeniceData['0']['totalprice'] }} kn</td>
                         </tr>
                     </tbody>
                 </table>

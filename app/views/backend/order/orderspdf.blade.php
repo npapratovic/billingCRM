@@ -2,7 +2,7 @@
 
 	<head>
    			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	 		<title>Izdavanje narudžbe {{ $ordersdata['0']['order']['entry']->order_id }}</title>
+	 		<title>Izdavanje narudžbe {{ $ordersdata['0']['order']->order_id }}</title>
 			<style>
 			body {
 				font-size: 12px;
@@ -43,29 +43,29 @@
         <tr>
             <td style="color:#595959;">Izdavatelj</td>
             <td style="color:#595959;">Klijent</td>
-            <td style="color:#595959;">Broj narudžbe #{{ $ordersdata['0']['order']['entry']->order_id}} </td>
+            <td style="color:#595959;">Broj narudžbe #{{ $ordersdata['0']['order']->order_id}} </td>
         </tr>
         <tr>
             <td style="color:#000000;">{{ $ordersdata['0']['employeeinfo']->first_name }} {{ $ordersdata['0']['employeeinfo']->last_name }}</td>
-            <td style="color:#000000;">{{ $ordersdata['0']['order']['entry']->first_name }} {{ $ordersdata['0']['order']['entry']->last_name }}</td>
-            <td style="color:#595959;">Datum izdavanja narudžbe: {{ date('d.m.Y', strtotime($ordersdata['0']['order']['entry']->order_date))}}</td>
+            <td style="color:#000000;">{{ $ordersdata['0']['order']->first_name }} {{ $ordersdata['0']['order']->last_name }}</td>
+            <td style="color:#595959;">Datum izdavanja narudžbe: {{ date('d.m.Y', strtotime($ordersdata['0']['order']->order_date))}}</td>
             <td></td>
         </tr>
         <tr>
             <td style="color:#595959;">{{ $ordersdata['0']['employeeinfo']->address }}</td>
-            <td style="color:#595959;">{{ $ordersdata['0']['order']['entry']->billing_address }}</td>
+            <td style="color:#595959;">{{ $ordersdata['0']['order']->billing_address }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Hrvatska, {{ $ordersdata['0']['employeeinfo']->zip }} {{ $ordersdata['0']['employeeinfo']->cityname }}</td>
-            <td style="color:#595959;">Hrvatska, {{ $ordersdata['0']['order']['entry']->zip }} {{ $ordersdata['0']['order']['entry']->cityname }}</td>
+            <td style="color:#595959;">Hrvatska, {{ $ordersdata['0']['order']->zip }} {{ $ordersdata['0']['order']->cityname }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Telefon: {{ $ordersdata['0']['employeeinfo']->phone }}</td>
-            <td style="color:#595959;">Telefon: {{ $ordersdata['0']['order']['entry']->phone }}</td>
+            <td style="color:#595959;">Telefon: {{ $ordersdata['0']['order']->phone }}</td>
         </tr>
         <tr>
             <td style="color:#595959;">Email: {{ $ordersdata['0']['employeeinfo']->email }}</td>
-            <td style="color:#595959;">Email: {{ $ordersdata['0']['order']['entry']->email }}</td>
+            <td style="color:#595959;">Email: {{ $ordersdata['0']['order']->email }}</td>
         </tr>
     </tbody>
 </table>
@@ -82,14 +82,26 @@
     </thead>
     <tbody>
 
-    @foreach($productsperorder['orderbycustomer'] as $singleproduct)
+     @if($ordersdata[0]['order']->show_only == '1')
+      @foreach($productsperorder as $singleproduct)
         <tr>
-            <td style="text-align:left;">{{ $singleproduct->productname }}</td>
+            <td style="text-align:left;">{{ $singleproduct['importedOrderProducts'][0]->name }}</td>
             <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
             <td style="text-align:center;">{{ $singleproduct->quantity }}</td> 
             <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->quantity }} kn</td> 
         </tr>
         @endforeach
+     @else
+      @foreach($productsperorder as $singleproduct)
+        <tr>
+            <td style="text-align:left;">{{ $singleproduct['productServices'][0]->title }}</td>
+            <td style="text-align:center;">{{ $singleproduct->price }} kn</td>
+            <td style="text-align:center;">{{ $singleproduct->quantity }}</td> 
+            <td style="text-align:center;">{{ $singleproduct->price * $singleproduct->quantity }} kn</td> 
+        </tr>
+        @endforeach
+     @endif
+   
     </tbody>
 </table>
 <br>
@@ -101,17 +113,17 @@
             <td style="color:#595959; text-align:right;"></td>
         </tr>
         <tr>
-        @if($ordersdata['0']['order']['entry']->payment_way == 'virman')
+        @if($ordersdata['0']['order']->payment_way == 'virman')
             <td>Virman (bankovna transakcija)</td>
-        @elseif($ordersdata['0']['order']['entry']->payment_way == 'preuzimanje')
+        @elseif($ordersdata['0']['order']->payment_way == 'preuzimanje')
         <td>Po preuzimanju</td>
-        @elseif($ordersdata['0']['order']['entry']->payment_way == 'kartica')
+        @elseif($ordersdata['0']['order']->payment_way == 'kartica')
         <td>Kartično plaćanje</td>
-        @elseif($ordersdata['0']['order']['entry']->payment_way == 'paypal')
+        @elseif($ordersdata['0']['order']->payment_way == 'paypal')
         <td>PayPal</td>
         @endif
-        @if($ordersdata['0']['order']['entry']->show_only == '1')
-        <td>{{ $ordersdata['0']['order']['entry']->shipping_way }}
+        @if($ordersdata['0']['order']->show_only == '1')
+        <td>{{ $ordersdata['0']['order']->shipping_way }}
         @endif
             <td>
                 <table style="width:100%;">

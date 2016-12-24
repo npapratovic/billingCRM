@@ -8,6 +8,8 @@ class Narudzbenice extends Eloquent
 	
 	protected $table = 'narudzbenice';
 
+	protected $fillable = array('narudzbenica_number', 'client_id', 'employee_id', 'tax', 'hide_amount', 'client_address', 'client_oib', 'payment_way', 'narudzbenica_start', 'narudzbenica_end', 'narudzbenica_note', 'narudzbenica_language', 'valute');
+
 	// New entry validation
 	public static $store_rules = array(
 		'narudzbenica_number'					=>	'required',
@@ -15,9 +17,20 @@ class Narudzbenice extends Eloquent
 
 	// Edit entry validation
 	public static $update_rules = array(
-		'id'					=>	'required|integer',
+		'narudzbenica_number'					=>	'required',
 	);
 	
+
+	public function client()
+	{
+		return $this->belongsTo('Client', 'client_id', 'id');
+	}
+
+	public function products()
+	{
+		return $this->hasMany('NarudzbeniceProduct');
+	}
+
 	/*
 	*	Get entries
 	*

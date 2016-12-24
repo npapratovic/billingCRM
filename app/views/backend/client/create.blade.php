@@ -259,11 +259,6 @@
             @endforeach
         @endif 
 
-    	 $('#entries-list').DataTable( 
-        	{
-            "language": {
-                "url": "http://cdn.datatables.net/plug-ins/1.10.11/i18n/Croatian.json"
-            }
-        	})
+    	
 	});
 </script>

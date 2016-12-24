@@ -3,7 +3,25 @@
 class InvoicesProducts extends Eloquent
 {
 	protected $table = 'invoices_products';
-	
+
+	protected $fillable = array('invoice_id', 'product_id', 'measurement', 'amount', 'price', 'discount', 'taxpercent', 'imported');
+
+
+	 public function orders()
+    {
+        return $this->hasMany('Order');
+    }
+
+    public function importedOrders()
+    {
+        return $this->hasMany('ImportedOrderProduct', 'id', 'product_id');
+    }
+
+     public function productServices()
+    {
+        return $this->hasMany('ProductService', 'id', 'product_id');
+    }
+
 
 	 	public static function getEntries($id = null)
 	{

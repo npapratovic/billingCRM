@@ -4,6 +4,11 @@ class WorkingOrdersServices extends Eloquent
 {
 	protected $table = 'workingorders_services';
 	
+	protected $fillable = array('workingorder_id', 'service_id', 'measurement', 'amount', 'price', 'discount', 'taxpercent');
+
+	public function services(){
+		return $this->belongsTo('ProductService', 'service_id', 'id');
+	}
 
 	 	public static function getEntries($id = null)
 	{

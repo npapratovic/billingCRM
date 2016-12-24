@@ -1,9 +1,9 @@
  
  <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ URL::route('InvoiceIndex') }}">Pregled svih računa</a></li>
+    <li class="active"><a href="{{ URL::route('admin.invoices.index') }}">Pregled svih računa</a></li>
     
-    <a href="{{ URL::route('InvoiceCreate') }}" class="pull-right" style="margin-top: -5px;">
+    <a href="{{ URL::route('admin.invoices.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
             <i class="fa fa-plus"></i> Dodaj novi račun
         </button>
@@ -11,7 +11,7 @@
 </ul>
 
 <div class="panel-heading">
-    <h4>Pregled svih računa ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih računa ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -21,21 +21,25 @@
             <tr>
                 <th>Broj računa</th>
                 <th>Ime kupca</th>
+                <th>Ukupna cijena</th>
+                <th>Datum računa</th>
                 <th>Akcije</th>
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $key => $entry)
                 <tr>
                     @if($entry->invoice_type == 'N')
                     <td>{{ $entry->invoice_number }} <span style="color:crimson;"> Račun zahtjeva provjeru</span></td>
                     @else
                     <td>{{ $entry->invoice_number }}</td>
                     @endif
-                    <td>{{ $entry->first_name }} {{ $entry->last_name }} </td>
+                    <td>{{ $entry['client']->first_name }} {{ $entry['client']->last_name }} </td>
+                    <td> {{$entry['invoicesProducts']['totalprice'] }}kn</td>
+                    <td>{{ $entry->invoice_date}}</td>
                     <td class="col-md-1">
-                        <a href="{{ URL::route('InvoiceEdit', array('id' => $entry->id)) }}">
+                        <a href="{{ URL::route('admin.invoices.edit', array('id' => $entry->id)) }}">
                             <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                         </a>
                         <button type="button" id="btn-delete-tag-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-tag-id-{{ $entry->id }}"><i class="fa fa-times"></i>
@@ -54,8 +58,8 @@
     </table>
 </div>
       
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     {{ Form::open(array('route' => 'InvoiceSendMail', 'role' => 'form', 'class' => 'form-horizontal', 'autocomplete' => 'off', 'method' => 'post')) }}
     {{Form::hidden('id', $entry->id, array('id' => 'id'))}}
 
@@ -86,8 +90,8 @@
     @endforeach
 @endif 
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -98,13 +102,23 @@
                     <h4 class="modal-title">Pozor!</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Želite li obrisati račun: {{ $entry->first_name }} {{ $entry->last_name }} ?</p>
+                    <p>Želite li obrisati račun: {{ $entry['client']->first_name }} {{ $entry['client']->last_name }} ?</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ URL::route('InvoiceDestroy', array('id' => $entry->id)) }}">
-                        <button type="button" class="btn btn-default" data-ok="modal">U redu</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                   <div class="row">
+                        <div class="col-md-7">
+                        </div>
+                        <div class="col-md-2">
+                            {{ Form::open(['method' => 'DELETE', 'route'=>['admin.invoices.destroy', $entry->id]]) }}
+                            {{ Form::submit('Uredu', ['class' => 'btn btn-default', 'data-ok' => 'modal']) }}
+                            {{ Form::close() }} 
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -112,20 +126,20 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
 
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-email-invoice-id-{{ $entry->id }}").click(function() { 
                     $('#email-invoice-id-{{ $entry->id }}').modal('show');
                 });
