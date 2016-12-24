@@ -212,6 +212,7 @@ class OrderRepository {
 				foreach ($products_array as $key=>$value)
 				{
 					$singleprice = ImportedOrderProduct::getPrices($value);
+
 					$orderproduct = new OrdersProducts;
 					$orderproduct->order_id = $order;
 					$orderproduct->product_id = $value;
@@ -224,15 +225,15 @@ class OrderRepository {
 
 
 			$order = DB::table('orders')->orderBy('created_at', 'desc')->first();
-		        	
-		        	$order_id  = $order->id;
+		       
+		           $order_id  = $order->id;
 
 		           $order = ImportOrder::find($order_id);
 
 		           $order->price = $orderprice;
 
 		           $order->save();
-
+ 	 
 			DB::commit();
 
 			return array('status' => 1);

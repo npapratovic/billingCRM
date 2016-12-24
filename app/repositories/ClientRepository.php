@@ -36,6 +36,7 @@ class ClientRepository {
 			$entry->address = $address;
 			$entry->mjesto = $mjesto;
 			$entry->city = '1';
+			$entry->region = '1';
 			$entry->zip = $zip;
 			$entry->country = $country;
 			$entry->phone = $phone;

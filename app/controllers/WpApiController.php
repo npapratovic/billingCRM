@@ -18,9 +18,9 @@ class WpApiController extends \BaseController {
 	protected $ordersrepo;
 	protected $customersrepo;  
 
-	const CUSTOMER_KEY = 'ck_ecdc7d1ee1ef9482383481468b6896360a415b1d'; // Add your own Consumer Key here
-	const CUSTOMER_SECRET = 'cs_ab9b7ffcda6b782aa90e58f793de5f7decbb2b21'; // Add your own Consumer Secret here
-	const STORE_URL = 'http://origanoshop.com/'; // Add the home URL to the store you want to connect to here
+	const CUSTOMER_KEY = 'ck_4a6bee38c3147cc043ad20cb3016734a00cb1007'; // Add your own Consumer Key here
+	const CUSTOMER_SECRET = 'cs_5176afcd440cbf082f3d2f45c29f489d05ede56d'; // Add your own Consumer Secret here
+	const STORE_URL = 'http://zlatnazora.hr/webshop/'; // Add the home URL to the store you want to connect to here
 
 	// Constructing default values
 	public function __construct()
@@ -193,47 +193,47 @@ class WpApiController extends \BaseController {
 						$created_at,
 						$updated_at
 						);
-
+ 
 				} 
 
 				else {
 
 
 					$store = $this->productsrepo->import(
-						$product->id,
-						$product->title,
-						$product->short_description,
-						$product->permalink,
-						$product->sku,
-						$product->regular_price,
-						$product->sale_price,
-						$product->stock_quantity,
-						$product->total_sales,
-						$product->in_stock, 	//	stock status
-						$product->sold_individually,
-						$product->weight,
-						$dimensions['length'],	//	length
-						$dimensions['width'],	//	width
-						$dimensions['height'],	//	height
-						$product->status,
-						1,	//	product type
-						$product->description,
-						$product->visible,
-						$product->downloadable,
-						$product->featured,
-						$product->virtual,
-						1,
-						$product->managing_stock,
-						$product->backorders_allowed,
-						null,
-						null,
-						null,
-						null,
-						$created_at,
-						$updated_at
+							$product->id,
+							$product->title,
+							$product->short_description,
+							$product->permalink,
+							$product->sku,
+							$product->regular_price,
+							$product->sale_price,
+							$product->stock_quantity,
+							$product->total_sales,
+							$product->in_stock, 	//	stock status
+							$product->sold_individually,
+							$product->weight,
+							$dimensions['length'],	//	length
+							$dimensions['width'],	//	width
+							$dimensions['height'],	//	height
+							$product->status,
+							1,	//	product type
+							$product->description,
+							$product->visible,
+							$product->downloadable,
+							$product->featured,
+							$product->virtual,
+							1,
+							$product->managing_stock,
+							$product->backorders_allowed,
+							null,
+							null,
+							null,
+							null,
+							$created_at,
+							$updated_at
 
 						);
-
+ 
 				}
 				
 
@@ -325,7 +325,7 @@ class WpApiController extends \BaseController {
 						'iban',					//	iban
 						'Podaci iz WordPress stranice'			//	note
 
-					);
+					); 
 
 				}
 
@@ -359,7 +359,7 @@ class WpApiController extends \BaseController {
 
 				foreach($order['line_items'] as $singleorder) { 
 
-						$store = $this->productsrepo->productfromorder(
+					$store = $this->productsrepo->productfromorder(
 						$singleorder->subtotal,
 						$singleorder->subtotal_tax,
 						$singleorder->total,
@@ -371,44 +371,13 @@ class WpApiController extends \BaseController {
 						$singleorder->product_id
 					);
 
-					array_push($product, $store['id']);
-					array_push($quantity, $store['quantity']); 
+					array_push($product, $singleorder->product_id);
+					array_push($quantity, $singleorder->quantity); 
 
 				}
-
-				/*
-	 			$product = array(); 
-				$quantity = array(); 
-
-				foreach($order['line_items'] as $singleorder) { 
-					if(is_null($singleorder->product_id))
-					{
-						$productcheck = ProductService::checkProduct($singleorder->name);
-
-						if(!is_null($productcheck['entry']))
-						{	
-							$newproductid = $productcheck['entry']->id;
-						}
-
-						else {
-							$store = $this->productsrepo->errorproduct(
-								$singleorder->name,
-								$singleorder->price
-							);
-
-							$newproductid = $store['product_id'];
-						}
-							array_push($product, $newproductid);
-							array_push($quantity, $singleorder->quantity); 
-					} else{
-						array_push($product, $singleorder->product_id);
-						array_push($quantity, $singleorder->quantity); 					
-					}
-
-				}
-				*/
-
+ 
 				$user = User::where('email', $order['customer']->email)->first();
+				 
 
 				$created_at = $order['created_at'];
 				$updated_at = $order['updated_at'];
@@ -433,7 +402,7 @@ class WpApiController extends \BaseController {
 					$created_at,
 					$updated_at
 				);
-				
+				 
 			}
  
 		}
@@ -466,8 +435,7 @@ class WpApiController extends \BaseController {
 		$response = $wc_api->get_customers(array( 'filter[limit]' => '-1' ));
 
 		$customers = $response->customers; 
-
-
+ 
 
 		foreach($customers as $customer)
 		{
@@ -497,7 +465,7 @@ class WpApiController extends \BaseController {
 				'iban',					//	iban
 				'Podaci iz WordPress stranice'			//	note
 
-			);
+			);  
 		}
 
 		$this->layout->title = 'WpApi | BillingCRM';

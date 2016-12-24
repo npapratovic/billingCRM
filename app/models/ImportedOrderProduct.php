@@ -2,7 +2,7 @@
 
 class ImportedOrderProduct extends Eloquent
 {
-	protected $table = 'imported_order_products';
+	protected $table = 'products_services';
 
 
 	  public function invoices_products()
@@ -81,16 +81,16 @@ class ImportedOrderProduct extends Eloquent
 	{
 	/*	try 
 		{ */
-			$entry = DB::table('imported_order_products')
+			$entry = DB::table('products_services')
 				->select(
-					'imported_order_products.id AS id',
-					'imported_order_products.price AS price'
+					'products_services.id AS id',
+					'products_services.price AS price'
 				);
 
 			if ($id != null)
 			{
 				// Retrieve specific entry
-				$entry = $entry->where('imported_order_products.id', '=', $id)->first();
+				$entry = $entry->where('products_services.id', '=', $id)->first();
 				return array('status' => 1, 'entry' => $entry);
 			} else {
 				$entry->get();
