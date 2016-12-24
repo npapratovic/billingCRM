@@ -1,16 +1,16 @@
   <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ route('admin.employees.index') }}">Pregled svih korisnika</a></li>
+    <li class="active"><a href="{{ route('admin.employees.index') }}">Pregled svih zaposlenika</a></li>
     
     <a href="{{ route('admin.employees.create') }}" class="pull-right" style="margin-top: -5px;">
         <button class="btn btn-success btn-addon btn-sm">
-            <i class="fa fa-plus"></i> Dodaj novog korisnika
+            <i class="fa fa-plus"></i> Dodaj novog zaposlenika
         </button>
     </a>
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih korisnika ({{ count($entries) }})</h4>
+    <h4>Pregled svih zaposlenika ({{ count($entries) }})</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -42,7 +42,7 @@
                 </tr>
                 @endforeach 
             @else
-                <p>Nema niti jednog unešenog korisnika</p>
+                <p>Nema niti jednog unešenog zaposlenika</p>
             @endif
         </tbody>
     </table>
@@ -60,7 +60,7 @@
                     <h4 class="modal-title">Pozor!</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Želite li obrisati korisnika: {{ $entry->first_name }} {{ $entry->last_name }}?</p>
+                    <p>Želite li obrisati zaposlenika: {{ $entry->first_name }} {{ $entry->last_name }}?</p>
                 </div>
                 <div class="modal-footer">
                 	<div class="row">

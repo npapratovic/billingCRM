@@ -4,7 +4,7 @@ class Employees extends Eloquent {
 
 	protected $table = 'users';
 
-	protected $fillable = array('first_name','last_name','email','password', 'user_group', 'image', 'created_at','updated_at');
+	protected $fillable = array('first_name','last_name','email','password', 'user_group', 'image', 'city', 'region', 'created_at','updated_at');
 
 	// New employee validation
 	public static $store_rules = array(

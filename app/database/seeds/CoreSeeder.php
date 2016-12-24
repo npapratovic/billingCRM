@@ -243,27 +243,8 @@ class DefaultUsersSeeder extends Seeder
 
 		$user->save();
 
-		$user->attachRole(2); // admin
-
-
-		// Seed user (5)
-		$user = new User();
-		$user->email = 'jbarnese@blogger.com';
-		$user->password = Hash::make('123456');
-		$user->username = 'jbarnese';
-		$user->first_name = 'Joyce';
-		$user->last_name = 'Barnese';
-		$user->address = '56 Sherman Lane';
-		$user->city = '83';
-		$user->region = '14';
-		$user->phone = '8912824968';
-		$user->user_group = 'client';
-		$user->zip = '30000';
-
-		$user->save();
-
-		$user->attachRole(5); //1. user 
-
+		$user->attachRole(2); // admin 
+		
 	}
 }
  

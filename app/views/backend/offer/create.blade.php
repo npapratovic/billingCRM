@@ -74,53 +74,53 @@
                             <div class="row">
                             <div class="col-md-12">
 
-                <div class="col-md-12">
-                <div class="form-group">  
-                    {{ Form::label('product', 'Proizvod:') }}    
-                    {{ Form::select('product[]', $productlist, null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')) }}
-                    <small class="text-danger">{{ $errors->first('product') }}</small>
-                        </div>
-                        </div>
-                <div class="col-md-2">
-                        <div class="form-group">  
-                    {{ Form::label('measurement', 'Jedinična mjera:') }}  
-                    {{ Form::select('measurement[]', array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'), 'piece', array('class'=>'form-control')) }}
-                    <small class="text-danger">{{ $errors->first('measurement') }}</small>
-                </div>     
-                </div> 
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                   <div class="form-group">  
-                    {{ Form::label('amount', 'Količina:') }} 
-                    {{ Form::text('amount[]', null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
-                    <small class="text-danger">{{ $errors->first('amount') }}</small>
-                </div>    
-                </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                   <div class="form-group">  
-                    {{ Form::label('price', 'Cijena:') }} 
-                    {{ Form::text('price[]', null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']) }}
-                    <small class="text-danger">{{ $errors->first('price') }}</small>
-                </div>    
-                </div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-1">
-                   <div class="form-group">  
-                    {{ Form::label('discount', 'Popust:') }} 
-                    {{ Form::text('discount[]', null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']) }}
-                    <small class="text-danger">{{ $errors->first('discount') }}</small>
-                </div>    
-                </div>
-                <div class="col-md-1"></div>
-                   <div class="col-md-1">
-                   <div class="form-group">  
-                    {{ Form::label('taxpercent', 'Stopa:') }}
-                    {{ Form::text('taxpercent[]', null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
-                    <small class="text-danger">{{ $errors->first('taxpercent') }}</small>
-                </div>    
-                </div>
-                            </div>
+                                <div class="col-md-12">
+                                <div class="form-group">  
+                                    {{ Form::label('product', 'Proizvod:') }}    
+                                    {{ Form::select('product[]', $productlist, null, array('class' => 'form-control multiselect', 'style' => 'width:100%', 'id' => 'id')) }}
+                                    <small class="text-danger">{{ $errors->first('product') }}</small>
+                                        </div>
+                                        </div>
+                                <div class="col-md-2">
+                                        <div class="form-group">  
+                                    {{ Form::label('measurement', 'Jedinična mjera:') }}  
+                                    {{ Form::select('measurement[]', array('piece' => 'kom', 'hour' => 'sat', 'year' => 'god', 'km' => 'km', 'lit' => 'lit', 'kg' => 'kg', 'kWh' => 'kWh', 'm³' => 'm³', 't' => 't', 'm²' => 'm²', 'm' => 'm', 'day' => 'dan', 'night' => 'noć', 'kart' => 'kart', 'rč' => 'rč', 'par' => 'par', 'ml' => 'ml', 'pax' => 'pax', 'room' => 'soba', 'apt' => 'apt', 'term' => 'term', 'set' => 'set', 'pak' => 'pak', 'bod' => 'bod', 'usi' => 'usi'), 'piece', array('class'=>'form-control')) }}
+                                    <small class="text-danger">{{ $errors->first('measurement') }}</small>
+                                </div>     
+                                </div> 
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2">
+                                   <div class="form-group">  
+                                    {{ Form::label('amount', 'Količina:') }} 
+                                    {{ Form::text('amount[]', null, ['class' => 'form-control', 'id' => 'amount', 'placeholder' => '1']) }}
+                                    <small class="text-danger">{{ $errors->first('amount') }}</small>
+                                </div>    
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2">
+                                   <div class="form-group">  
+                                    {{ Form::label('price', 'Cijena:') }} 
+                                    {{ Form::text('price[]', null, ['class' => 'form-control', 'id' => 'price', 'placeholder' => 'Cijena']) }}
+                                    <small class="text-danger">{{ $errors->first('price') }}</small>
+                                </div>    
+                                </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-1">
+                                   <div class="form-group">  
+                                    {{ Form::label('discount', 'Popust:') }} 
+                                    {{ Form::text('discount[]', null, ['class' => 'form-control', 'id' => 'discount', 'placeholder' => '%']) }}
+                                    <small class="text-danger">{{ $errors->first('discount') }}</small>
+                                </div>    
+                                </div>
+                                <div class="col-md-1"></div>
+                               <div class="col-md-1">
+                                   <div class="form-group">  
+                                        {{ Form::label('taxpercent', 'Stopa:') }}
+                                        {{ Form::text('taxpercent[]', null, ['class' => 'form-control', 'id' => 'taxpercent', 'placeholder' => '%']) }}
+                                        <small class="text-danger">{{ $errors->first('taxpercent') }}</small>
+                                    </div>    
+                                </div>
+                                </div>
                             </div>
                           </div>
                         </div>

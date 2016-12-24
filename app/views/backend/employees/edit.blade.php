@@ -1,13 +1,13 @@
 <!-- Main content -->
 <ul class="breadcrumb">
     <li><a href="{{ URL::route('getDashboard') }}"><i class="fa fa-home"></i> Početna</a></li>
-    <li class="active"><a href="{{ route('admin.employees.index') }}">Pregled svih korisnika</a></li>
-    <li class="active">Uređivanje korisnika</li>
+    <li class="active"><a href="{{ route('admin.employees.index') }}">Pregled svih zaposlenika</a></li>
+    <li class="active">Uređivanje zaposlenika</li>
 </ul>
 <div class="panel-heading">
 	<div class="row">
 	    <div class="col-md-10">
-    		<h4>Uređivanje korisnika: {{ $employee->first_name }} {{ $employee->last_name }}</h4>
+    		<h4>Uređivanje zaposlenika: {{ $employee->first_name }} {{ $employee->last_name }}</h4>
     	</div>
     	<div class="col-md-2">
       		<a href="{{ route('admin.employees.index') }}">
@@ -31,6 +31,16 @@
                 {{ Form::text('last_name', null, ['class'=>'form-control']) }}
                 <small class="text-danger">{{ $errors->first('last_name') }}</small>
             </div> 
+            <div class="form-group">
+                {{ Form::label('region', 'Županija:') }}
+                {{ Form::select('region', $regions, null, ['class'=>'form-control']) }}
+                <small class="text-danger">{{ $errors->first('region') }}</small>
+            </div>
+            <div class="form-group">
+                {{ Form::label('city', 'Grad:') }}
+                {{ Form::select('city', $cities, null, ['class'=>'form-control']) }}
+                <small class="text-danger">{{ $errors->first('city') }}</small>
+            </div>
             <div class="form-group">
                 {{ Form::label('email', 'E-mail:') }}
                 {{ Form::text('email', null, ['class'=>'form-control']) }}

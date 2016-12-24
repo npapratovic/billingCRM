@@ -65,6 +65,7 @@ class ClientController extends \BaseController {
 		}
 
 		$client['city'] = '1';
+		$client['region'] = '14';
 		$client['user_group'] = 'client';
 
 		User::create($client); 

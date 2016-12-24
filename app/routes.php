@@ -102,22 +102,25 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
   	// CRUD za clients 
   	Route::resource('clients', 'ClientController');
   	// CRUD za invoices 
-  	Route::resource('invoices', 'InvoiceController');
-  	// CRUD za orders 
-  	Route::resource('orders', 'OrderController');
-  	Route::get('createinvoice/{id}', array('as' => 'CreateInvoice', 'uses' => 'OrderController@createInvoice'));
-
+  	Route::resource('invoices', 'InvoiceController');   	
   	// CRUD za narudzbenice 
   	Route::resource('narudzbenice', 'NarudzbeniceController');
+  	// CRUD za orders 
+  	Route::resource('orders', 'OrderController'); 
   	// CRUD za offers 
   	Route::resource('offers', 'OfferController');
-
   	// CRUD za dispatch
-  	Route::resource('dispatch', 'DispatchController');
-
+  	Route::resource('dispatch', 'DispatchController'); 
   	// CRUD za workingorder
   	Route::resource('workingorder', 'WorkingOrderController');
+ 	// CRUD za tags 
+  	Route::resource('tags', 'TagController'); 
+ 	// CRUD za attributes 
+  	Route::resource('attributes', 'AttributeController');
 
+  	// Create invoice from order:
+  	Route::get('createinvoice/{id}', array('as' => 'CreateInvoice', 'uses' => 'OrderController@createInvoice')); 
+ 
 	//PDF routes
 	Route::group(array('prefix' => 'pdf'), function()
 	{
@@ -152,14 +155,7 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
 	});
 
-
- 	// CRUD za tags 
-  	Route::resource('tags', 'TagController');
-
- 	// CRUD za tags 
-  	Route::resource('attributes', 'AttributeController');
-
-
+ 
 	Route::group(array('prefix' => 'clients'), function()
 	{
 		Route::get('/', array('as' => 'ClientIndex', 'uses' => 'ClientController@index'));

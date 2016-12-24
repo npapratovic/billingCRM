@@ -202,7 +202,7 @@ More details about us can be found on our official website: http://www.shopcenta
                     </li>
                     <li>
                         <a href="{{ route('admin.employees.index') }}">
-                            <i class="fa fa-users"></i> <span>Korisnici</span>
+                            <i class="fa fa-users"></i> <span>Zaposlenici</span>
                         </a>
                     </li>
                     <hr>

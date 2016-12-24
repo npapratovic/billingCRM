@@ -12,7 +12,7 @@ class EmployeesController extends \BaseController {
   {
     $entries = Employees::where('user_group','employee')->paginate(10);  
 
-    $this->layout->title = 'Korisnici | BillingCRM';
+    $this->layout->title = 'Zaposlenici | BillingCRM';
  
     $this->layout->content = View::make('backend.employees.index', compact('entries'));
   } 
@@ -26,9 +26,13 @@ class EmployeesController extends \BaseController {
 
   public function create()
   {
-    $this->layout->title = 'Kreiranje novog korisnika | BillingCRM';
- 
-    $this->layout->content = View::make('backend.employees.create');
+    $this->layout->title = 'Kreiranje novog zaposlenika | BillingCRM';
+    
+    $cities = City::lists('name', 'id');
+
+    $regions = Region::lists('name', 'id'); 
+
+    $this->layout->content = View::make('backend.employees.create', compact('cities', 'regions'));
   }
 
 
@@ -110,9 +114,13 @@ class EmployeesController extends \BaseController {
   {
       $employee = Employees::find($id);
       
-      $this->layout->title = 'Uređivanje korisnika | BillingCRM';
+      $cities = City::lists('name', 'id');
+
+      $regions = Region::lists('name', 'id'); 
+
+      $this->layout->title = 'Uređivanje zaposlenika | BillingCRM';
  
-      $this->layout->content = View::make('backend.employees.edit', compact('employee'));
+      $this->layout->content = View::make('backend.employees.edit', compact('employee', 'cities', 'regions'));
   }
 
 
