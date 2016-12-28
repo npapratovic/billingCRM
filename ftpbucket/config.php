@@ -60,4 +60,4 @@ return array(
     ),
     // ADMIN password for FTPBucket's UI
     'admin_pass' => 'admin'
-)
+);
