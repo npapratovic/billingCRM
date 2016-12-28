@@ -16,12 +16,8 @@ class WpApiController extends \BaseController {
 	
 	protected $productsrepo;
 	protected $ordersrepo;
-	protected $customersrepo;  
-
-	const CUSTOMER_KEY = 'ck_4a6bee38c3147cc043ad20cb3016734a00cb1007'; // Add your own Consumer Key here
-	const CUSTOMER_SECRET = 'cs_5176afcd440cbf082f3d2f45c29f489d05ede56d'; // Add your own Consumer Secret here
-	const STORE_URL = 'http://zlatnazora.hr/webshop/'; // Add the home URL to the store you want to connect to here
-
+	protected $customersrepo;   
+ 
 	// Constructing default values
 	public function __construct()
 	{
@@ -34,7 +30,7 @@ class WpApiController extends \BaseController {
 		//Repos access
 		$this->productsrepo = new ProductRepository;
 		$this->customersrepo = new ClientRepository;
-		$this->ordersrepo = new OrderRepository;
+		$this->ordersrepo = new OrderRepository; 
 
 
 	}
@@ -45,12 +41,16 @@ class WpApiController extends \BaseController {
 	 */
 	public function index()
 	{ 
-		// Get data
+ 		// Get data
 
 		$entries = LaravelWpApi::products();  
 
+		$consumer_key = Auth::user()->consumer_key;
+		$consumer_secret = Auth::user()->consumer_secret;
+		$store_url = Auth::user()->store_url;
+		 
 		// Initialize the class
-		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
+		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url);
 
 		$orders = $wc_api->get_orders( array( 'status' => 'completed' ) );
 
@@ -119,9 +119,12 @@ class WpApiController extends \BaseController {
 	 */
 	public function products()
 	{ 
+		$consumer_key = Auth::user()->consumer_key;
+		$consumer_secret = Auth::user()->consumer_secret;
+		$store_url = Auth::user()->store_url;
 
 		// Initialize the class
-		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
+		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url);
  
 		$response = $wc_api->get_products( array( 'filter[limit]' => '-1'));
 
@@ -262,8 +265,12 @@ class WpApiController extends \BaseController {
 	 */
 	public function orders()
 	{ 
+		$consumer_key = Auth::user()->consumer_key;
+		$consumer_secret = Auth::user()->consumer_secret;
+		$store_url = Auth::user()->store_url;
+		 
 		// Initialize the class
-		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
+		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url);
  
 		$response = $wc_api->get_orders(array( 'filter[limit]' => '-1' ));
 
@@ -429,8 +436,12 @@ class WpApiController extends \BaseController {
 	public function customers()
 	{ 
 
+		$consumer_key = Auth::user()->consumer_key;
+		$consumer_secret = Auth::user()->consumer_secret;
+		$store_url = Auth::user()->store_url;
+		 
 		// Initialize the class
-		$wc_api = new WC_API_Client( self::CUSTOMER_KEY, self::CUSTOMER_SECRET, self::STORE_URL );
+		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url);
  
 		$response = $wc_api->get_customers(array( 'filter[limit]' => '-1' ));
 

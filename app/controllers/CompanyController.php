@@ -7,21 +7,7 @@
 */
 
 class CompanyController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new CompanyRepository;
-	}
+ 
 
 	/**
 	 * Show the form for editing the specified company post(s).
@@ -125,7 +111,7 @@ class CompanyController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($id) { 
 	 
 		$this->layout->title = 'Korisnici | BillingCRM';
 
