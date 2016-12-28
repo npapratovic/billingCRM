@@ -150,15 +150,19 @@ class WpApiController extends \BaseController {
 				$result = (array)($product); 
 
 				//Lets create array with product details
-				$product = array(); 
+				$product = array();  
 
-  				//Lets fill the newly created array
-			 	$product['title'] = $result['title']; 
+  				//Lets fill the newly created array 
+				foreach($result as $key => $value) {
+				 	$product[$key] = $value;
+				}
+ 
+				//we will populate 'product_id' with different value
 				$product['product_id'] = $result['id']; 
 
 				//Now, lets create new product
 		      	ProductService::create($product);   
-		   
+
 			}   
 
 /*
