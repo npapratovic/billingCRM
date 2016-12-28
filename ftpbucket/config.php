@@ -1,5 +1,5 @@
 <?php
-/* aaaaaaaaaaaaaaaa
+/* nikola
 * @repo_name = you can find it in your repo URL : https://bitbucket.org/a_name/repo_name/
 * @repo_home = 'bitbucket' OR 'github'
 * @type = FTP or SSH or NONE if it's the same server
@@ -13,8 +13,27 @@
 */
 
 return array(
-    'repos' => array( 
+    'repos' => array(
         'repo1' => array (
+            'repo_name'=>'testa',
+            'repo_host'=>'bitbucket',
+            'branches'=>array(
+                array(
+                    'branch_name'=>'master',
+                    'type'=>'ftp',
+                    'ftp_host'=>'ftp.example.org',
+                    'ftp_user'=>'example_username',
+                    'ftp_pass'=>'example_password',
+                    'ftp_path'=>'/prod/',
+                ),
+                array(
+                    'branch_name'=>'beta',
+                    'type'=>'none',
+                    'ftp_path'=>'../',
+                ),
+            ),        
+        ),
+        'repo2' => array (
             'repo_name'=>'billingCRM',
             'repo_host'=>'github',
             'branches'=>array(
