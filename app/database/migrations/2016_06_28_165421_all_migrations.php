@@ -11,14 +11,13 @@ class AllMigrations extends Migration {
 	 * @return void
 	 */
 	public function up()
-	{
-
+	{ 
 
 		Schema::create('city', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('name', 50);
-			$table->string('permalink', 255);
+			$table->string('permalink', 255); 
 			$table->timestamps();
 		});
 
@@ -555,17 +554,25 @@ class AllMigrations extends Migration {
 	public function down()
 	{
 		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-		Schema::drop('languages');
-		Schema::drop('users');
-		Schema::drop('password_reminders'); 
-		Schema::drop('products_tags');
-		Schema::drop('products_categories');
-		Schema::drop('products_attributes');
-		Schema::drop('invoices_products');
-		Schema::drop('company'); 
+ 
 		Schema::drop('city');
 		Schema::drop('region');
+		Schema::drop('languages');
+		Schema::drop('users');
+		Schema::drop('products_services');
+		Schema::drop('attributes');
+		Schema::drop('categories');
 		Schema::drop('tags');
+		Schema::drop('invoices');
+		Schema::drop('offers');
+		Schema::drop('offers_products');
+		Schema::drop('password_reminders');
+		Schema::drop('products_attributes');
+		Schema::drop('products_categories');
+		Schema::drop('products_tags');
+		Schema::drop('invoices_products');
+		Schema::drop('imported_order_products');
+		Schema::drop('company');
 		Schema::drop('dispatches');
 		Schema::drop('dispatches_services');
 		Schema::drop('dispatches_products');
@@ -574,13 +581,7 @@ class AllMigrations extends Migration {
 		Schema::drop('orders');
 		Schema::drop('orders_products');
 		Schema::drop('workingorders');
-		Schema::drop('categories');
-		Schema::drop('attributes');
-		Schema::drop('products_services');
-		Schema::drop('invoices');
-		Schema::drop('services');
-		Schema::drop('offers');
-		Schema::drop('offers_products');
+		Schema::drop('workingorders_services');
 
 	    DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 	}
