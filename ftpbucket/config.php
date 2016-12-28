@@ -1,5 +1,5 @@
 <?php
-/*
+/* aaaaaaaaaaaaaaaa
 * @repo_name = you can find it in your repo URL : https://bitbucket.org/a_name/repo_name/
 * @repo_home = 'bitbucket' OR 'github'
 * @type = FTP or SSH or NONE if it's the same server
