@@ -126,12 +126,52 @@ class WpApiController extends \BaseController {
 		// Initialize the class
 		$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url);
  
-		$response = $wc_api->get_products( array( 'filter[limit]' => '-1'));
+		$response = $wc_api->get_products( array( 'filter[limit]' => '-1')); 
 
-		$products = $response->products;
+		$products = $response->products;  
 
 		foreach($products as $product)
 		{
+			/** 
+			 Switch (product_exists) 
+			 Case 1: product doesen't exist in billingCRM => CREATE product
+			 Case 2: product exists in billingCRM
+					2a => product from WordPress has updated_at newer than one in billingCRM => UPDATE product
+					2b => product from WordPress doesen't have updated_at newer than one in billingCRM => do nothing 
+
+			**/
+
+			$productdata = ProductService::where('product_id', '=', $product->id)->first();
+
+			if ($productdata === null) {
+			   	// Case 1: product doesn't exist
+
+				//convert stdClass object to array		        
+				$result = (array)($product); 
+
+				//Lets create array with product details
+				$product = array(); 
+
+  				//Lets fill the newly created array
+			 	$product['title'] = $result['title']; 
+				$product['product_id'] = $result['id']; 
+
+				//Now, lets create new product
+		      	ProductService::create($product);   
+		   
+			}   
+
+/*
+			if ($productdata = ProductService::where('product_id', '=', $product->id)->exists()) {
+			   // product found
+
+
+			}  
+
+
+
+
+
 			$existingproduct = ProductService::checkUpdate($product->id);
 
 			$updatecheck = substr_replace(preg_replace("/[^0-9,:,-]/", "", $product->updated_at), ' ', 10, -8);
@@ -241,7 +281,7 @@ class WpApiController extends \BaseController {
 				
 
 			}
-
+*/
 			
 		}
 

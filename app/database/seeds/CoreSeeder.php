@@ -239,7 +239,9 @@ class DefaultUsersSeeder extends Seeder
 		$user->city = '83';
 		$user->region = '14';
 		$user->phone = '0959039610';
-
+		$user->consumer_key = 'ck_134dc0c2783b089ec2a5e51c31b80c90b260318d';
+		$user->consumer_secret = 'cs_608d6abe228cd7634a4c65578c60182cadc2e933';
+		$user->store_url = 'http://zlatnazora.hr/webshop/'; 
 
 		$user->save();
 

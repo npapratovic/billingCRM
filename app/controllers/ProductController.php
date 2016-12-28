@@ -28,9 +28,7 @@ class ProductController extends \BaseController {
 	 * @return Response
 	 */
 	public function index()
-	{
-		 
-
+	{ 
 		// Get data
 
 		$entries = ProductService::getEntriesProducts(null, null);

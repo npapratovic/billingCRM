@@ -8,7 +8,8 @@ class ProductService extends Eloquent
 	
 	protected $table = 'products_services';
 
-	protected $fillable = array('title', 'intro', 'measurement','amount','price', 'type', 'discount', 'tax', 'created_at','updated_at');
+	//protected $fillable = array('title', 'intro', 'measurement','amount','price', 'type', 'discount', 'tax', 'created_at','updated_at');
+	protected $fillable = array('title', 'product_id');
 
 	// New entry validation
 	public static $store_rules = array(
