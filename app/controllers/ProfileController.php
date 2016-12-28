@@ -7,22 +7,7 @@
 */
 
 class ProfileController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new ProfileRepository;
-	}
-
+ 
 	/**
 	 * Show the form for editing the specified profile post(s).
 	 *
@@ -32,39 +17,19 @@ class ProfileController extends \BaseController {
 	public function index()
 	{
 	 
-		// Get data
+	  $id = Auth::user()->id;
 
-		$entry = User::getUserByUserGroup('client');
+      $profile = Profile::find($id); 
 
-		$mode = 'add';
+      $cities = City::lists('name', 'id');
 
-		$postRoute = 'ProfileStore';
-		/*
-		if (!is_object($entry['entry'])){
-			$mode = 'add';
-			$postRoute = 'ProfileStore';
-		}*/
+      $regions = Region::lists('name', 'id'); 
 
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$this->layout->title = 'Uredi profil | BillingCRM';
-
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'
-			);
-
-		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
-			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
-		);
-
-		$this->layout->content = View::make('backend.profile.index', array('entry' => $entry, 'postRoute' => $postRoute, 'mode' => $mode));
-	}
+      $this->layout->title = 'Uređivanje profila | BillingCRM';
+ 
+      $this->layout->content = View::make('backend.profile.edit', compact('profile', 'cities', 'regions'));
+  
+ 	}
 
 
 	/**
@@ -74,49 +39,7 @@ class ProfileController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
-
-		$entryValidator = Validator::make(Input::all(), User::$store_rules_client);
-
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
-
-		$store = $this->repo->store(
-			Auth::user()->id,
-			Input::get('username'),
-			Input::get('password'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('email'),
-			Input::get('phone'),
-			Input::get('bill_type'),
-			Input::get('bill_dimensions'),
-			Input::get('consumer_key'),
-			Input::get('customer_key')
-			/*Input::get('tax_percentage'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('mobile_phone_number'),
-			Input::get('website'),
-			Input::get('swift'),
-			Input::get('pdv_id'),
-			Input::get('free_input'),
-			Input::get('show_text'),
-			Input::get('tax_base'),
-			Input::file('image')*/
-
-		);
-
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('ProfileIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+		/* */
 	}
 
 
@@ -128,18 +51,7 @@ class ProfileController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		 
-		$this->layout->title = 'Korisnici | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js'
-		);
-
-		$this->layout->content = View::make('backend.profile.view');
+		/* */
 	}
 
 
@@ -151,48 +63,46 @@ class ProfileController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
+          $profile = Request::all(); 
 
-		$entryValidator = Validator::make(Input::all(), User::$store_rules_client);
+	      $entryValidator = Validator::make(Input::all(), Profile::$update_rules); 
 
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+	      if ($entryValidator->fails())
+	      {
+	        return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+	      } 
+	 
+	      $data = Profile::find($id);
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('username'),
-			Input::get('password'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('email'),
-			Input::get('phone'),
-			Input::get('bill_type'),
-			Input::get('bill_dimensions'),
-			Input::get('consumer_key'),
-			Input::get('customer_key')
-			/*Input::get('tax_percentage'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('mobile_phone_number'),
-			Input::get('website'),
-			Input::get('swift'),
-			Input::get('pdv_id'),
-			Input::get('free_input'),
-			Input::get('show_text'),
-			Input::get('tax_base'),
-			Input::file('image')*/
-		);
-		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('ProfileIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+	      //Get old image value, this is fallback
+
+	      if (!is_object($profile['image'])) { 
+	        $profile['image'] = $data->image;
+	      }
+
+	      //Check if image is updated
+	      if (is_object($profile['image'])) { 
+
+	        //Image processing
+	        $destinationPath = public_path() . "/uploads/backend/profile/"; // upload path
+	        $extension = $profile['image']->getClientOriginalExtension(); // getting image extension
+	        $image = rand(11111,99999).'.'.$extension; // renameing image
+	        Image::make($profile['image']->getRealPath())
+	                          ->orientate()
+	                          ->fit(500, 500)
+	                          ->crop(500, 500)
+	                          ->resize(150, 150)
+	                          ->save($destinationPath . $image)
+	                          ->destroy(); // uploading file to given path
+	                              
+	        //add extra fields to array for model
+	        $profile['image'] = $image;
+
+	      } 
+	   
+	      $data->update($profile);
+
+	      return Redirect::route('admin.profile.index')->with('success_message', Lang::get('core.msg_success_entry_edited'));
 	}
 
 
@@ -204,23 +114,7 @@ class ProfileController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		 
-
-		if ($id == null)
-		{
-			return Redirect::route('ProfileIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('ProfileIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('ProfileIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		/*	*/
 	}
 
 

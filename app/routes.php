@@ -92,7 +92,9 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 		Route::get('/getAddress/{id}', 'InfoController@getAddress');
 
 	});
-
+ 
+ 	// CRUD za profile 
+ 	Route::resource('profile', 'ProfileController');
 	// CRUD za employees 
  	Route::resource('employees', 'EmployeesController');
  	// CRUD za categories 
@@ -317,17 +319,6 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
 	});
 
-	Route::group(array('prefix' => 'profile'), function()
-	{
-		Route::get('/', array('as' => 'ProfileIndex', 'uses' => 'ProfileController@index'));
-
-		Route::post('store', array('as' => 'ProfileStore', 'uses' => 'ProfileController@store'));
-
-		Route::post('update/{id}', array('as' => 'ProfileUpdate', 'uses' => 'ProfileController@update'));
-
-		Route::get('destroy/{id}', array('as' => 'ProfileDestroy', 'uses' => 'ProfileController@destroy'));
-
-	});
 
 	// Restore trash (Blog, pages, media, widgets, workshops, clients, products)
 	Route::group(array('prefix' => 'trash'), function()

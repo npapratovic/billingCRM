@@ -184,7 +184,7 @@ More details about us can be found on our official website: http://www.shopcenta
                         </a>
                         <ul class="treeview-menu">
                               <li>
-                                    <a href="{{ URL::route('ProfileIndex') }}">
+                                    <a href="{{ route('admin.profile.index') }}">
                                         <i class="fa fa-user" aria-hidden="true"></i>Uredi profil
                                     </a>
                               </li>

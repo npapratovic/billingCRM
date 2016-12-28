@@ -70,7 +70,7 @@ class AllMigrations extends Migration {
 			$table->integer('language')->unsigned()->default(1);
 			$table->string('consumer_key');
 			$table->string('consumer_secret');
-
+			$table->string('store_url');
 			$table->foreign('language')->references('id')->on('languages');
 			$table->foreign('city')->references('id')->on('city');
 			$table->foreign('region')->references('id')->on('region');
