@@ -173,12 +173,13 @@ class WpApiController extends \BaseController {
 					 	$product[$key] = $value;
 					}
 
-					//Grab the product image, and save locally 
-	      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
-					$content = file_get_contents($result['featured_src']);
-					$imagename = rand(11111,9999999) . '.jpg';
-					file_put_contents($destinationPath . $imagename, $content);
-
+					if (!empty($result['featured_src'])) {
+							//Grab the product image, and save locally 
+			      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
+							$content = file_get_contents($result['featured_src']);
+							$imagename = rand(11111,9999999) . '.jpg';
+							file_put_contents($destinationPath . $imagename, $content);
+					}
 					//we will populate additional data in array
 					$product['product_id'] = $result['id']; 
 					$product['intro'] = $result['short_description']; 
@@ -193,7 +194,11 @@ class WpApiController extends \BaseController {
 					$product['stock'] = $result['stock_quantity'];   
 					$product['product_type'] = $result['type']; 
 					$product['type'] = 'product'; 
-					$product['image'] = $imagename; 
+
+					if (!empty($result['featured_src'])) {
+						$product['image'] = $imagename; 
+					}
+
 					$product['updated_at'] = $product_updated_at; 
 
  					$data->update($product);
@@ -223,11 +228,13 @@ class WpApiController extends \BaseController {
 				 	$product[$key] = $value;
 				}
 
-				//Grab the product image, and save locally 
-      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
-				$content = file_get_contents($result['featured_src']);
-				$imagename = rand(11111,9999999) . '.jpg';
-				file_put_contents($destinationPath . $imagename, $content);
+				if (!empty($result['featured_src'])) {
+					//Grab the product image, and save locally 
+	      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
+					$content = file_get_contents($result['featured_src']);
+					$imagename = rand(11111,9999999) . '.jpg';
+					file_put_contents($destinationPath . $imagename, $content);
+				}
 
 				//we will populate additional data in array
 				$product['product_id'] = $result['id']; 
@@ -243,8 +250,11 @@ class WpApiController extends \BaseController {
 				$product['stock'] = $result['stock_quantity'];   
 				$product['product_type'] = $result['type']; 
 				$product['type'] = 'product'; 
-				$product['image'] = $imagename; 
-				$product['updated_at'] = $product_updated_at; 
+
+				if (!empty($result['featured_src'])) {
+					$product['image'] = $imagename; 
+					$product['updated_at'] = $product_updated_at; 
+				}
 
 				//Now, lets create new product
 		      	ProductService::create($product);   
@@ -444,7 +454,7 @@ class WpApiController extends \BaseController {
 				//convert stdClass object to array	
 
 				$result = (array)($customer);   
- 
+
 				//Lets create array with customer details
 				$customer = array();  
  
@@ -453,12 +463,13 @@ class WpApiController extends \BaseController {
 				 	$customer[$key] = $value;
 				}
 
-				//Grab the customer image, and save locally 
-      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
-				$content = file_get_contents($result['avatar_url']);
-				$imagename = rand(11111,9999999) . '.jpg';
-				file_put_contents($destinationPath . $imagename, $content);
- 
+				if (!empty($result['avatar_url'])) {
+					//Grab the customer image, and save locally 
+	      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
+					$content = file_get_contents($result['avatar_url']);
+					$imagename = rand(11111,9999999) . '.jpg';
+					file_put_contents($destinationPath . $imagename, $content);
+ 				}
 
 				//we will populate additional data in array
 				$customer['client_id'] = $result['id'];  
@@ -479,8 +490,10 @@ class WpApiController extends \BaseController {
 				$customer['city'] = '1';
 				$customer['region'] = '1';
 
-				$customer['image'] = $imagename;  
- 
+				if (!empty($result['avatar_url'])) {
+					$customer['image'] = $imagename;  
+ 				}
+
 				$data->update($customer);
  				 
 			} else { 
@@ -489,7 +502,7 @@ class WpApiController extends \BaseController {
 
 				//convert stdClass object to array		        
 				$result = (array)($customer);   
- 
+  
 				//Lets create array with product details
 				$customer = array();  
  
@@ -498,12 +511,13 @@ class WpApiController extends \BaseController {
 				 	$customer[$key] = $value;
 				}
 
-				//Grab the customer image, and save locally 
-      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
-				$content = file_get_contents($result['avatar_url']);
-				$imagename = rand(11111,9999999) . '.jpg';
-				file_put_contents($destinationPath . $imagename, $content);
- 
+				if (!empty($result['avatar_url'])) {
+					//Grab the customer image, and save locally 
+	      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
+					$content = file_get_contents($result['avatar_url']);
+					$imagename = rand(11111,9999999) . '.jpg';
+					file_put_contents($destinationPath . $imagename, $content);
+ 				}
 
 				//we will populate additional data in array
 				$customer['client_id'] = $result['id'];  
@@ -524,7 +538,9 @@ class WpApiController extends \BaseController {
 				$customer['city'] = '1';
 				$customer['region'] = '1';
 
-				$customer['image'] = $imagename; 
+				if (!empty($result['avatar_url'])) {
+					$customer['image'] = $imagename; 
+ 				}
 
 				//Now, lets create new customer
 		      	Client::create($customer);   
