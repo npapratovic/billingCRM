@@ -23,7 +23,7 @@ class ProductController extends \BaseController {
 		$this->repo = new ProductRepository;
 	}
 	/**
-	 * Display a listing of the product.
+	 * Display a listing of the products.
 	 *
 	 * @return Response
 	 */
@@ -31,22 +31,12 @@ class ProductController extends \BaseController {
 	{ 
 		// Get data
 
-		$entries = ProductService::getEntriesProducts(null, null);
-		
-		if ($entries['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-		$this->layout->title = 'Proizvodi | BillingCRM';
+	    $entries = ProductService::where('type','product')->paginate(10);  
 
-		$this->layout->css_files = array(
+	    $this->layout->title = 'Proizvodi | BillingCRM';
+	 
+	    $this->layout->content = View::make('backend.product.index', compact('entries'));
 
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
-		$this->layout->content = View::make('backend.product.index', array('entries' => $entries));
 	}
 
 

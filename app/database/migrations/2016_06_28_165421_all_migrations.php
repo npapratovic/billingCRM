@@ -43,6 +43,7 @@ class AllMigrations extends Migration {
 		Schema::create('users', function($table)
 		{
 			$table->increments('id');
+			$table->string('client_id',30); 
 			$table->string('username', 30);
 			$table->string('user_group');
 			$table->string('email', 50);
@@ -52,6 +53,7 @@ class AllMigrations extends Migration {
 			$table->string('address', 50);
 			$table->integer('city')->unsigned();
 			$table->string('mjesto', 30)->nullable();
+			$table->string('zupanija', 50)->nullable();
 			$table->string('zip', 8)->nullable();
 			$table->string('country', 30)->nullable();
 			$table->string('fax', 50);
@@ -114,10 +116,7 @@ class AllMigrations extends Migration {
 			$table->integer('backorders')->nullable();
 			$table->integer('stock')->nullable();
 			$table->integer('existing')->nullable();
-
-			$table->string('measurement')->nullable();
-			$table->integer('amount')->nullable();
-			$table->float('discount')->nullable();
+  
 			$table->float('tax')->nullable();
 
 			$table->string('type')->nullable();

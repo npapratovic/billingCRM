@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih proizvoda ({{ count($entries['entries']) }})</h4>
+    <h4>Pregled svih proizvoda</h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -19,21 +19,33 @@
     <table class="table table-hover" id="entries-list">
         <thead>
             <tr>
-                <th>Naziv</th>
+                <th class="col-md-1">ID</th>
+                <th class="col-md-1">Istaknuta slika</th>  
+                <th class="col-md-2">Naziv</th>
                 <th>SKU</th>
                 <th>Cijena</th>
                 <th>Zalihe</th>
+                <th>Tip proizvoda</th> 
+                <th>Datum</th> 
                 <th>Akcije</th>
             </tr>
         </thead>
         <tbody>
-             @if (count($entries['entries']) > 0) 
-                @foreach($entries['entries'] as $entry)
+             @if (count($entries) > 0) 
+                @foreach($entries as $entry)
                 <tr>
-                    <td>{{ $entry->title }}</td>
+                    <td>{{ $entry->product_id }}</td> 
+                    <td>
+                        @if ($entry->image != null || $entry->image != '')  
+                            {{ HTML::image(URL::to('/') . '/uploads/backend/product/' . $entry->image, $entry->title, array('class' => 'img-responsive')) }}  
+                        @endif
+                    </td>
+                    <td>{{ $entry->title }}</td> 
                     <td>{{ $entry->sku }}</td>
                     <td>{{ $entry->price }} kn</td>
                     <td>{{ $entry->stock }}</td>
+                    <td>{{ $entry->product_type }}</td> 
+                    <td>Uvezeno iz WordPressa <br /> {{ $entry->created_at->format('d. m. Y. h:m:i') }}</td>  
                     <td class="col-md-1">
 
                         <a href="{{ URL::route('ProductEdit', array('id' => $entry->id)) }}">
@@ -49,8 +61,8 @@
     </table>
 </div>
 
-@if (count($entries['entries']) > 0) 
-    @foreach($entries['entries'] as $entry)
+@if (count($entries) > 0) 
+    @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
     <div class="modal fade" id="delete-tag-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
@@ -75,12 +87,12 @@
     @endforeach
 @endif 
 
-<div class="text-center">{{$entries['entries']->links()}}</div>
+<div class="text-center">{{$entries->links()}}</div>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        @if (count($entries['entries']) > 0) 
-            @foreach($entries['entries'] as $entry)
+        @if (count($entries) > 0) 
+            @foreach($entries as $entry)
                 $("#btn-delete-tag-id-{{ $entry->id }}").click(function() { 
                     $('#delete-tag-id-{{ $entry->id }}').modal('show');
                 });

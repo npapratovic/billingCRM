@@ -6,6 +6,8 @@ class Client extends Eloquent
 
 	public $timestamps = false;
 
+ 	protected $fillable = array('client_id', 'first_name', 'last_name', 'email', 'username', 'user_group', 'note', 'address', 'mjesto', 'zip', 'country', 'city', 'zupanija', 'company_name', 'region', 'phone', 'image');
+
 	public function narudzbenice(){
 		return $this->hasMany('Narudzbenice');
 	}

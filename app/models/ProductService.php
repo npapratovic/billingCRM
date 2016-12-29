@@ -8,9 +8,8 @@ class ProductService extends Eloquent
 	
 	protected $table = 'products_services';
 
-	//protected $fillable = array('title', 'intro', 'measurement','amount','price', 'type', 'discount', 'tax', 'created_at','updated_at');
-	protected $fillable = array('title', 'product_id', 'permalink');
-
+ 	protected $fillable = array('title', 'product_id', 'permalink', 'type', 'product_type', 'image', 'intro', 'content', 'visibility', 'stock_status', 'total_sales', 'downloadable', 'virtual', 'regular_price', 'sale_price', 'price', 'purchase_note', 'featured', 'weight', 'length', 'width', 'status', 'sku', 'sold_individually', 'manage_stock', 'backorders', 'stock', 'updated_at');
+ 
 	// New entry validation
 	public static $store_rules = array(
 		'title'					=>	'required',

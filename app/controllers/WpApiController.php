@@ -134,12 +134,73 @@ class WpApiController extends \BaseController {
 		{
 			/** 
 			 Switch (product_exists) 
-			 Case 1: product doesen't exist in billingCRM => CREATE product
-			 Case 2: product exists in billingCRM
-					2a => product from WordPress has updated_at newer than one in billingCRM => UPDATE product
-					2b => product from WordPress doesen't have updated_at newer than one in billingCRM => do nothing 
+			 Case 1: product exists in billingCRM
+					1a => product from WordPress has updated_at newer than one in billingCRM => UPDATE product
+					1b => product from WordPress doesen't have updated_at newer than one in billingCRM => do nothing 
+			 Case 2: product doesen't exist in billingCRM => CREATE product
+
 
 			**/
+
+
+			if ($productdata = ProductService::where('product_id', '=', $product->id)->exists()) {
+
+			    // Case 1: product found 
+
+		        $data = ProductService::where('product_id', '=', $product->id)->first();
+
+		        // Now we check if product is updated
+
+		        $product_updated_at = $product->updated_at; 
+
+		        // Lets reformat from atom to normal datetime
+		        $product_updated_at = date('Y-m-d H:i:s', strtotime($product_updated_at));
+
+				$imported_product_updated_at = $data->updated_at; 
+		   
+ 				if($product_updated_at > $imported_product_updated_at) {
+
+ 					//1a => product from WordPress has updated_at newer than one in billingCRM => UPDATE product
+
+ 					//convert stdClass object to array		        
+					$result = (array)($product);   
+
+					//Lets create array with product details
+					$product = array();  
+	 
+	  				//Lets fill the newly created array 
+					foreach($result as $key => $value) {
+					 	$product[$key] = $value;
+					}
+
+					//Grab the product image, and save locally 
+	      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
+					$content = file_get_contents($result['featured_src']);
+					$imagename = rand(11111,9999999) . '.jpg';
+					file_put_contents($destinationPath . $imagename, $content);
+
+					//we will populate additional data in array
+					$product['product_id'] = $result['id']; 
+					$product['intro'] = $result['short_description']; 
+					$product['content'] = $result['description']; 
+					$product['visibility'] = $result['catalog_visibility']; 
+					$product['stock_status'] = $result['in_stock']; 
+					$product['length'] = $result['dimensions']->length; 
+					$product['width'] = $result['dimensions']->width;	 
+					$product['height'] = $result['dimensions']->height;
+					$product['manage_stock'] = $result['managing_stock'];
+					$product['backorders'] = $result['backorders_allowed'];
+					$product['stock'] = $result['stock_quantity'];   
+					$product['product_type'] = $result['type']; 
+					$product['type'] = 'product'; 
+					$product['image'] = $imagename; 
+					$product['updated_at'] = $product_updated_at; 
+
+ 					$data->update($product);
+ 				
+ 				} 
+
+			}  
 
 			$productdata = ProductService::where('product_id', '=', $product->id)->first();
 
@@ -147,159 +208,56 @@ class WpApiController extends \BaseController {
 			   	// Case 1: product doesn't exist
 
 				//convert stdClass object to array		        
-				$result = (array)($product); 
+				$result = (array)($product);  
+
+		        $product_updated_at = $product->updated_at; 
+
+		        // Lets reformat from atom to normal datetime
+		        $product_updated_at = date('Y-m-d H:i:s', strtotime($product_updated_at));
 
 				//Lets create array with product details
 				$product = array();  
-
+ 
   				//Lets fill the newly created array 
 				foreach($result as $key => $value) {
 				 	$product[$key] = $value;
 				}
- 
-				//we will populate 'product_id' with different value
+
+				//Grab the product image, and save locally 
+      			$destinationPath = public_path() . "/uploads/backend/product/"; // upload path
+				$content = file_get_contents($result['featured_src']);
+				$imagename = rand(11111,9999999) . '.jpg';
+				file_put_contents($destinationPath . $imagename, $content);
+
+				//we will populate additional data in array
 				$product['product_id'] = $result['id']; 
+				$product['intro'] = $result['short_description']; 
+				$product['content'] = $result['description']; 
+				$product['visibility'] = $result['catalog_visibility']; 
+				$product['stock_status'] = $result['in_stock']; 
+				$product['length'] = $result['dimensions']->length; 
+				$product['width'] = $result['dimensions']->width;	 
+				$product['height'] = $result['dimensions']->height;
+				$product['manage_stock'] = $result['managing_stock'];
+				$product['backorders'] = $result['backorders_allowed'];
+				$product['stock'] = $result['stock_quantity'];   
+				$product['product_type'] = $result['type']; 
+				$product['type'] = 'product'; 
+				$product['image'] = $imagename; 
+				$product['updated_at'] = $product_updated_at; 
 
 				//Now, lets create new product
 		      	ProductService::create($product);   
 
 			}   
-
-/*
-			if ($productdata = ProductService::where('product_id', '=', $product->id)->exists()) {
-			   // product found
-
-
-			}  
-
-
-
-
-
-			$existingproduct = ProductService::checkUpdate($product->id);
-
-			$updatecheck = substr_replace(preg_replace("/[^0-9,:,-]/", "", $product->updated_at), ' ', 10, -8);
-
-			$updateverify = $updatecheck;
-
-			$oldproduct = false;
-
-			if(!is_null($existingproduct['entry'])){
-				if(substr_replace(preg_replace("/[^0-9,:,-]/", "", $existingproduct['entry']->updated_at), ' ', 10, -8) != $updateverify){
-					$updateverify = $existingproduct['entry']->updated_at;
-					$oldproduct = true;
-				}
-			} 
-
-
-			if(!is_null($existingproduct['entry']) && $updatecheck == $updateverify){
-				continue;
-			}
-
-			else {
-
-				$created_at = $product->created_at;
-				$updated_at = $product->updated_at;
-
-				$created_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $created_at), ' ', 10, -8);
-				$updated_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $updated_at), ' ', 10, -8);
-
-				$dimensions = get_object_vars($product->dimensions);
-
-				if($oldproduct == true){
-					$store = $this->productsrepo->importupdate(
-						$product->id,
-						$product->title,
-						$product->short_description,
-						$product->permalink,
-						$product->sku,
-						$product->regular_price,
-						$product->sale_price,
-						$product->stock_quantity,
-						$product->total_sales,
-						$product->in_stock, 	//	stock status
-						$product->sold_individually,
-						$product->weight,
-						$dimensions['length'],	//	length
-						$dimensions['width'],	//	width
-						$dimensions['height'],	//	height
-						$product->status,
-						1,	//	product type
-						$product->description,
-						$product->visible,
-						$product->downloadable,
-						$product->featured,
-						$product->virtual,
-						1,
-						$product->managing_stock,
-						$product->backorders_allowed,
-						null,
-						null,
-						null,
-						null,
-						$created_at,
-						$updated_at
-						);
- 
-				} 
-
-				else {
-
-
-					$store = $this->productsrepo->import(
-							$product->id,
-							$product->title,
-							$product->short_description,
-							$product->permalink,
-							$product->sku,
-							$product->regular_price,
-							$product->sale_price,
-							$product->stock_quantity,
-							$product->total_sales,
-							$product->in_stock, 	//	stock status
-							$product->sold_individually,
-							$product->weight,
-							$dimensions['length'],	//	length
-							$dimensions['width'],	//	width
-							$dimensions['height'],	//	height
-							$product->status,
-							1,	//	product type
-							$product->description,
-							$product->visible,
-							$product->downloadable,
-							$product->featured,
-							$product->virtual,
-							1,
-							$product->managing_stock,
-							$product->backorders_allowed,
-							null,
-							null,
-							null,
-							null,
-							$created_at,
-							$updated_at
-
-						);
- 
-				}
-				
-
-			}
-*/
-			
+ 			
 		}
 
 
 		$this->layout->title = 'WpApi | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
+  
 		$this->layout->content = View::make('backend.wp-api.products', array('entries' => $products));
+
 	}
  
 	/**
@@ -491,48 +449,121 @@ class WpApiController extends \BaseController {
 
 		$customers = $response->customers; 
  
-
 		foreach($customers as $customer)
-		{
+		{ 
+			 
+			/** 
 
-			$existinguser = User::checkExisting($customer->id);
+			 Switch (customer_exists) 
+			 Case 1: customer exists in billingCRM
+					1a => customer found from WordPress in billingCRM => UPDATE customer 
+			 Case 2: customer doesen't exist in billingCRM => CREATE customer
 
-			if(!is_null($existinguser['entry'])){
-				continue;
-			}
 
+			**/
+ 
+			if ($customerdata = Client::where('client_id', '=', $customer->id)->exists()) {
 
-			$store = $this->customersrepo->store(
-				'asdf',			//	naziv kompanije
-				1,			//	tip djelatnosti
-				1,			//	oib
-				$customer->first_name,
-				$customer->last_name,
-				'asdf',			//	adresa
-				14,			//	mjesto
-				31000,		//	zip
-				14,			//	grad			
-				987654321,		//	broj telefona
-				0987123456,		//	fax
-				123098456,		//	broj mobitela
-				$customer->email,
-				'http://mojawebstranica.com',	//	web stranica
-				'iban',					//	iban
-				'Podaci iz WordPress stranice'			//	note
+			    // Case 1a: customer found 
 
-			);  
+		        $data = Client::where('client_id', '=', $customer->id)->first();  
+
+				//convert stdClass object to array	
+
+				$result = (array)($customer);   
+ 
+				//Lets create array with customer details
+				$customer = array();  
+ 
+  				//Lets fill the newly created array 
+				foreach($result as $key => $value) {
+				 	$customer[$key] = $value;
+				}
+
+				//Grab the customer image, and save locally 
+      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
+				$content = file_get_contents($result['avatar_url']);
+				$imagename = rand(11111,9999999) . '.jpg';
+				file_put_contents($destinationPath . $imagename, $content);
+ 
+
+				//we will populate additional data in array
+				$customer['client_id'] = $result['id'];  
+				$customer['user_group'] = $result['role'];
+				$customer['username'] = $result['username'];
+				$customer['first_name'] = $result['billing_address']->first_name; 
+				$customer['last_name'] = $result['billing_address']->last_name;
+				$customer['email'] = $result['billing_address']->email; 
+				$customer['company_name'] = $result['billing_address']->company; 
+				$customer['address'] = $result['billing_address']->address_1 . $result['billing_address']->address_2; 
+				$customer['zip'] = $result['billing_address']->postcode; 
+ 				$customer['mjesto'] = $result['billing_address']->city; 
+ 				$customer['zupanija'] = $result['billing_address']->state;
+ 				$customer['country'] = $result['billing_address']->country; 
+ 				$customer['phone'] = $result['billing_address']->phone; 
+				$customer['note'] = 'Podaci iz WordPress stranice';
+				// Lets default city & region to 1, because of foreign_keys
+				$customer['city'] = '1';
+				$customer['region'] = '1';
+
+				$customer['image'] = $imagename;  
+ 
+				$data->update($customer);
+ 				 
+			} else { 
+
+			   	// Case 2: customer doesn't exist
+
+				//convert stdClass object to array		        
+				$result = (array)($customer);   
+ 
+				//Lets create array with product details
+				$customer = array();  
+ 
+  				//Lets fill the newly created array 
+				foreach($customer as $key => $value) {
+				 	$customer[$key] = $value;
+				}
+
+				//Grab the customer image, and save locally 
+      			$destinationPath = public_path() . "/uploads/backend/client/"; // upload path
+				$content = file_get_contents($result['avatar_url']);
+				$imagename = rand(11111,9999999) . '.jpg';
+				file_put_contents($destinationPath . $imagename, $content);
+ 
+
+				//we will populate additional data in array
+				$customer['client_id'] = $result['id'];  
+				$customer['user_group'] = $result['role'];
+				$customer['username'] = $result['username'];
+				$customer['first_name'] = $result['billing_address']->first_name; 
+				$customer['last_name'] = $result['billing_address']->last_name;
+				$customer['email'] = $result['billing_address']->email; 
+				$customer['company_name'] = $result['billing_address']->company; 
+				$customer['address'] = $result['billing_address']->address_1 . $result['billing_address']->address_2; 
+				$customer['zip'] = $result['billing_address']->postcode; 
+ 				$customer['mjesto'] = $result['billing_address']->city; 
+ 				$customer['zupanija'] = $result['billing_address']->state;
+ 				$customer['country'] = $result['billing_address']->country; 
+ 				$customer['phone'] = $result['billing_address']->phone; 
+				$customer['note'] = 'Podaci iz WordPress stranice';
+				// Lets default city & region to 1, because of foreign_keys
+				$customer['city'] = '1';
+				$customer['region'] = '1';
+
+				$customer['image'] = $imagename; 
+
+				//Now, lets create new customer
+		      	Client::create($customer);   
+
+			}   
+ 
 		}
 
-		$this->layout->title = 'WpApi | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
+		$this->layout->title = 'Klijenti | BillingCRM';
+ 
 		$this->layout->content = View::make('backend.wp-api.customers', array('customers' => $customers));
+
 	}
 
 }
