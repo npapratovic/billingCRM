@@ -210,7 +210,7 @@ class WpApiController extends \BaseController {
 			$productdata = ProductService::where('product_id', '=', $product->id)->first();
 
 			if ($productdata === null) {
-			   	// Case 1: product doesn't exist
+			   	// Case 2: product doesn't exist
 
 				//convert stdClass object to array		        
 				$result = (array)($product);  
@@ -302,7 +302,7 @@ class WpApiController extends \BaseController {
 
 			if ($orderdata = Order::where('order_id', '=', $order->order_number)->exists()) {
 
-			    // Case 1: order found 
+			    // Case 1: order exists 
 
 		        $data = Order::where('order_id', '=', $order->order_number)->first();
  
@@ -447,7 +447,7 @@ class WpApiController extends \BaseController {
  
 			if ($customerdata = Client::where('client_id', '=', $customer->id)->exists()) {
 
-			    // Case 1a: customer found 
+			    // Case 1a: customer exists 
 
 		        $data = Client::where('client_id', '=', $customer->id)->first();  
 
