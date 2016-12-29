@@ -12,7 +12,7 @@ class ClientController extends \BaseController {
 	{ 
 		// Get data
 
-		$entries = User::where('user_group', 'client')->paginate(10);
+		$entries = Client::paginate(10);
 
 		$this->layout->title = 'Klijenti | BillingCRM';
 

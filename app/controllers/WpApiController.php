@@ -280,151 +280,124 @@ class WpApiController extends \BaseController {
 
 		foreach($orders as $order)
 		{    
+			/** 
 
-			$existingorder = Order::checkExisting($order->order_number);
-			
-			$updatecheck = substr_replace(preg_replace("/[^0-9,:,-]/", "", $order->updated_at), ' ', 10, -8);
+			 Switch (order_exists) 
+			 Case 1: order exists in billingCRM
+					1a => order from WordPress has updated_at newer than one in billingCRM => UPDATE order, update order_products table
+					1b => order from WordPress doesen't have updated_at newer than one in billingCRM => do nothing 
+			 Case 2: order doesen't exist in billingCRM => CREATE order, fill order_products table
+			 		 
+			**/  
 
-			$updateverify = $updatecheck;
+			if ($orderdata = Order::where('order_id', '=', $order->order_number)->exists()) {
 
-			$oldorder = false;
+			    // Case 1: order found 
 
-			if(!is_null($existingorder['entry'])){
-				if(substr_replace(preg_replace("/[^0-9,:,-]/", "", $existingorder['entry']->updated_at), ' ', 10, -8) != $updateverify){
-					$updateverify = $existingorder['entry']->updated_at;
-					$oldorder = true;
-				}
-			} 
-
-
+		        $data = Order::where('order_id', '=', $order->order_number)->first();
  
-			if(!is_null($existingorder['entry']) && $updatecheck == $updateverify){
-				continue;
-			}
+		        // Now we check if order is updated
 
-			else {
+		        $order_updated_at = $order->updated_at; 
 
-				if($oldorder == true){
-					DB::table('orders')->where('order_id', '=', $existingorder['entry']->order_id)->delete();
-					DB::table('orders_products')->where('order_id', '=', $existingorder['entry']->id)->delete();
-				}
+		        // Lets reformat from atom to normal datetime
+		        $order_updated_at = date('Y-m-d H:i:s', strtotime($order_updated_at));
 
+				$imported_order_updated_at = $data->updated_at; 
+		   
+ 				if($order_updated_at > $imported_order_updated_at) {
 
-				$order = get_object_vars($order); 
+ 					//1a => order from WordPress has updated_at newer than one in billingCRM => UPDATE order
 
-				$userexists = User::getUserByEmail($order['customer']->email);
-
-				if(empty($userexists['user']))
-				{
-					$store = $this->customersrepo->import(
-						'asdf',			//	naziv kompanije
-						1,			//	tip djelatnosti
-						1,			//	oib
-						$order['customer']->first_name,
-						$order['customer']->last_name,
-						'asdf',			//	adresa
-						14,			//	mjesto
-						31000,		//	zip
-						14,			//	grad			
-						987654321,		//	broj telefona
-						0987123456,		//	fax
-						123098456,		//	broj mobitela
-						$order['customer']->email,
-						'http://mojawebstranica.com',	//	web stranica
-						'iban',					//	iban
-						'Podaci iz WordPress stranice'			//	note
-
-					); 
-
-				}
-
-				else{
-
-					$store = $this->customersrepo->importupdate(
-						$order['customer']->id,
-						'asdf',			//	naziv kompanije
-						1,			//	tip djelatnosti
-						1,			//	oib
-						$order['customer']->first_name,
-						$order['customer']->last_name,
-						'asdf',			//	adresa
-						14,			//	mjesto
-						31000,		//	zip
-						14,			//	grad			
-						987654321,		//	broj telefona
-						0987123456,		//	fax
-						123098456,		//	broj mobitela
-						$order['customer']->email,
-						'http://mojawebstranica.com',	//	web stranica
-						'iban',					//	iban
-						'Podaci iz WordPress stranice'			//	note
-
-					);
-
-				}
+ 					//convert stdClass object to array		        
+					$result = (array)($order);   
  
-	 			$product = array(); 
-				$quantity = array(); 
+					//Lets create array with order details
+					$order = array(); 
 
-				foreach($order['line_items'] as $singleorder) { 
+	   				//we will populate additional data in array
+					$order['order_id'] = $result['order_number']; 
+					$order['client_id'] = $result['customer']->id;
+					$order['price'] = $result['total'];
+					$order['shipping_way'] = $result['shipping_methods'];
+					$order['payment_way'] = $result['payment_details']->method_id;
+					$order['payment_status'] = $result['status'];
+	 				$order['billing_address'] = $result['billing_address']->address_1 . ' ' . $result['billing_address']->address_2 . ' ' . $result['billing_address']->postcode . ' ' . $result['billing_address']->city . ' ' . $result['billing_address']->state . ' ' . $result['billing_address']->country;
+	 				$order['shipping_address'] = $result['shipping_address']->address_1 . ' ' . $result['shipping_address']->address_2 . ' ' . $result['shipping_address']->postcode . ' ' . $result['shipping_address']->city . ' ' . $result['shipping_address']->state . ' ' . $result['shipping_address']->country;
+	 				$order['note'] = $result['note']; 
+	 				$order['order_date'] = $result['created_at']; 
+	  				$order['updated_at'] = $order_updated_at; 
 
-					$store = $this->productsrepo->productfromorder(
-						$singleorder->subtotal,
-						$singleorder->subtotal_tax,
-						$singleorder->total,
-						$singleorder->total_tax,
-						$singleorder->price,
-						$singleorder->quantity, 
-						$singleorder->tax_class,
-						$singleorder->name, 
-						$singleorder->product_id
-					);
+ 					$data->update($order);
 
-					array_push($product, $singleorder->product_id);
-					array_push($quantity, $singleorder->quantity); 
+ 					// Delete products from order_products table
 
-				}
+					DB::table('orders_products')->where('order_id', '=', $result['order_number'])->delete();
+
+ 					//Now, we need to associate products to order
+
+			      	foreach($result['line_items'] as $singleproduct) { 
+
+			      		$orders_products = array();
+						$orders_products['order_id'] = $order['order_id']; 
+						$orders_products['product_id'] = $singleproduct->product_id; 
+						$orders_products['quantity'] = $singleproduct->quantity; 
+						$orders_products['price'] = $singleproduct->price; 
+	 					$orders_products['product_name'] = $singleproduct->name; 
+
+			      		OrdersProducts::create($orders_products);
+	 			
+					}
+ 				
+ 				} 
+
+			} else {
+
+			   	// Case 2: order doesn't exist
+
+				//convert stdClass object to array		        
+				$result = (array)($order);  
  
-				$user = User::where('email', $order['customer']->email)->first();
-				 
+				//Lets create array with order details
+				$order = array();  
 
-				$created_at = $order['created_at'];
-				$updated_at = $order['updated_at'];
+  				//we will populate additional data in array
+				$order['order_id'] = $result['order_number']; 
+				$order['client_id'] = $result['customer']->id;
+				$order['price'] = $result['total'];
+				$order['shipping_way'] = $result['shipping_methods'];
+				$order['payment_way'] = $result['payment_details']->method_id;
+				$order['payment_status'] = $result['status'];
+ 				$order['billing_address'] = $result['billing_address']->address_1 . ' ' . $result['billing_address']->address_2 . ' ' . $result['billing_address']->postcode . ' ' . $result['billing_address']->city . ' ' . $result['billing_address']->state . ' ' . $result['billing_address']->country;
+ 				$order['shipping_address'] = $result['shipping_address']->address_1 . ' ' . $result['shipping_address']->address_2 . ' ' . $result['shipping_address']->postcode . ' ' . $result['shipping_address']->city . ' ' . $result['shipping_address']->state . ' ' . $result['shipping_address']->country;
+ 				$order['note'] = $result['note']; 
+ 				$order['order_date'] = $result['created_at']; 
 
-				$created_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $created_at), ' ', 10, -8);
-				$updated_at = substr_replace(preg_replace("/[^0-9,:,-]/", "", $updated_at), ' ', 10, -8);
+				//Now, lets create new order
+		      	Order::create($order);   
 
-				$store = $this->ordersrepo->import(
-					$order['order_number'],
-					$user->id,			//	user id
-					Auth::id(),			//	employee_id
-					$order['created_at'],
-					$product,			//	products 	 
-					$quantity,			//	quantities	
-					$order['shipping_methods'],
-					$order['payment_details']->method_id,		//	payment_way
-					$order['status'],
-					$order['billing_address']->city,
-					$order['billing_address']->address_1,	//	adresa racuna
-					$order['shipping_address']->address_1,		//	adresa dostave
-					$order['note'],
-					$created_at,
-					$updated_at
-				);
-				 
-			}
+		      	//Now, we need to associate products to order
+
+		      	foreach($result['line_items'] as $singleproduct) { 
+
+		      		$orders_products = array();
+					$orders_products['order_id'] = $order['order_id']; 
+					$orders_products['product_id'] = $singleproduct->product_id; 
+					$orders_products['quantity'] = $singleproduct->quantity; 
+					$orders_products['price'] = $singleproduct->price; 
+ 					$orders_products['product_name'] = $singleproduct->name; 
+
+		      		OrdersProducts::create($orders_products);
+ 			
+				}
+
+			}   
+
  
 		}
 
-		$this->layout->title = 'WpApi | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-
-		);
+		$this->layout->title = 'Narudžbe | BillingCRM';
+ 
 
 		$this->layout->content = View::make('backend.wp-api.orders', array('orders' => $orders));
 		
@@ -451,7 +424,7 @@ class WpApiController extends \BaseController {
  
 		foreach($customers as $customer)
 		{ 
-			 
+
 			/** 
 
 			 Switch (customer_exists) 

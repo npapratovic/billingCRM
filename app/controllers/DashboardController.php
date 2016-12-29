@@ -10,31 +10,31 @@ class DashboardController extends \BaseController {
 
 	public function index() {
 	
-		// Get last 10 of each data
+		// Get last 10 of each data 
 
-		$productsentries = ProductService::getEntriesProducts(null, null);
-		$productscount = ProductService::countProducts();
-
-		$invoicesentries = Invoice::getEntries(null, null); 
-		$invoicescount = Invoice::countInvoices();
+		$productsentries = ProductService::where('type','product')->get()->take(10); 
+		$productscount = ProductService::count();
+ 
+		$invoicesentries = Invoice::get()->take(10); 
+		$invoicescount = Invoice::count();
 		
-		$ordersentries = Order::getEntries(null);
-		$orderscount = Order::countOrders();
+		$ordersentries = Order::get()->take(10);
+		$orderscount = Order::count();
 
-		$offersentries = Offer::getEntries(null, null);
-		$offerscount = Offer::countOffers();	
+		$offersentries = Offer::get()->take(10);
+		$offerscount = Offer::count();	
 
-		$dispatchentries = Dispatch::getEntries(null, null);
-		$dispatchcount = Dispatch::countDispatches();	
+		$dispatchentries = Dispatch::get()->take(10);
+		$dispatchcount = Dispatch::count();	
 
-		$workingorderentries = WorkingOrder::getEntries(null, null);
-		$workingordercount = WorkingOrder::countWorkingOrders();	
+		$workingorderentries = WorkingOrder::get()->take(10);
+		$workingordercount = WorkingOrder::count();	
  	  
-		$narudzbeniceentries = Narudzbenice::getEntries(null, null);
-		$narudzbenicecount = Narudzbenice::countNarudzbenice();	
+		$narudzbeniceentries = Narudzbenice::get()->take(10);
+		$narudzbenicecount = Narudzbenice::count();	
 
-		$cliententries = User::getEntries(null, null);
-		$clientcount = User::countUsers('client');	
+		$cliententries = User::where('user_group','customer')->get()->take(10);
+		$clientcount = User::where('user_group','customer')->count();	
 
 		$this->layout->title = 'Admin';
 
@@ -46,7 +46,7 @@ class DashboardController extends \BaseController {
 			'js/backend/wow.min.js'
 		);
 
-		$this->layout->content = View::make('backend.dashboard', array('productsentries' => $productsentries['entries'], 'productscount' => $productscount['number'], 'invoicesentries' => $invoicesentries['entries'], 'invoicescount' => $invoicescount['number'], 'ordersentries' => $ordersentries['entries'], 'orderscount' => $orderscount['number'], 'offersentries' => $offersentries['entries'], 'offerscount' => $offerscount['number'], 'dispatchentries' => $dispatchentries['entries'], 'dispatchcount' => $dispatchcount['number'], 'workingorderentries' => $workingorderentries['entries'], 'workingordercount' => $workingordercount['number'], 'narudzbeniceentries' => $narudzbeniceentries['entries'], 'narudzbenicecount' => $narudzbenicecount['number'], 'cliententries' => $cliententries['entries'],  'clientcount' => $clientcount['number']));
+		$this->layout->content = View::make('backend.dashboard', compact('productsentries', 'productscount', 'invoicesentries', 'invoicescount', 'ordersentries', 'orderscount', 'offersentries', 'offerscount', 'dispatchentries', 'dispatchcount', 'workingorderentries', 'workingordercount', 'narudzbeniceentries', 'narudzbenicecount', 'cliententries',  'clientcount'));
 	}
 
 

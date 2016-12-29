@@ -19,12 +19,12 @@ class Order extends Eloquent
 		'id'					=>	'required|integer' 
 	);
 
-	protected $fillable = array('order_id', 'user_id', 'employee_id', 'price', 'shipping_way', 'payment_way', 'payment_status', 'cityname', 'billing_address', 'shipping_address', 'note', 'order_date', 'show_only', 'deleted_at');
+	protected $fillable = array('order_id', 'client_id', 'employee_id', 'price', 'shipping_way', 'payment_way', 'payment_status', 'billing_address', 'shipping_address', 'note', 'order_date', 'show_only', 'deleted_at', 'updated_at');
 
 
   	public function client()
     {
-        return $this->hasMany('User', 'id', 'user_id');
+        return $this->hasMany('User', 'id', 'client_id');
     }
 
     public function orderProducts()

@@ -6,7 +6,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-red"><i class="fa fa-user"></i></span>
                             <div class="sm-st-info">
-                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $productscount['total'] }}</span> Ukupno proizvoda 
+                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $productscount }}</span> Ukupno proizvoda 
                             </div>
                         </div>
                     </div>
@@ -14,7 +14,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-violet"><i class="fa fa-male"></i></span>
                             <div class="sm-st-info">
-                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $invoicescount['total'] }}</span> Ukupno računa   
+                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $invoicescount }}</span> Ukupno računa   
                             </div>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-green"><i class="fa fa-truck"></i></span>
                             <div class="sm-st-info">
-                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $orderscount['total'] }}</span> Ukupno narudžbi   
+                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $orderscount }}</span> Ukupno narudžbi   
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-blue"><i class="fa fa-certificate"></i></span>
                             <div class="sm-st-info">
-                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $offerscount['total'] }}</span> Ukupno ponuda   
+                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $offerscount }}</span> Ukupno ponuda   
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-orange"><i class="fa fa-certificate"></i></span>
                             <div class="sm-st-info">
-                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $dispatchcount['total'] }}</span> Ukupno otpremnica 
+                                <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $dispatchcount }}</span> Ukupno otpremnica 
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-purple"><i class="fa fa-certificate"></i></span>
                             <div class="sm-st-info">
-                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $workingordercount['total'] }}</span> Ukupno radnih naloga  
+                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $workingordercount }}</span> Ukupno radnih naloga  
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-lime"><i class="fa fa-ticket"></i></span>
                             <div class="sm-st-info">
-                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $narudzbenicecount['total'] }}</span> Ukupno narudžbenica
+                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $narudzbenicecount }}</span> Ukupno narudžbenica
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                         <div class="sm-st clearfix widgets">
                             <span class="sm-st-icon st-gray"><i class="fa fa-users"></i></span>
                             <div class="sm-st-info">
-                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $clientcount['total'] }}</span> Ukupno klijenata
+                                  <span class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">{{ $clientcount }}</span> Ukupno klijenata
                             </div>
                         </div>
                     </div>

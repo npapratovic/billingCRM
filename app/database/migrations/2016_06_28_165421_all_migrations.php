@@ -467,13 +467,12 @@ class AllMigrations extends Migration {
 		{
 			$table->increments('id')->unsigned();
 			$table->string('order_id');
-			$table->integer('user_id');
+			$table->integer('client_id');
 			$table->integer('employee_id');
 			$table->float('price');
 			$table->string('shipping_way');
 			$table->string('payment_way');
 			$table->string('payment_status');
-			$table->string('cityname')->nullable();
 			$table->string('billing_address');
 			$table->string('shipping_address');
 			$table->text('note');
@@ -489,9 +488,10 @@ class AllMigrations extends Migration {
 		{
 			$table->increments('id')->unsigned();
 			$table->integer('order_id');
-			$table->integer('product_id');
+			$table->integer('product_id')->nullable();
 			$table->integer('quantity');
 			$table->float('price');
+			$table->string('product_name');
 			$table->dateTime('created_at');
 			$table->dateTime('updated_at');
 		});
