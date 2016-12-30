@@ -9,26 +9,7 @@
 
 class OrderController extends \BaseController {
 
-
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-	protected $invoicerepo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new OrderRepository;
-		$this->invoicerepo = new InvoiceRepository;
-
-	}
+ 
 
 	/**
 	 * Display a listing of the client post(s).
@@ -41,33 +22,11 @@ class OrderController extends \BaseController {
 	public function index()
 	{
 		// Get data
-		$entries = Order::with('client')->paginate(10); 
-		
-
-
-		$allproducts = array();
-
-		foreach ($entries as $order){
-			$productsperorder = array();
-	 		$productdata = OrdersProducts::where('order_id', $order->id)->get();
-		 		foreach($productdata as $product)
-				{
-					if($order->show_only == '1'){
-						$singleproduct = ImportedOrderProduct::find($product->product_id);
-					}
-					else {
-						$singleproduct = ProductService::find($product->product_id);
-
-					}
-					array_push($productsperorder, $singleproduct);
-				}
-				$allproducts[] = $productsperorder;
-		}
-
-
+		$entries = Order::with('client')->with('orderProducts')->paginate(10); 
+ 
 		$this->layout->title = 'Narudžbe | BillingCRM';
 
-		$this->layout->content = View::make('backend.order.index', compact('entries', 'allproducts'));
+		$this->layout->content = View::make('backend.order.index', compact('entries'));
 	}
 
 

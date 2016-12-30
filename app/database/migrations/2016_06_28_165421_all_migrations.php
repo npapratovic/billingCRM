@@ -295,34 +295,7 @@ class AllMigrations extends Migration {
 			$table->foreign('invoice_id')->references('id')->on('invoices');
 			$table->foreign('product_id')->references('id')->on('products_services');
 		});
-
-
-		//products imported from woocommerce
-		Schema::create('imported_order_products', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->string('subtotal')->nullable();
-			$table->string('subtotal_tax')->nullable();
-			$table->string('total')->nullable();
-			$table->string('total_tax')->nullable();
-			$table->string('price')->nullable();
-			$table->integer('quantity')->nullable();
-			$table->string('tax_class')->nullable();
-			$table->string('name')->nullable();
-			$table->integer('product_id')->unsigned();
-			$table->string('sku')->nullable();
-			$table->integer('existing')->nullable();
-			$table->string('type')->nullable();
-			$table->timestamp('created_at')->nullable();
-			$table->timestamp('updated_at')->nullable();
-			$table->softDeletes(); 
-			
-		});
-
-		Schema::table('imported_order_products', function($table) {
-		   $table->foreign('product_id')->references('product_id')->on('invoices_products');
-		});
-
+ 
 		Schema::create('company', function(Blueprint $table)
 		{
 			$table->increments('id');
@@ -467,7 +440,7 @@ class AllMigrations extends Migration {
 		{
 			$table->increments('id')->unsigned();
 			$table->string('order_id');
-			$table->integer('client_id');
+			$table->integer('client_id')->unsigned();
 			$table->integer('employee_id');
 			$table->float('price');
 			$table->string('shipping_way');
@@ -483,6 +456,10 @@ class AllMigrations extends Migration {
 			$table->softDeletes();
 		});
 
+		Schema::table('orders', function($table) { 
+			$table->foreign('client_id')->references('id')->on('users'); 
+		});
+
 		// Create orders_products
 		Schema::create('orders_products', function($table)
 		{
@@ -492,6 +469,7 @@ class AllMigrations extends Migration {
 			$table->integer('quantity');
 			$table->float('price');
 			$table->string('product_name');
+			$table->string('type');
 			$table->dateTime('created_at');
 			$table->dateTime('updated_at');
 		});
@@ -569,8 +547,7 @@ class AllMigrations extends Migration {
 		Schema::drop('products_attributes');
 		Schema::drop('products_categories');
 		Schema::drop('products_tags');
-		Schema::drop('invoices_products');
-		Schema::drop('imported_order_products');
+		Schema::drop('invoices_products'); 
 		Schema::drop('company');
 		Schema::drop('dispatches');
 		Schema::drop('dispatches_services');

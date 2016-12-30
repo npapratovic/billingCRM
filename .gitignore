@@ -1,9 +1,10 @@
 /vendor
 /app/storage
-/app/public_html/backend/dispatches
-/app/public_html/backend/invoices
-/app/public_html/backend/narudzbenice
-/app/public_html/backend/offers
-/app/public_html/backend/orders
-/app/public_html/backend/workingorders
+/public_html/backend/dispatches
+/public_html/backend/invoices
+/public_html/backend/narudzbenice
+/public_html/backend/offers
+/public_html/backend/orders
+/public_html/backend/product/
+/public_html/backend/workingorders
 .phpintel

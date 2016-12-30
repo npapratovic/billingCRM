@@ -4,7 +4,7 @@ class OrdersProducts extends Eloquent
 {
 	protected $table = 'orders_products';
 
-	protected $fillable = array('order_id', 'product_id', 'quantity', 'price', 'product_name');
+	protected $fillable = array('order_id', 'product_id', 'quantity', 'price', 'product_name', 'type');
 
 	  public function orders()
     {

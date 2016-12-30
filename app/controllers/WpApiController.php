@@ -8,32 +8,7 @@
 */
 
 class WpApiController extends \BaseController {
-
-
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-	
-	protected $productsrepo;
-	protected $ordersrepo;
-	protected $customersrepo;   
  
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new WpApiRepository;
-
-		//Repos access
-		$this->productsrepo = new ProductRepository;
-		$this->customersrepo = new ClientRepository;
-		$this->ordersrepo = new OrderRepository; 
-
-
-	}
 	/**
 	 * Display a listing of the tag.
 	 *
@@ -181,6 +156,11 @@ class WpApiController extends \BaseController {
 							file_put_contents($destinationPath . $imagename, $content);
 					}
 					//we will populate additional data in array
+					if (!empty($result['id'])) {
+						$product['product_id'] = $result['id']; 
+					} else {
+						$product['product_id'] = 'deleted';
+					}
 					$product['product_id'] = $result['id']; 
 					$product['intro'] = $result['short_description']; 
 					$product['content'] = $result['description']; 
@@ -237,7 +217,11 @@ class WpApiController extends \BaseController {
 				}
 
 				//we will populate additional data in array
-				$product['product_id'] = $result['id']; 
+				if (!empty($result['id'])) {
+					$product['product_id'] = $result['id']; 
+				} else {
+					$product['product_id'] = 'deleted';
+				}
 				$product['intro'] = $result['short_description']; 
 				$product['content'] = $result['description']; 
 				$product['visibility'] = $result['catalog_visibility']; 
@@ -350,10 +334,15 @@ class WpApiController extends \BaseController {
 
 			      		$orders_products = array();
 						$orders_products['order_id'] = $order['order_id']; 
-						$orders_products['product_id'] = $singleproduct->product_id; 
+						if (!empty($singleproduct->product_id)) {
+							$orders_products['product_id'] = $singleproduct->product_id; 
+						} else {
+							$orders_products['product_id'] = 'deleted';
+						}
 						$orders_products['quantity'] = $singleproduct->quantity; 
 						$orders_products['price'] = $singleproduct->price; 
 	 					$orders_products['product_name'] = $singleproduct->name; 
+	 					$orders_products['type'] = 'product'; 
 
 			      		OrdersProducts::create($orders_products);
 	 			
@@ -392,10 +381,15 @@ class WpApiController extends \BaseController {
 
 		      		$orders_products = array();
 					$orders_products['order_id'] = $order['order_id']; 
-					$orders_products['product_id'] = $singleproduct->product_id; 
+					if (!empty($singleproduct->product_id)) {
+						$orders_products['product_id'] = $singleproduct->product_id; 
+					} else {
+						$orders_products['product_id'] = 'deleted';
+					}
 					$orders_products['quantity'] = $singleproduct->quantity; 
 					$orders_products['price'] = $singleproduct->price; 
  					$orders_products['product_name'] = $singleproduct->name; 
+	 				$orders_products['type'] = 'product'; 
 
 		      		OrdersProducts::create($orders_products);
  			

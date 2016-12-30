@@ -29,7 +29,7 @@ class Order extends Eloquent
 
     public function orderProducts()
     {
-        return $this->hasMany('OrdersProducts');
+        return $this->hasMany('OrdersProducts', 'order_id', 'order_id');
     }
 
 

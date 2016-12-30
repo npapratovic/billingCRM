@@ -11,7 +11,7 @@
 </ul>
         
 <div class="panel-heading">
-    <h4>Pregled svih narudžbi ({{ count($entries) }})</h4>
+    <h4>Pregled svih narudžbi </h4>
 </div>
 
 <div class="panel-body table-responsive">
@@ -22,59 +22,76 @@
                
                 <th>Broj narudžbe</th>
                 <th>Klijent</th>
-                <th>Adresa</th>
+                <th>Adresa dostave</th>
                 <th>Datum narudžbe</th>
                 <th>Proizvodi</th>
+                <th>Iznos</th>
+                <th>Akcije</th>
+
             </tr>
         </thead>
         <tbody>
              @foreach($entries as $val => $entry)
                 <tr>
                     <td> 
-                    {{ $entry->order_id }}
+                        {{ $entry->order_id }}
                     </td>
                     <td> 
-                    {{ $entry['client'][0]->first_name }}  {{ $entry['client'][0]->last_name }}
+                        {{  $entry['client'][0]->first_name }}  {{ $entry['client'][0]->last_name }}
                     </td>
-                    <td> {{ $entry->shipping_address }}</td>
-                    <td> {{ date('d.m.Y', strtotime($entry->order_date))}}</td>
                     <td> 
-                    @foreach($allproducts[$val] as $key => $product)
-                  <div class="row"><div class="col-md-12">
-                  @if($product->existing == '0')
-                    <span style="color:lightslategray;"> {{ $product->name }}</span>
-                    <span style="color:maroon;"> Nepostojeći proizvod</span>
-                  @else
-                  @if($product->type == 'service')
-                  <a href="{{ URL::route('admin.services.edit', array('id' => $product->id)) }}">{{ $product->title }}</a>
-                  @else
-                   <a href="{{ URL::route('ProductEdit', array('id' => $product->id)) }}">{{ $product->title }}</a>
-                   @endif
-                   @endif
-                   </div></div>
-                    @endforeach
+                        {{ $entry->shipping_address }}
                     </td>
-                    <td class="col-md-2">
-
+                    <td class="text-center"> 
+                        {{ date('d.m.Y', strtotime($entry->order_date))}}
+                    </td>
+                    <td> 
+                          @foreach($entry['orderProducts'] as $key => $product)  
+                            <div class="row">
+                                <div class="col-md-12">
+                                  @if( $product->product_id == '0')
+                                      <span style="color:lightslategray;"> {{ $product->product_name }}</span>
+                                      <span style="color:maroon;"> Nepostojeći proizvod</span>
+                                  @else
+                                      @if($product->type == 'service')
+                                        <a href="{{ URL::route('admin.services.edit', array('id' => $product->product_id)) }}">{{ $product->product_name }}</a>
+                                      @else
+                                        <a href="{{ URL::route('ProductEdit', array('id' => $product->product_id)) }}">{{ $product->product_name }}</a>
+                                       @endif
+                                  @endif
+                                </div>
+                            </div>  
+                        @endforeach  
+                    </td>
+                    <td class="text-right">
+                        {{ $entry->price }}kn
+                    </td>
+                    <td class="col-md-2"> 
                         @if($entry->show_only == '1')
-                        <a href="{{ URL::route('admin.orders.show', array('id' => $entry->id)) }}">
-                        <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
+                            <a href="{{ URL::route('admin.orders.show', array('id' => $entry->id)) }}">
+                                <button class="btn btn-success btn-xs"><i class="fa fa-eye"></i></button>
+                            </a>
                         @else
-                        <a href="{{ URL::route('admin.orders.edit', array('id' => $entry->id)) }}">
-                        <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        @endif
-                        </a>
-                        <button type="button" id="btn-delete-blog-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-blog-id-{{ $entry->id }}"><i class="fa fa-times"></i>
+                            <a href="{{ URL::route('admin.orders.edit', array('id' => $entry->id)) }}">
+                                <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                            </a>
+                        @endif 
+
+                        <button type="button" id="btn-delete-order-id-{{ $entry->id }}" class="btn btn-danger btn-xs" data-target="#delete-order-id-{{ $entry->id }}">
+                            <i class="fa fa-times"></i>
                         </button>
                         <a href="{{ URL::route('OrderCreatePdf', array('entry_id' => $entry->id)) }}" target="_blank">
-                        <button type="button" id="btn-pdf-order-id-{{ $entry->id }}" class="btn btn-warning btn-xs"><i class="fa fa-file-text-o"></i>
-                        </button>
+                            <button type="button" id="btn-pdf-order-id-{{ $entry->id }}" class="btn btn-warning btn-xs">
+                                <i class="fa fa-file-text-o"></i>
+                            </button>
                         </a>
-                        <button type="button" id="btn-email-order-id-{{ $entry->id }}" class="btn btn-primary btn-xs" data-target="#email-order-id-{{ $entry->id }}"><i class="fa fa-envelope-o"></i></i>
+                        <button type="button" id="btn-email-order-id-{{ $entry->id }}" class="btn btn-primary btn-xs" data-target="#email-order-id-{{ $entry->id }}">
+                            <i class="fa fa-envelope-o"></i></i>
                         </button>
                         <a href="{{ URL::route('CreateInvoice', array('entry_id' => $entry->id)) }}">
-                        <button type="button" id="btn-pdf-order-id-{{ $entry->id }}" class="btn btn-default btn-xs"><i class="fa fa-bars" aria-hidden="true"></i>
-                        </button>
+                            <button type="button" id="btn-pdf-order-id-{{ $entry->id }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </button>
                         </a>
                     </td>
                 </tr>
@@ -120,7 +137,7 @@
 @if (count($entries) > 0) 
     @foreach($entries as $entry)
     <!-- Modal {{ $entry->id }}-->
-    <div class="modal fade" id="delete-blog-id-{{ $entry->id }}" role="dialog">
+    <div class="modal fade" id="delete-order-id-{{ $entry->id }}" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -159,8 +176,8 @@
     $(document).ready(function() {
         @if (count($entries) > 0) 
             @foreach($entries as $entry)
-                $("#btn-delete-blog-id-{{ $entry->id }}").click(function() { 
-                    $('#delete-blog-id-{{ $entry->id }}').modal('show');
+                $("#btn-delete-order-id-{{ $entry->id }}").click(function() { 
+                    $('#delete-order-id-{{ $entry->id }}').modal('show');
                 });
             @endforeach
         @endif 
