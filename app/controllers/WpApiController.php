@@ -159,7 +159,7 @@ class WpApiController extends \BaseController {
 					if (!empty($result['id'])) {
 						$product['product_id'] = $result['id']; 
 					} else {
-						$product['product_id'] = 'deleted';
+						$product['product_id'] = '0';
 					}
 					$product['product_id'] = $result['id']; 
 					$product['intro'] = $result['short_description']; 
@@ -220,7 +220,7 @@ class WpApiController extends \BaseController {
 				if (!empty($result['id'])) {
 					$product['product_id'] = $result['id']; 
 				} else {
-					$product['product_id'] = 'deleted';
+					$product['product_id'] = '0';
 				}
 				$product['intro'] = $result['short_description']; 
 				$product['content'] = $result['description']; 
@@ -270,7 +270,7 @@ class WpApiController extends \BaseController {
  
 		$response = $wc_api->get_orders(array( 'filter[limit]' => '-1' ));
 
-		$orders = $response->orders;  
+		$orders = $response->orders;   
 
 		foreach($orders as $order)
 		{    
@@ -310,8 +310,13 @@ class WpApiController extends \BaseController {
 					$order = array(); 
 
 	   				//we will populate additional data in array
-					$order['order_id'] = $result['order_number']; 
-					$order['client_id'] = $result['customer']->id;
+					$order['order_id'] = $result['order_number'];  
+					if ($result['customer']->id == '0') {
+						//Lets assign this to Guest user
+						$order['client_id'] = '0'; 
+					} else {
+						$order['client_id'] = $result['customer']->id;
+					} 
 					$order['price'] = $result['total'];
 					$order['shipping_way'] = $result['shipping_methods'];
 					$order['payment_way'] = $result['payment_details']->method_id;
@@ -337,7 +342,7 @@ class WpApiController extends \BaseController {
 						if (!empty($singleproduct->product_id)) {
 							$orders_products['product_id'] = $singleproduct->product_id; 
 						} else {
-							$orders_products['product_id'] = 'deleted';
+							$orders_products['product_id'] = '0';
 						}
 						$orders_products['quantity'] = $singleproduct->quantity; 
 						$orders_products['price'] = $singleproduct->price; 
@@ -362,7 +367,12 @@ class WpApiController extends \BaseController {
 
   				//we will populate additional data in array
 				$order['order_id'] = $result['order_number']; 
-				$order['client_id'] = $result['customer']->id;
+				if ($result['customer']->id == '0') {
+					//Lets assign this to Guest user
+					$order['client_id'] = '0'; 
+				} else {
+					$order['client_id'] = $result['customer']->id;
+				} 
 				$order['price'] = $result['total'];
 				$order['shipping_way'] = $result['shipping_methods'];
 				$order['payment_way'] = $result['payment_details']->method_id;
@@ -384,7 +394,7 @@ class WpApiController extends \BaseController {
 					if (!empty($singleproduct->product_id)) {
 						$orders_products['product_id'] = $singleproduct->product_id; 
 					} else {
-						$orders_products['product_id'] = 'deleted';
+						$orders_products['product_id'] = '0';
 					}
 					$orders_products['quantity'] = $singleproduct->quantity; 
 					$orders_products['price'] = $singleproduct->price; 

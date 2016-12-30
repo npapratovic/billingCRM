@@ -1,0 +1,18 @@
+zlatnazora_api:
+
+API kljuè:
+ck_134dc0c2783b089ec2a5e51c31b80c90b260318d
+API lozinka:
+cs_608d6abe228cd7634a4c65578c60182cadc2e933
+Adresa webshopa:
+http://zlatnazora.hr/webshop/
+
+origanoshop_api:
+
+
+API kljuè:
+ck_519a19673b8bcc88c0a124568a7303eaa7c03a4b
+API lozinka:
+cs_8e63437af374a24435d9a35c800dba21bf106ce6
+Adresa webshopa:
+http://origanoshop.com/

@@ -15,7 +15,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 	use UserTrait, RemindableTrait;
 	use HasRole;
 
-    protected $fillable = array('company_name', 'client_type', 'user_group', 'oib', 'first_name','last_name', 'address', 
+    protected $fillable = array('company_name', 'client_type', 'client_id', 'user_group', 'oib', 'first_name','last_name', 'address', 
     	'mjesto', 'zip', 'country', 'city', 'region', 'phone', 'fax', 'mobile','email', 'web', 'iban', 'note', 'password', 'created_at', 
     	'updated_at', 'deleted_at');
 

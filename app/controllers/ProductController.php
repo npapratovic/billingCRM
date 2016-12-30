@@ -7,21 +7,7 @@
 */
 
 class ProductController extends \BaseController {
-	// Enviroment variables
-	protected $repo;
-	protected $moduleInfo;
-
-
-
-	// Constructing default values
-	public function __construct()
-	{
-		// Call CoreController constructor to get Layout and other variables
-		parent::__construct();
-
-		// Make module variables
-		$this->repo = new ProductRepository;
-	}
+ 
 	/**
 	 * Display a listing of the products.
 	 *

@@ -227,6 +227,9 @@ class DefaultUsersSeeder extends Seeder
 {
 	public function run()
 	{
+		// Seed Guest user (5)
+ 		User::create(array('id' => '0', 'first_name' => 'Gost', 'last_name' => 'Korisnik', 'client_id' => '0', 'city' => '83', 'region' => '14')); 
+
 		// Seed admin user (2)
 		$user = new User();
 		$user->email = 'admin@gmail.com';
@@ -246,6 +249,8 @@ class DefaultUsersSeeder extends Seeder
 		$user->save();
 
 		$user->attachRole(2); // admin 
+  
+
 		
 	}
 }
