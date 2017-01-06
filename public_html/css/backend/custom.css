@@ -447,7 +447,10 @@ body > .header .navbar {
     font-size: 20px;
 }
 
-/*-------Added Ivan------*/
+.alert-danger {
+    background-color: #983636;
+}
+ 
 .st-orange {
     background-color: #d88f11;
 }

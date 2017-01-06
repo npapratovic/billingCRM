@@ -1,5 +1,18 @@
 
+            @if ($companynotice != null || $companynotice != '') 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-block alert-danger"> 
+                                <button data-dismiss="alert" class="close close-sm" type="button">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            <strong>Važno!</strong> Profil vaše tvrtke nije popunjen. Popunite ga u postavkama: <a href="{{ URL::route('admin.company.index') }}" style="font-weight: bold; color: #fff;"> Moja tvrtka </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
+ 
 
                 <div class="row" style="margin-bottom:5px;">
                     <div class="col-md-3 wow fadeIn">

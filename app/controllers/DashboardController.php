@@ -9,7 +9,21 @@ class DashboardController extends \BaseController {
 	 */
 
 	public function index() {
-	
+
+		//Check if company data is populated:
+
+		$company = Company::where('user_id', Auth::user()->id)->first(); 
+   
+       	if(!empty($company)) {
+
+      		$companynotice = false; 
+ 
+      	} else {
+
+      		$companynotice = true;
+ 
+      	}
+
 		// Get last 10 of each data 
 
 		$productsentries = ProductService::where('type','product')->get()->take(10); 
@@ -44,9 +58,10 @@ class DashboardController extends \BaseController {
 
 		$this->layout->js_footer_files = array( 
 			'js/backend/wow.min.js'
-		);
+		); 
 
-		$this->layout->content = View::make('backend.dashboard', compact('productsentries', 'productscount', 'invoicesentries', 'invoicescount', 'ordersentries', 'orderscount', 'offersentries', 'offerscount', 'dispatchentries', 'dispatchcount', 'workingorderentries', 'workingordercount', 'narudzbeniceentries', 'narudzbenicecount', 'cliententries',  'clientcount'));
+		$this->layout->content = View::make('backend.dashboard', compact('companynotice','productsentries', 'productscount', 'invoicesentries', 'invoicescount', 'ordersentries', 'orderscount', 'offersentries', 'offerscount', 'dispatchentries', 'dispatchcount', 'workingorderentries', 'workingordercount', 'narudzbeniceentries', 'narudzbenicecount', 'cliententries',  'clientcount'));
+
 	}
 
 
