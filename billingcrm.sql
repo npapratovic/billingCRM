@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2016 at 10:49 PM
+-- Generation Time: Jan 06, 2017 at 01:41 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `assigned_roles` (
 --
 
 INSERT INTO `assigned_roles` (`id`, `user_id`, `role_id`) VALUES
-(1, 1, 2);
+(1, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -96,134 +96,134 @@ CREATE TABLE IF NOT EXISTS `city` (
 --
 
 INSERT INTO `city` (`id`, `name`, `permalink`, `created_at`, `updated_at`) VALUES
-(1, 'Zagreb', 'zagreb', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(2, 'Dugo Selo', 'dugo-selo', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(3, 'Ivanić Grad', 'ivanic-grad', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(4, 'Jastrebarsko', 'jastrebarsko', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(5, 'Samobor', 'samobor', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(6, 'Sveta Nedelja', 'sveta-nedelja', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(7, 'Sveti Ivan Zelina', 'sveti-ivan-zelina', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(8, 'Velika Gorica', 'velika-gorica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(9, 'Vrbovec', 'vrbovec', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(10, 'Zaprešić', 'zapresic', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(11, 'Donja Stubica', 'donja-stubica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(12, 'Klanjec', 'klanjec', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(13, 'Krapina', 'krapina', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(14, 'Oroslavje', 'oroslavje', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(15, 'Pregrada', 'pregrada', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(16, 'Zabok', 'zabok', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(17, 'Zlatar', 'zlatar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(18, 'Glina', 'glina', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(19, 'Hrvatska Kostajnica', 'hrvatska-kostajnica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(20, 'Kutina', 'kutina', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(21, 'Novska', 'novska', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(22, 'Petrinja', 'petrinja', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(23, 'Popovača', 'popovaca', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(24, 'Sisak', 'sisak', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(25, 'Duga Resa', 'duga-resa', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(26, 'Karlovac', 'karlovac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(27, 'Ogulin', 'ogulin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(28, 'Ozalj', 'ozalj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(29, 'Slunj', 'slunj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(30, 'Ivanec', 'ivanec', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(31, 'Lepoglava', 'lepoglava', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(32, 'Ludbreg', 'ludbreg', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(33, 'Novi Marof', 'novi-marof', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(34, 'Varaždin', 'varazdin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(35, 'Varaždinske Toplice', 'varazdinske-toplice', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(36, 'Đurđevac', 'durdevac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(37, 'Koprivnica', 'koprivnica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(38, 'Križevci', 'krizevci', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(39, 'Bjelovar', 'bjelovar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(40, 'Čazma', 'cazma', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(41, 'Daruvar', 'daruvar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(42, 'Garešnica', 'garesnica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(43, 'Grubišno Polje', 'grubisno-polje', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(44, 'Bakar', 'bakar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(45, 'Cres', 'cres', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(46, 'Crikvenica', 'crikvenica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(47, 'Čabar', 'cabar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(48, 'Delnice', 'delnice', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(49, 'Kastav', 'kastav', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(50, 'Kraljevica', 'kraljevica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(51, 'Krk', 'krk', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(52, 'Mali Lošinj', 'mali-losinj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(53, 'Novi Vinodolski', 'novi-vinodolski', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(54, 'Opatija', 'opatija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(55, 'Rab', 'rab', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(56, 'Rijeka', 'rijeka', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(57, 'Vrbovsko', 'vrbovsko', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(58, 'Gospić', 'gospic', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(59, 'Novalja', 'novalja', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(60, 'Otočac', 'otocac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(61, 'Senj', 'senj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(62, 'Orahovica', 'orahovica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(63, 'Slatina', 'slatina', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(64, 'Virovitica', 'virovitica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(65, 'Kutjevo', 'kutjevo', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(66, 'Lipik', 'lipik', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(67, 'Pakrac', 'pakrac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(68, 'Pleternica', 'pleternica', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(69, 'Požega', 'pozega', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(70, 'Nova gradiška', 'nova-gradiska', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(71, 'Slavonski Brod', 'slavonski-brod', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(72, 'Benkovac', 'benkovac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(73, 'Biograd na Moru', 'biograd-na-moru', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(74, 'Nin', 'nin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(75, 'Obrovac', 'obrovac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(76, 'Pag', 'pag', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(77, 'Zadar', 'zadar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(78, 'Beli Manastir', 'beli-manastir', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(79, 'Belišće', 'belisce', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(80, 'Donji Miholjac', 'donji-miholjac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(81, 'Đakovo', 'dakovo', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(82, 'Našice', 'nasice', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(83, 'Osijek', 'osijek', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(84, 'Valpovo', 'valpovo', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(85, 'Drniš', 'drnis', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(86, 'Knin', 'knin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(87, 'Skradin', 'skradin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(88, 'Šibenik', 'sibenik', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(89, 'Vodice', 'vodice', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(90, 'Ilok', 'ilok', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(91, 'Otok', 'otok', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(92, 'Vinkovci', 'vinkovci', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(93, 'Vukovar', 'vukovar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(94, 'Županja', 'zupanja', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(95, 'Hvar', 'hvar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(96, 'Imotski', 'imotski', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(97, 'Kaštela', 'kastela', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(98, 'Komiža', 'komiza', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(99, 'Makarska', 'makarska', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(100, 'Omiš', 'omis', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(101, 'Sinj', 'sinj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(102, 'Solin', 'solin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(103, 'Split', 'split', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(104, 'Stari Grad', 'stari-grad', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(105, 'Supetar', 'supetar', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(106, 'Trilj', 'trilj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(107, 'Trogir', 'trogir', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(108, 'Vis', 'vis', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(109, 'Vrgorac', 'vrgorac', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(110, 'Vrlika', 'vrlika', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(111, 'Buje-Buie', 'buje-buie', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(112, 'Buzet', 'buzet', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(113, 'Labin', 'labin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(114, 'Novigrad', 'novigrad', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(115, 'Pazin', 'pazin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(116, 'Poreč', 'porec', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(117, 'Pula', 'pula', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(118, 'Rovinj', 'rovinj', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(119, 'Umag', 'umag', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(120, 'Vodnjan', 'vodnjan', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(121, 'Dubrovnik', 'dubrovnik', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(122, 'Korčula', 'korcula', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(123, 'Metković', 'metkovic', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(124, 'Opuzen', 'opuzen', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(125, 'Ploče', 'ploce', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(126, 'Čakovec', 'cakovec', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(127, 'Mursko Središće', 'mursko-sredisce', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(128, 'Prelog', 'prelog', '2016-12-29 21:49:36', '2016-12-29 21:49:36');
+(1, 'Zagreb', 'zagreb', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(2, 'Dugo Selo', 'dugo-selo', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(3, 'Ivanić Grad', 'ivanic-grad', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(4, 'Jastrebarsko', 'jastrebarsko', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(5, 'Samobor', 'samobor', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(6, 'Sveta Nedelja', 'sveta-nedelja', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(7, 'Sveti Ivan Zelina', 'sveti-ivan-zelina', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(8, 'Velika Gorica', 'velika-gorica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(9, 'Vrbovec', 'vrbovec', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(10, 'Zaprešić', 'zapresic', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(11, 'Donja Stubica', 'donja-stubica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(12, 'Klanjec', 'klanjec', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(13, 'Krapina', 'krapina', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(14, 'Oroslavje', 'oroslavje', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(15, 'Pregrada', 'pregrada', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(16, 'Zabok', 'zabok', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(17, 'Zlatar', 'zlatar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(18, 'Glina', 'glina', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(19, 'Hrvatska Kostajnica', 'hrvatska-kostajnica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(20, 'Kutina', 'kutina', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(21, 'Novska', 'novska', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(22, 'Petrinja', 'petrinja', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(23, 'Popovača', 'popovaca', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(24, 'Sisak', 'sisak', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(25, 'Duga Resa', 'duga-resa', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(26, 'Karlovac', 'karlovac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(27, 'Ogulin', 'ogulin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(28, 'Ozalj', 'ozalj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(29, 'Slunj', 'slunj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(30, 'Ivanec', 'ivanec', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(31, 'Lepoglava', 'lepoglava', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(32, 'Ludbreg', 'ludbreg', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(33, 'Novi Marof', 'novi-marof', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(34, 'Varaždin', 'varazdin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(35, 'Varaždinske Toplice', 'varazdinske-toplice', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(36, 'Đurđevac', 'durdevac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(37, 'Koprivnica', 'koprivnica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(38, 'Križevci', 'krizevci', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(39, 'Bjelovar', 'bjelovar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(40, 'Čazma', 'cazma', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(41, 'Daruvar', 'daruvar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(42, 'Garešnica', 'garesnica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(43, 'Grubišno Polje', 'grubisno-polje', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(44, 'Bakar', 'bakar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(45, 'Cres', 'cres', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(46, 'Crikvenica', 'crikvenica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(47, 'Čabar', 'cabar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(48, 'Delnice', 'delnice', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(49, 'Kastav', 'kastav', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(50, 'Kraljevica', 'kraljevica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(51, 'Krk', 'krk', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(52, 'Mali Lošinj', 'mali-losinj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(53, 'Novi Vinodolski', 'novi-vinodolski', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(54, 'Opatija', 'opatija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(55, 'Rab', 'rab', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(56, 'Rijeka', 'rijeka', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(57, 'Vrbovsko', 'vrbovsko', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(58, 'Gospić', 'gospic', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(59, 'Novalja', 'novalja', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(60, 'Otočac', 'otocac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(61, 'Senj', 'senj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(62, 'Orahovica', 'orahovica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(63, 'Slatina', 'slatina', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(64, 'Virovitica', 'virovitica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(65, 'Kutjevo', 'kutjevo', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(66, 'Lipik', 'lipik', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(67, 'Pakrac', 'pakrac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(68, 'Pleternica', 'pleternica', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(69, 'Požega', 'pozega', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(70, 'Nova gradiška', 'nova-gradiska', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(71, 'Slavonski Brod', 'slavonski-brod', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(72, 'Benkovac', 'benkovac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(73, 'Biograd na Moru', 'biograd-na-moru', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(74, 'Nin', 'nin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(75, 'Obrovac', 'obrovac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(76, 'Pag', 'pag', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(77, 'Zadar', 'zadar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(78, 'Beli Manastir', 'beli-manastir', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(79, 'Belišće', 'belisce', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(80, 'Donji Miholjac', 'donji-miholjac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(81, 'Đakovo', 'dakovo', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(82, 'Našice', 'nasice', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(83, 'Osijek', 'osijek', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(84, 'Valpovo', 'valpovo', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(85, 'Drniš', 'drnis', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(86, 'Knin', 'knin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(87, 'Skradin', 'skradin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(88, 'Šibenik', 'sibenik', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(89, 'Vodice', 'vodice', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(90, 'Ilok', 'ilok', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(91, 'Otok', 'otok', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(92, 'Vinkovci', 'vinkovci', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(93, 'Vukovar', 'vukovar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(94, 'Županja', 'zupanja', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(95, 'Hvar', 'hvar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(96, 'Imotski', 'imotski', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(97, 'Kaštela', 'kastela', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(98, 'Komiža', 'komiza', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(99, 'Makarska', 'makarska', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(100, 'Omiš', 'omis', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(101, 'Sinj', 'sinj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(102, 'Solin', 'solin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(103, 'Split', 'split', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(104, 'Stari Grad', 'stari-grad', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(105, 'Supetar', 'supetar', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(106, 'Trilj', 'trilj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(107, 'Trogir', 'trogir', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(108, 'Vis', 'vis', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(109, 'Vrgorac', 'vrgorac', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(110, 'Vrlika', 'vrlika', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(111, 'Buje-Buie', 'buje-buie', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(112, 'Buzet', 'buzet', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(113, 'Labin', 'labin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(114, 'Novigrad', 'novigrad', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(115, 'Pazin', 'pazin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(116, 'Poreč', 'porec', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(117, 'Pula', 'pula', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(118, 'Rovinj', 'rovinj', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(119, 'Umag', 'umag', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(120, 'Vodnjan', 'vodnjan', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(121, 'Dubrovnik', 'dubrovnik', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(122, 'Korčula', 'korcula', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(123, 'Metković', 'metkovic', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(124, 'Opuzen', 'opuzen', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(125, 'Ploče', 'ploce', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(126, 'Čakovec', 'cakovec', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(127, 'Mursko Središće', 'mursko-sredisce', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(128, 'Prelog', 'prelog', '2017-01-06 00:41:12', '2017-01-06 00:41:12');
 
 -- --------------------------------------------------------
 
@@ -335,33 +335,6 @@ CREATE TABLE IF NOT EXISTS `dispatches_services` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `imported_order_products`
---
-
-CREATE TABLE IF NOT EXISTS `imported_order_products` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `subtotal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subtotal_tax` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `total` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `total_tax` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `price` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `tax_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `product_id` int(10) unsigned NOT NULL,
-  `sku` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `existing` int(11) DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `imported_order_products_product_id_foreign` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `invoices`
 --
 
@@ -436,9 +409,9 @@ CREATE TABLE IF NOT EXISTS `languages` (
 --
 
 INSERT INTO `languages` (`id`, `iso_tag`, `language`, `local_name`, `created_at`, `updated_at`) VALUES
-(1, 'en', 'English', NULL, '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(2, 'hr', 'Croatian', 'Hrvatski', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(3, 'de', 'German', 'Deutsch', '2016-12-29 21:49:36', '2016-12-29 21:49:36');
+(1, 'en', 'English', NULL, '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(2, 'hr', 'Croatian', 'Hrvatski', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(3, 'de', 'German', 'Deutsch', '2017-01-06 00:41:12', '2017-01-06 00:41:12');
 
 -- --------------------------------------------------------
 
@@ -566,7 +539,7 @@ CREATE TABLE IF NOT EXISTS `offers_products` (
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `client_id` int(11) NOT NULL,
+  `client_id` int(10) unsigned NOT NULL,
   `employee_id` int(11) NOT NULL,
   `price` float(8,2) NOT NULL,
   `shipping_way` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -580,7 +553,8 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `orders_client_id_foreign` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -596,6 +570,7 @@ CREATE TABLE IF NOT EXISTS `orders_products` (
   `quantity` int(11) NOT NULL,
   `price` float(8,2) NOT NULL,
   `product_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -761,27 +736,27 @@ CREATE TABLE IF NOT EXISTS `region` (
 --
 
 INSERT INTO `region` (`id`, `name`, `permalink`, `created_at`, `updated_at`) VALUES
-(1, 'Zagrebačka županija', 'zagrebacka-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(2, 'Krapinsko-zagorska županija', 'krapinsko-zagorska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(3, 'Sisačko-moslavačka županija', 'sisacko-moslavacka-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(4, 'Karlovačka županija', 'karlovacka-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(5, 'Varaždinska županija', 'varazdinska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(6, 'Koprivničko-križevačka županija', 'koprivnicko-krizevacka-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(7, 'Bjelovarsko-bilogorska županija', 'bjelovarsko-bilogorska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(8, 'Primorsko-goranska županija', 'primorsko-goranska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(9, 'Ličko-senjska županija', 'licko-senjska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(10, 'Virovitičko-podravska županija', 'viroviticko-podravska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(11, 'Požeško-slavonska županija', 'pozesko-slavonska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(12, 'Brodsko-posavska županija', 'brodsko-posavska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(13, 'Zadarska županija', 'zadarska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(14, 'Osječko-baranjska županija', 'osjecko-baranjska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(15, 'Šibensko-kninska županija', 'sibensko-kninska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(16, 'Vukovarsko-srijemska županija', 'vukovarsko-srijemska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(17, 'Splitsko-dalmatinska županija', 'splitsko-dalmatinska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(18, 'Istarska županija', 'istarska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(19, 'Dubrovačko-neretvanska županija', 'dubrovacko-neretvanska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(20, 'Međimurska županija', 'medimurska-zupanija', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(21, 'Grad Zagreb', 'grad-zagreb', '2016-12-29 21:49:36', '2016-12-29 21:49:36');
+(1, 'Zagrebačka županija', 'zagrebacka-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(2, 'Krapinsko-zagorska županija', 'krapinsko-zagorska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(3, 'Sisačko-moslavačka županija', 'sisacko-moslavacka-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(4, 'Karlovačka županija', 'karlovacka-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(5, 'Varaždinska županija', 'varazdinska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(6, 'Koprivničko-križevačka županija', 'koprivnicko-krizevacka-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(7, 'Bjelovarsko-bilogorska županija', 'bjelovarsko-bilogorska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(8, 'Primorsko-goranska županija', 'primorsko-goranska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(9, 'Ličko-senjska županija', 'licko-senjska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(10, 'Virovitičko-podravska županija', 'viroviticko-podravska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(11, 'Požeško-slavonska županija', 'pozesko-slavonska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(12, 'Brodsko-posavska županija', 'brodsko-posavska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(13, 'Zadarska županija', 'zadarska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(14, 'Osječko-baranjska županija', 'osjecko-baranjska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(15, 'Šibensko-kninska županija', 'sibensko-kninska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(16, 'Vukovarsko-srijemska županija', 'vukovarsko-srijemska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(17, 'Splitsko-dalmatinska županija', 'splitsko-dalmatinska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(18, 'Istarska županija', 'istarska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(19, 'Dubrovačko-neretvanska županija', 'dubrovacko-neretvanska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(20, 'Međimurska županija', 'medimurska-zupanija', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(21, 'Grad Zagreb', 'grad-zagreb', '2017-01-06 00:41:12', '2017-01-06 00:41:12');
 
 -- --------------------------------------------------------
 
@@ -803,12 +778,12 @@ CREATE TABLE IF NOT EXISTS `roles` (
 --
 
 INSERT INTO `roles` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'superadmin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(2, 'admin', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(3, 'manager', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(4, 'employee', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(5, 'user', '2016-12-29 21:49:36', '2016-12-29 21:49:36'),
-(6, 'anonymous', '2016-12-29 21:49:36', '2016-12-29 21:49:36');
+(1, 'superadmin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(2, 'admin', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(3, 'manager', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(4, 'employee', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(5, 'user', '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(6, 'anonymous', '2017-01-06 00:41:12', '2017-01-06 00:41:12');
 
 -- --------------------------------------------------------
 
@@ -885,14 +860,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `users_language_foreign` (`language`),
   KEY `users_city_foreign` (`city`),
   KEY `users_region_foreign` (`region`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `client_id`, `username`, `user_group`, `email`, `password`, `first_name`, `last_name`, `address`, `city`, `mjesto`, `zupanija`, `zip`, `country`, `fax`, `mobile`, `phone`, `web`, `iban`, `note`, `region`, `image`, `oib`, `company_name`, `client_type`, `remember_token`, `verify_code`, `language`, `consumer_key`, `consumer_secret`, `store_url`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, '', 'admin', '', 'admin@gmail.com', '$2y$10$KO00SO58mp3KMvAXwDtsmO9bUOYE3a4UitCXR8bQJHlExVvod4VHG', 'Ivan', 'Horvat', 'Sunčana ulica 365', 83, NULL, NULL, NULL, NULL, '', '', '0959039610', '', '', NULL, 14, '', NULL, NULL, NULL, NULL, NULL, 1, 'ck_134dc0c2783b089ec2a5e51c31b80c90b260318d', 'cs_608d6abe228cd7634a4c65578c60182cadc2e933', 'http://zlatnazora.hr/webshop/', NULL, '2016-12-29 21:49:36', '2016-12-29 21:49:36');
+(1, '0', '', '', '', '', 'Gost', 'Korisnik', '', 83, NULL, NULL, NULL, NULL, '', '', '', '', '', NULL, 14, '', NULL, NULL, NULL, NULL, NULL, 1, '', '', '', NULL, '2017-01-06 00:41:12', '2017-01-06 00:41:12'),
+(2, '', 'admin', '', 'admin@gmail.com', '$2y$10$NjEi7QJ9KLGGZ/44ZaPIIectcfWQa3L3DOC3zfRSrOm4C5YAFrHu.', 'Ivan', 'Horvat', 'Sunčana ulica 365', 83, NULL, NULL, NULL, NULL, '', '', '0959039610', '', '', NULL, 14, '', NULL, NULL, NULL, NULL, NULL, 1, 'ck_134dc0c2783b089ec2a5e51c31b80c90b260318d', 'cs_608d6abe228cd7634a4c65578c60182cadc2e933', 'http://zlatnazora.hr/webshop/', NULL, '2017-01-06 00:41:12', '2017-01-06 00:41:12');
 
 -- --------------------------------------------------------
 
@@ -974,12 +950,6 @@ ALTER TABLE `dispatches_services`
   ADD CONSTRAINT `dispatches_services_dispatch_id_foreign` FOREIGN KEY (`dispatch_id`) REFERENCES `dispatches` (`id`);
 
 --
--- Constraints for table `imported_order_products`
---
-ALTER TABLE `imported_order_products`
-  ADD CONSTRAINT `imported_order_products_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `invoices_products` (`product_id`);
-
---
 -- Constraints for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1004,6 +974,12 @@ ALTER TABLE `narudzbenice`
 ALTER TABLE `narudzbenice_products`
   ADD CONSTRAINT `narudzbenice_products_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products_services` (`id`),
   ADD CONSTRAINT `narudzbenice_products_narudzbenica_id_foreign` FOREIGN KEY (`narudzbenica_id`) REFERENCES `narudzbenice` (`id`);
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `permission_role`
