@@ -119,6 +119,8 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
   	Route::resource('tags', 'TagController'); 
  	// CRUD za attributes 
   	Route::resource('attributes', 'AttributeController');
+ 	// CRUD za company 
+  	Route::resource('company', 'CompanyController');
 
   	// Create invoice from order:
   	Route::get('createinvoice/{id}', array('as' => 'CreateInvoice', 'uses' => 'OrderController@createInvoice')); 
@@ -307,18 +309,7 @@ Route::group(array('before' => 'admin', 'prefix' => 'admin'), function()
 
 	});
 
-	Route::group(array('prefix' => 'company'), function()
-	{
-		Route::get('/', array('as' => 'CompanyIndex', 'uses' => 'CompanyController@index'));
-
-		Route::post('store', array('as' => 'CompanyStore', 'uses' => 'CompanyController@store'));
-
-		Route::post('update/{id}', array('as' => 'CompanyUpdate', 'uses' => 'CompanyController@update'));
-
-		Route::get('destroy/{id}', array('as' => 'CompanyDestroy', 'uses' => 'CompanyController@destroy'));
-
-	});
-
+ 
 
 	// Restore trash (Blog, pages, media, widgets, workshops, clients, products)
 	Route::group(array('prefix' => 'trash'), function()

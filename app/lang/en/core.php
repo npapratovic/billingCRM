@@ -21,5 +21,6 @@ return array(
 	'msg_success_entry_deleted' =>	'Obrisano',
 	'msg_success_entry_restored' => 'Uspješno vraćeno',
 	'msg_success_email_sent'	=>	'Uspješno poslan email',
+	'msg_error_validating_entry' =>	'Greška prilikom unosa polja, provjerite da li su sva obavezna polja popunjana',
 	'msg_success_invoice_created'	=>	'Uspješno stvoren raćun'
 );

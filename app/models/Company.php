@@ -4,15 +4,29 @@ class Company extends Eloquent
 {
 	protected $table = 'company';
 
+	protected $fillable = array('user_id', 'title', 'oib', 'address', 'city', 'post_number', 'country', 'phone_number', 'email', 'iban', 'company_note', 'tax_percentage', 'first_name', 'last_name', 'mobile_phone_number', 'website', 'swift', 'pdv_id', 'free_input', 'show_text', 'tax_base', 'image', 'created_at', 'updated_at');
+  
 	// New entry validation
-	public static $store_rules = array(
-		'user_id'					=>	'required',
+	public static $store_rules = array( 
+		'title'						=>	'required', 
+		'image'						=>	'required',
+		'oib'						=>	'required', 
+		'city'						=>	'required', 
+		'post_number'				=>	'required',
+		'country'					=>	'required', 
+		'address'					=>	'required'
 	);
 
 	// Edit entry validation
-	public static $update_rules = array(
-		'user_id'					=>	'required|integer',
+	public static $update_rules = array( 
+		'title'						=>	'required',
+		'oib'						=>	'required', 
+		'city'						=>	'required', 
+		'post_number'				=>	'required',
+		'country'					=>	'required', 
+		'address'					=>	'required'
 	);	
+ 
 
 	/*
 	*	Get entries

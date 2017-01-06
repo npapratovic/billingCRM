@@ -18,37 +18,27 @@ class CompanyController extends \BaseController {
 	public function index()
 	{ 
 		// Get data
-
-		$entry = Company::getEntries(Auth::user()->id);
-
-		$mode = 'edit';
-
-		$postRoute = 'CompanyUpdate';
-
-		if (!is_object($entry['entry'])){
-			$mode = 'add';
-			$postRoute = 'CompanyStore';
-		}
-
-		if ($entry['status'] == 0)
-		{
-			return Redirect::route('getDashboard')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
+  
+	  	$id = Auth::user()->id; 
+ 
+      	$company = Company::where('user_id', $id)->first(); 
+  
 		$this->layout->title = 'Moja tvrtka | BillingCRM';
 
-		$this->layout->css_files = array(
-			'css/backend/summernote.css'
-			);
-
 		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js',
-			'js/backend/summernote.js',
-			'js/backend/jquery.stringtoslug.min.js',
-			'js/backend/speakingurl.min.js',
-			'js/backend/datatables.js'
+			'js/backend/bootstrap-filestyle.min.js'
 		);
+ 
+       	if(!empty($company)) {
 
-		$this->layout->content = View::make('backend.company.index', array('entry' => $entry['entry'], 'postRoute' => $postRoute, 'mode' => $mode));
+        	$this->layout->content = View::make('backend.company.edit', compact('company'));
+ 
+      	} else {
+
+        	$this->layout->content = View::make('backend.company.create');
+ 
+      	}
+
 	}
 
 
@@ -59,49 +49,36 @@ class CompanyController extends \BaseController {
 	 */
 	public function store()
 	{
-		Input::merge(array_map('trim', Input::all()));
 
-		$entryValidator = Validator::make(Input::all(), User::$store_rules_client);
+      $company = Request::all(); 
 
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+      $entryValidator = Validator::make(Input::all(), Company::$store_rules); 
 
-		$store = $this->repo->store(
-			Auth::user()->id,
-			Input::get('title'),
-			Input::get('oib'),
-			Input::get('address'),
-			Input::get('city'),
-			Input::get('post_number'),
-			Input::get('country'),
-			Input::get('phone_number'),
-			Input::get('email'),
-			Input::get('iban'),
-			Input::get('company_note'),
-			Input::get('tax_percentage'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('mobile_phone_number'),
-			Input::get('website'),
-			Input::get('swift'),
-			Input::get('pdv_id'),
-			Input::get('free_input'),
-			Input::get('show_text'),
-			Input::get('tax_base'),
-			Input::file('image')
+      if ($entryValidator->fails())
+      {
+        return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+      } 
 
-		);
+      //Image processing
+      $destinationPath = public_path() . "/uploads/backend/company/"; // upload path
+      $extension = $company['image']->getClientOriginalExtension(); // getting image extension
+      $image = rand(11111,99999).'.'.$extension; // renameing image
+      Image::make($company['image']->getRealPath())
+                        ->orientate()
+                        ->fit(500, 500)
+                        ->crop(500, 500)
+                        ->resize(150, 150)
+                        ->save($destinationPath . $image)
+                        ->destroy(); // uploading file to given path
+                            
+      //add extra fields to array for model 
+      $company['image'] = $image;
+      $company['user_id'] = Auth::user()->id;
 
-		if ($store['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('CompanyIndex')->with('success_message', Lang::get('core.msg_success_entry_added', array('name' => Input::get('name'))));
-		}
+      Company::create($company);   
+  
+      return Redirect::back()->with('success_message', Lang::get('core.msg_success_entry_added'));
+
 	}
 
 
@@ -113,17 +90,7 @@ class CompanyController extends \BaseController {
 	 */
 	public function show($id) { 
 	 
-		$this->layout->title = 'Korisnici | BillingCRM';
-
-		$this->layout->css_files = array(
-
-		);
-
-		$this->layout->js_footer_files = array(
-			'js/backend/bootstrap-filestyle.min.js'
-		);
-
-		$this->layout->content = View::make('backend.company.view');
+ 
 	}
 
 
@@ -135,48 +102,48 @@ class CompanyController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		Input::merge(array_map('trim', Input::all()));
 
-		$entryValidator = Validator::make(Input::all(), User::$store_rules_client);
+      $company = Request::all(); 
 
-		if ($entryValidator->fails())
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
-		}
+      $entryValidator = Validator::make(Input::all(), Company::$update_rules); 
 
-		$update = $this->repo->update(
-		    Input::get('id'),
-			Input::get('title'),
-			Input::get('oib'),
-			Input::get('address'),
-			Input::get('city'),
-			Input::get('post_number'),
-			Input::get('country'),
-			Input::get('phone_number'),
-			Input::get('email'),
-			Input::get('iban'),
-			Input::get('company_note'),
-			Input::get('tax_percentage'),
-			Input::get('first_name'),
-			Input::get('last_name'),
-			Input::get('mobile_phone_number'),
-			Input::get('website'),
-			Input::get('swift'),
-			Input::get('pdv_id'),
-			Input::get('free_input'),
-			Input::get('show_text'),
-			Input::get('tax_base'),
-			Input::file('image')
-		);
-		
-		if ($update['status'] == 0)
-		{
-			return Redirect::back()->with('error_message', Lang::get('core.msg_error_adding_entry'))->withErrors($entryValidator)->withInput();
-		}
-		else
-		{
-			return Redirect::route('CompanyIndex')->with('success_message', Lang::get('core.msg_success_entry_edited', array('name' => Input::get('name'))));
-		}
+      if ($entryValidator->fails())
+      {
+        return Redirect::back()->with('error_message', Lang::get('core.msg_error_validating_entry'))->withErrors($entryValidator)->withInput();
+      } 
+
+      $data = Company::find($id);
+
+      //Get old image value, this is fallback
+
+      if (!is_object($company['image'])) { 
+        $company['image'] = $data->image;
+      }
+
+      //Check if image is updated
+      if (is_object($company['image'])) { 
+
+        //Image processing
+        $destinationPath = public_path() . "/uploads/backend/company/"; // upload path
+        $extension = $company['image']->getClientOriginalExtension(); // getting image extension
+        $image = rand(11111,99999).'.'.$extension; // renameing image
+        Image::make($company['image']->getRealPath())
+                          ->orientate()
+                          ->fit(500, 500)
+                          ->crop(500, 500)
+                          ->resize(150, 150)
+                          ->save($destinationPath . $image)
+                          ->destroy(); // uploading file to given path
+                              
+        //add extra fields to array for model
+        $company['image'] = $image;
+
+      } 
+
+	  $data->update($company);
+
+      return Redirect::back()->with('success_message', Lang::get('core.msg_success_entry_edited')); 
+
 	}
 
 
@@ -188,21 +155,7 @@ class CompanyController extends \BaseController {
 	 */
 	public function destroy($id)
 	{ 
-		if ($id == null)
-		{
-			return Redirect::route('CompanyIndex')->with('error_message', Lang::get('core.msg_error_getting_entry'));
-		}
-
-		$destroy = $this->repo->destroy($id);
-
-		if ($destroy['status'] == 1)
-		{
-			return Redirect::route('CompanyIndex')->with('success_message', Lang::get('core.msg_success_entry_deleted'));
-		}
-		else
-		{
-			return Redirect::route('CompanyIndex')->with('error_message', Lang::get('core.msg_error_deleting_entry'));
-		}
+		/*	*/
 	}
 
 

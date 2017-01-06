@@ -194,7 +194,7 @@ More details about us can be found on our official website: http://www.shopcenta
                                     </a>
                               </li>
                               <li>
-                                    <a href="{{ URL::route('CompanyIndex') }}">
+                                    <a href="{{ URL::route('admin.company.index') }}">
                                         <i class="fa fa-building" aria-hidden="true"></i>Moja tvrtka
                                     </a>
                                </li>
